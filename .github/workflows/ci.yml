@@ -1,10 +1,4 @@
-on:
-  - pull_request
-  - push:
-    branches:
-      - master
-  - schedule:
-      - cron: '00 03 * * 1'
+on: [push, pull_request]
 
 name: Build
 
@@ -13,6 +7,8 @@ jobs:
     name: Jest
     runs-on: ubuntu-latest
     steps:
+      - name: Filter
+        run: if [[ ${GITHUB_EVENT_NAME} == "push" && ${GITHUB_REF} != "refs/heads/master" ]]; then exit 78; fi
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
