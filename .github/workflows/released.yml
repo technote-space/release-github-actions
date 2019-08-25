@@ -1,5 +1,5 @@
 #on: release
-on: pull_request
+on: project_card
 name: Released
 jobs:
   release:
