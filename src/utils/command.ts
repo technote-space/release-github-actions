@@ -1,7 +1,7 @@
 import signale from 'signale';
 import {exec} from 'child_process';
 import {Context} from '@actions/github/lib/context';
-import {isGitCloned, getGitUrl, getBuildCommands, getCloneDepth, getWorkspace} from './misc';
+import {isGitCloned, getGitUrl, getBuildCommands, getCloneDepth, getWorkspace, getCommitMessage} from './misc';
 
 export const clone = async (context: Context) => {
     if (isGitCloned()) return;
@@ -26,6 +26,13 @@ export const getDiffFiles = async () => {
     const workspace = getWorkspace();
     await execAsync(`git -C ${workspace} add --all --force`);
     return (await execAsync(`git -C ${workspace} status --short -uno`)).split(/\r\n|\n/).filter(line => line.match(/^[MDA]\s+/)).map(line => line.replace(/^[MDA]\s+/, ''));
+};
+
+export const commit = async () => {
+    const workspace = getWorkspace();
+    const message = getCommitMessage();
+    await execAsync(`git -C ${workspace} commit -m "${message}"`);
+    return execAsync(`git -C ${workspace} rev-parse HEAD`);
 };
 
 const execAsync = (command: string) => new Promise<string>((resolve, reject) => {
