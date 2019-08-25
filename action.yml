@@ -1,0 +1,16 @@
+name: Release GitHub Actions
+description: GitHub actions to auto release.
+author: technote-space
+inputs:
+  GITHUB_TOKEN:
+    description: Secret GitHub API token to use for making API requests.
+    required: true
+  BUILD_COMMAND:
+    description: Command to build.
+    default: ''
+  COMMIT_MESSAGE:
+    description: Commit message of build commit.
+    default: 'feat: Build for release'
+runs:
+  using: node12
+  main: lib/main.js
