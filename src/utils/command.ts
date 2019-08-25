@@ -8,7 +8,8 @@ export const clone = async (context: Context) => {
     const url = getGitUrl(context);
     const depth = getCloneDepth();
     const workspace = getWorkspace();
-    await execAsync(`git -C ${workspace} clone --depth=${depth} --branch=master ${url} .`);
+    await execAsync(`git -C ${workspace} clone --depth=${depth} ${url} .`);
+    await execAsync(`git -C ${workspace} fetch origin ${context.ref}`);
     await execAsync(`git -C ${workspace} checkout -qf ${context.sha}`);
 };
 
