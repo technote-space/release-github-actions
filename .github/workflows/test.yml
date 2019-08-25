@@ -8,4 +8,6 @@ jobs:
       - name: Release GitHub Actions
         uses: technote-space/release-github-actions@test
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_WORKSPACE: ${{ secrets.GITHUB_WORKSPACE }}
+          BUILD_COMMAND: 'yarn install && yarn build && yarn install --production'
