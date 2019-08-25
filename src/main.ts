@@ -9,10 +9,10 @@ async function run() {
     try {
         signale.info(`Event: ${context.eventName}`);
         signale.info(`Action: ${context.action}`);
-        if (!isTargetEvent(context)) {
-            signale.info('This is not target event.');
-            return;
-        }
+        // if (!isTargetEvent(context)) {
+        //     signale.info('This is not target event.');
+        //     return;
+        // }
 
         // signale.info(`Tag name: ${context.payload.release.tag_name}`);
         const octokit = new GitHub(getInput('GITHUB_TOKEN', {required: true}));
