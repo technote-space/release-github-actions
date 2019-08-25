@@ -3,7 +3,7 @@ import path from 'path';
 import yaml from 'js-yaml';
 import {getInput} from '@actions/core' ;
 import {Context} from '@actions/github/lib/context';
-import {TARGET_EVENT_NAME, TARGET_EVENT_ACTION, DEFAULT_COMMIT_MESSAGE, DEFAULT_CLONE_DEPTH} from '../constant';
+import {TARGET_EVENT_NAME, TARGET_EVENT_ACTION, DEFAULT_COMMIT_MESSAGE, DEFAULT_CLONE_DEPTH, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL} from '../constant';
 
 export const isTargetEvent = (context: Context) => TARGET_EVENT_NAME === context.eventName && TARGET_EVENT_ACTION === context.payload.action;
 
@@ -20,6 +20,10 @@ export const getBuildCommands = () => {
 };
 
 export const getCommitMessage = () => getInput('COMMIT_MESSAGE') || DEFAULT_COMMIT_MESSAGE;
+
+export const getCommitName = () => getInput('COMMIT_NAME') || DEFAULT_COMMIT_NAME;
+
+export const getCommitEmail = () => getInput('COMMIT_EMAIL') || DEFAULT_COMMIT_EMAIL;
 
 export const getCloneDepth = () => getInput('CLONE_DEPTH') || DEFAULT_CLONE_DEPTH;
 
