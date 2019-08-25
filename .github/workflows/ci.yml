@@ -5,7 +5,6 @@ name: Build
 jobs:
   jest:
     name: Jest
-    needs: eslint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -16,11 +15,11 @@ jobs:
       - name: Run tests
         run: yarn cover
       - name: Send covarage
-        run: yarn add coveralls && cat ./coverage/lcov.info | coveralls
+        run: yarn add coveralls && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
           COVERALLS_SERVICE_NAME: "GitHub Action"
-          COVERALLS_SERVICE_JOB_ID: ${GITHUB_SHA}
+          COVERALLS_SERVICE_JOB_ID: ${{ github.sha }}
       - uses: 8398a7/action-slack@v1
         with:
           type: failure
