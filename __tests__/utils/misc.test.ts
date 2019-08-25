@@ -1,8 +1,8 @@
 import nock from 'nock';
 import tmp from 'tmp';
 import {encodeContent} from '../util';
-import {isTargetEvent, parseConfig, getWorkspace, getCommitMessage, getBuildCommands, isGitCloned, getGitUrl} from '../../src/utils/misc';
-import {DEFAULT_COMMIT_MESSAGE} from '../../src/constant';
+import {isTargetEvent, parseConfig, getCommitMessage, getCloneDepth, getBuildCommands, isGitCloned, getGitUrl} from '../../src/utils/misc';
+import {DEFAULT_COMMIT_MESSAGE, DEFAULT_CLONE_DEPTH} from '../../src/constant';
 
 const fs = require('fs');
 const path = require('path');
@@ -88,36 +88,6 @@ describe('parseConfig', () => {
     });
 });
 
-describe('getWorkspace', () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-        jest.resetModules();
-        process.env = {...OLD_ENV};
-        delete process.env.NODE_ENV;
-    });
-
-    afterEach(() => {
-        process.env = OLD_ENV;
-    });
-
-    it('should return workspace', () => {
-        process.env.INPUT_GITHUB_WORKSPACE = 'test';
-        expect(getWorkspace()).toBe('test');
-    });
-
-    it('should throw error', () => {
-        const fn = jest.fn();
-        try {
-            expect(getWorkspace()).toBe('test');
-        } catch (error) {
-            fn();
-            expect(error.message).toBe('Input required and not supplied: GITHUB_WORKSPACE');
-        }
-        expect(fn).toBeCalled();
-    });
-});
-
 describe('getCommitMessage', () => {
     const OLD_ENV = process.env;
 
@@ -138,6 +108,29 @@ describe('getCommitMessage', () => {
 
     it('should get commit default message', () => {
         expect(getCommitMessage()).toBe(DEFAULT_COMMIT_MESSAGE);
+    });
+});
+
+describe('getCloneDepth', () => {
+    const OLD_ENV = process.env;
+
+    beforeEach(() => {
+        jest.resetModules();
+        process.env = {...OLD_ENV};
+        delete process.env.NODE_ENV;
+    });
+
+    afterEach(() => {
+        process.env = OLD_ENV;
+    });
+
+    it('should get clone depth', () => {
+        process.env.INPUT_CLONE_DEPTH = '3';
+        expect(getCloneDepth()).toBe('3');
+    });
+
+    it('should get default clone depth', () => {
+        expect(getCloneDepth()).toBe(DEFAULT_CLONE_DEPTH);
     });
 });
 
@@ -168,6 +161,26 @@ describe('getBuildCommands', () => {
 
 describe('isGitCloned', () => {
     const OLD_ENV = process.env;
+    const context = () => ({
+        payload: {
+            action: 'created',
+        },
+        eventName: 'release',
+        sha: '',
+        ref: '',
+        workflow: dir.name,
+        action: '',
+        actor: '',
+        issue: {
+            owner: '',
+            repo: '',
+            number: 1,
+        },
+        repo: {
+            owner: '',
+            repo: '',
+        },
+    });
     let dir;
 
     beforeEach(() => {
@@ -184,13 +197,11 @@ describe('isGitCloned', () => {
 
     it('should return true', () => {
         fs.mkdirSync(path.resolve(dir.name, '.git'));
-        process.env.INPUT_GITHUB_WORKSPACE = dir.name;
-        expect(isGitCloned()).toBeTruthy();
+        expect(isGitCloned(context())).toBeTruthy();
     });
 
     it('should return false', () => {
-        process.env.INPUT_GITHUB_WORKSPACE = dir.name;
-        expect(isGitCloned()).toBeFalsy();
+        expect(isGitCloned(context())).toBeFalsy();
     });
 });
 

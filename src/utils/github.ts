@@ -3,7 +3,7 @@ import path from 'path';
 import {GitHub} from '@actions/github/lib/github';
 import {Context} from '@actions/github/lib/context';
 import {Response, GitCreateTreeResponse, GitCreateCommitResponse} from '@octokit/rest';
-import {getCommitMessage, getWorkspace} from './misc';
+import {getCommitMessage} from './misc';
 
 export const filesToBlobs = async (files: object, octokit: GitHub, context: Context) => await Promise.all(Object.values(files).map(file => createBlob(file, octokit, context)));
 
@@ -68,7 +68,7 @@ const existsRef = (name: string, octokit: GitHub, context: Context) => {
 const getRef = (name: string) => `refs/heads/${name}`;
 
 const createBlob = async (filePath: string, octokit: GitHub, context: Context) => {
-    const file = path.resolve(getWorkspace(), filePath);
+    const file = path.resolve(context.workflow, filePath);
     const isExists = fs.existsSync(file);
     const blob = await octokit.git.createBlob({
         owner: context.repo.owner,

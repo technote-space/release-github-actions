@@ -5,15 +5,15 @@ inputs:
   GITHUB_TOKEN:
     description: Secret GitHub API token to use for making API requests.
     required: true
-  GITHUB_WORKSPACE:
-    description: The GitHub workspace directory path.
-    required: true
   BUILD_COMMAND:
     description: Command to build.
     default: ''
   COMMIT_MESSAGE:
     description: Commit message of build commit.
     default: 'feat: Build for release'
+  CLONE_DEPTH:
+    description: Git clone depth.
+    default: '50'
 runs:
   using: node12
   main: lib/main.js
