@@ -73,7 +73,7 @@ const createBlob = async (filePath: string, octokit: GitHub, context: Context) =
     const blob = await octokit.git.createBlob({
         owner: context.repo.owner,
         repo: context.repo.repo,
-        content: isExists ? new Buffer(fs.readFileSync(file)).toString('base64') : '',
+        content: isExists ? Buffer.from(fs.readFileSync(file)).toString('base64') : '',
         encoding: 'base64',
     });
     return ({path: filePath, sha: blob.data.sha});
