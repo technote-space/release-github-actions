@@ -14,7 +14,7 @@ async function run() {
             return;
         }
 
-        signale.info(`Tag name: ${context.payload.release.tag_name}`);
+        // signale.info(`Tag name: ${context.payload.release.tag_name}`);
         const octokit = new GitHub(getInput('GITHUB_TOKEN', {required: true}));
         await clone(context);
         await runBuild();
@@ -22,7 +22,8 @@ async function run() {
         signale.info(`Diff files count: ${files.length}`);
         if (!files.length) return;
 
-        await push(files, context.payload.release.tag_name, octokit, context);
+        // await push(files, context.payload.release.tag_name, octokit, context);
+        await push(files, 'test', octokit, context);
     } catch (error) {
         setFailed(error.message);
     }
