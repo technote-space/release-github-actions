@@ -25,7 +25,6 @@ export const runBuild = async () => {
 export const getDiffFiles = async () => {
     const workspace = getWorkspace();
     await execAsync(`git -C ${workspace} add --all --force`);
-    signale.info(await execAsync(`git -C ${workspace} status --short -uno`));
     return (await execAsync(`git -C ${workspace} status --short -uno`)).split(/\r\n|\n/).filter(line => line.match(/^[MDA]\s+/)).map(line => line.replace(/^[MDA]\s+/, ''));
 };
 
