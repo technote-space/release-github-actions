@@ -14,6 +14,12 @@ inputs:
   CLONE_DEPTH:
     description: Git clone depth.
     default: '50'
+  COMMIT_NAME:
+    description: Git commit name.
+    default: 'GitHub Actions'
+  COMMIT_EMAIL:
+    description: Git commit email.
+    default: 'example@example.com'
 runs:
   using: node12
   main: lib/main.js

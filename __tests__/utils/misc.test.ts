@@ -3,8 +3,8 @@ import path from 'path';
 import nock from 'nock';
 import tmp from 'tmp';
 import {encodeContent} from '../util';
-import {isTargetEvent, parseConfig, getCommitMessage, getCloneDepth, getWorkspace, getBuildCommands, isGitCloned, getGitUrl} from '../../src/utils/misc';
-import {DEFAULT_COMMIT_MESSAGE, DEFAULT_CLONE_DEPTH} from '../../src/constant';
+import {isTargetEvent, parseConfig, getCommitMessage, getCommitName, getCommitEmail, getCloneDepth, getWorkspace, getBuildCommands, isGitCloned, getGitUrl} from '../../src/utils/misc';
+import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL, DEFAULT_CLONE_DEPTH} from '../../src/constant';
 
 nock.disableNetConnect();
 
@@ -107,6 +107,52 @@ describe('getCommitMessage', () => {
 
     it('should get commit default message', () => {
         expect(getCommitMessage()).toBe(DEFAULT_COMMIT_MESSAGE);
+    });
+});
+
+describe('getCommitName', () => {
+    const OLD_ENV = process.env;
+
+    beforeEach(() => {
+        jest.resetModules();
+        process.env = {...OLD_ENV};
+        delete process.env.NODE_ENV;
+    });
+
+    afterEach(() => {
+        process.env = OLD_ENV;
+    });
+
+    it('should get commit name', () => {
+        process.env.INPUT_COMMIT_NAME = 'test';
+        expect(getCommitName()).toBe('test');
+    });
+
+    it('should get commit default name', () => {
+        expect(getCommitName()).toBe(DEFAULT_COMMIT_NAME);
+    });
+});
+
+describe('getCommitEmail', () => {
+    const OLD_ENV = process.env;
+
+    beforeEach(() => {
+        jest.resetModules();
+        process.env = {...OLD_ENV};
+        delete process.env.NODE_ENV;
+    });
+
+    afterEach(() => {
+        process.env = OLD_ENV;
+    });
+
+    it('should get commit email', () => {
+        process.env.INPUT_COMMIT_EMAIL = 'test';
+        expect(getCommitEmail()).toBe('test');
+    });
+
+    it('should get commit default email', () => {
+        expect(getCommitEmail()).toBe(DEFAULT_COMMIT_EMAIL);
     });
 });
 
