@@ -14,8 +14,8 @@ async function run() {
         // }
         // const octokit = new GitHub(getInput('GITHUB_TOKEN', {required: true}));
         await clone(context);
-        await runBuild(context);
-        const files = await getDiffFiles(context);
+        await runBuild();
+        const files = await getDiffFiles();
         signale.info(`Diff files count: ${files.length}`);
         if (!files.length) return;
 

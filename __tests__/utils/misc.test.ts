@@ -1,7 +1,7 @@
 import nock from 'nock';
 import tmp from 'tmp';
 import {encodeContent} from '../util';
-import {isTargetEvent, parseConfig, getCommitMessage, getCloneDepth, getBuildCommands, isGitCloned, getGitUrl} from '../../src/utils/misc';
+import {isTargetEvent, parseConfig, getCommitMessage, getCloneDepth, getWorkspace, getBuildCommands, isGitCloned, getGitUrl} from '../../src/utils/misc';
 import {DEFAULT_COMMIT_MESSAGE, DEFAULT_CLONE_DEPTH} from '../../src/constant';
 
 const fs = require('fs');
@@ -134,6 +134,30 @@ describe('getCloneDepth', () => {
     });
 });
 
+describe('getWorkspace', () => {
+    const OLD_ENV = process.env;
+
+    beforeEach(() => {
+        jest.resetModules();
+        process.env = {...OLD_ENV};
+        delete process.env.NODE_ENV;
+    });
+
+    afterEach(() => {
+        process.env = OLD_ENV;
+    });
+
+    it('should get workspace', () => {
+        process.env.GITHUB_WORKSPACE = 'test';
+        expect(getWorkspace()).toBe('test');
+    });
+
+    it('should not get workspace', () => {
+        process.env.GITHUB_WORKSPACE = undefined;
+        expect(getWorkspace()).toBe('');
+    });
+});
+
 describe('getBuildCommands', () => {
     const OLD_ENV = process.env;
 
@@ -161,26 +185,6 @@ describe('getBuildCommands', () => {
 
 describe('isGitCloned', () => {
     const OLD_ENV = process.env;
-    const context = () => ({
-        payload: {
-            action: 'created',
-        },
-        eventName: 'release',
-        sha: '',
-        ref: '',
-        workflow: dir.name,
-        action: '',
-        actor: '',
-        issue: {
-            owner: '',
-            repo: '',
-            number: 1,
-        },
-        repo: {
-            owner: '',
-            repo: '',
-        },
-    });
     let dir;
 
     beforeEach(() => {
@@ -197,11 +201,13 @@ describe('isGitCloned', () => {
 
     it('should return true', () => {
         fs.mkdirSync(path.resolve(dir.name, '.git'));
-        expect(isGitCloned(context())).toBeTruthy();
+        process.env.GITHUB_WORKSPACE = dir.name;
+        expect(isGitCloned()).toBeTruthy();
     });
 
     it('should return false', () => {
-        expect(isGitCloned(context())).toBeFalsy();
+        process.env.GITHUB_WORKSPACE = dir.name;
+        expect(isGitCloned()).toBeFalsy();
     });
 });
 
