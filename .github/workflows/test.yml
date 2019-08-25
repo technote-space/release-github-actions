@@ -9,5 +9,5 @@ jobs:
         uses: technote-space/release-github-actions@test
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_WORKSPACE: ${{ secrets.GITHUB_WORKSPACE }}
+          GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}
           BUILD_COMMAND: 'yarn install && yarn build && yarn install --production'
