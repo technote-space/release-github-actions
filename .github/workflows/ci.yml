@@ -7,8 +7,10 @@ jobs:
     name: Jest
     runs-on: ubuntu-latest
     steps:
-#      - name: Filter
-#        run: if [[ ${GITHUB_EVENT_NAME} == "push" && ${GITHUB_REF} != "refs/heads/master" ]]; then exit 78; fi
+      #       neutral status 78 has removed...
+      #       https://github.community/t5/GitHub-API-Development-and/GitHub-Actions-quot-neutral-quot-exit-code-is-incorrectly/td-p/29051
+      #      - name: Filter
+      #        run: if [[ ${GITHUB_EVENT_NAME} == "push" && ${GITHUB_REF} != "refs/heads/master" ]]; then exit 78; fi
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
