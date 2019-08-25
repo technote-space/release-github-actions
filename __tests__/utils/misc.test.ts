@@ -1,11 +1,10 @@
+import fs from 'fs';
+import path from 'path';
 import nock from 'nock';
 import tmp from 'tmp';
 import {encodeContent} from '../util';
 import {isTargetEvent, parseConfig, getCommitMessage, getCloneDepth, getWorkspace, getBuildCommands, isGitCloned, getGitUrl} from '../../src/utils/misc';
 import {DEFAULT_COMMIT_MESSAGE, DEFAULT_CLONE_DEPTH} from '../../src/constant';
-
-const fs = require('fs');
-const path = require('path');
 
 nock.disableNetConnect();
 
