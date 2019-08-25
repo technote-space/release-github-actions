@@ -1,13 +1,15 @@
 import fs from 'fs';
 import path from 'path';
+import signale from 'signale';
 import {GitHub} from '@actions/github/lib/github';
 import {Context} from '@actions/github/lib/context';
-import {Response, GitCreateCommitResponse} from '@octokit/rest';
 import {getCommitMessage, getWorkspace} from './misc';
+import {commit} from './command';
 
 export const push = async (files: object, name: string, octokit: GitHub, context: Context) => {
-    const commit = await createCommit(files, octokit, context);
-    await updateRef(commit, name, octokit, context);
+    // const commit = await createCommit(files, octokit, context);
+    // await updateRef(commit.data.sha, name, octokit, context);
+    await updateRef(await commit(), name, octokit, context);
 };
 
 const getCommit = async (octokit: GitHub, context: Context) => {
@@ -47,6 +49,7 @@ const createBlob = async (filePath: string, octokit: GitHub, context: Context) =
 };
 
 const createRef = async (name: string, octokit: GitHub, context: Context) => {
+    signale.info('Create Ref');
     await octokit.git.createRef({
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -58,6 +61,7 @@ const createRef = async (name: string, octokit: GitHub, context: Context) => {
 const filesToBlobs = async (files: object, octokit: GitHub, context: Context) => Object.values(files).map(async file => await createBlob(file, octokit, context));
 
 const createTree = async (blobs: object, octokit: GitHub, context: Context) => {
+    signale.info('Create Tree');
     return await octokit.git.createTree({
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -74,6 +78,7 @@ const createTree = async (blobs: object, octokit: GitHub, context: Context) => {
 const createCommit = async (files: object, octokit: GitHub, context: Context) => {
     const blobs = await filesToBlobs(files, octokit, context);
     const tree = await createTree(blobs, octokit, context);
+    signale.info('Create Commit');
     return await octokit.git.createCommit({
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -83,14 +88,16 @@ const createCommit = async (files: object, octokit: GitHub, context: Context) =>
     });
 };
 
-const updateRef = async (commit: Response<GitCreateCommitResponse>, name: string, octokit: GitHub, context: Context) => {
+const updateRef = async (commit: string, name: string, octokit: GitHub, context: Context) => {
     if (!await existsRef(name, octokit, context)) {
         await createRef(name, octokit, context);
     }
+
+    signale.info('Update Ref');
     await octokit.git.updateRef({
         owner: context.repo.owner,
         repo: context.repo.repo,
         ref: getRef(name),
-        sha: commit.data.sha,
+        sha: commit,
     });
 };
