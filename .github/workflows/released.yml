@@ -2,10 +2,11 @@ on: release
 name: Released
 jobs:
   release:
-    name: Release
+    name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - name: Pull Request Labeler
-        uses: actions/labeler@v2
+      - name: Release GitHub Actions
+        uses: technote-space/release-github-actions@pre
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUILD_COMMAND: 'yarn install && yarn build && yarn install --production'
