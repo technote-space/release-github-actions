@@ -1,5 +1,5 @@
 import signale from 'signale';
-import {spawn} from 'child_process';
+import {exec} from 'child_process';
 import {Context} from '@actions/github/lib/context';
 import {isGitCloned, getWorkspace, getGitUrl, getBuildCommands} from './misc';
 
@@ -7,8 +7,8 @@ export const clone = async (context: Context) => {
     if (isGitCloned()) return;
     const workspace = getWorkspace();
     const url = getGitUrl(context);
-    await spawnAsync(`git -C ${workspace} clone --depth=1 --branch=master ${url} .`);
-    await spawnAsync(`git -C ${workspace} checkout -qf ${context.sha}`);
+    await execAsync(`git -C ${workspace} clone --depth=1 --branch=master ${url} .`);
+    await execAsync(`git -C ${workspace} checkout -qf ${context.sha}`);
 };
 
 export const runBuild = async () => {
@@ -19,32 +19,25 @@ export const runBuild = async () => {
     const current = process.cwd();
     signale.info('workspace=%s', workspace);
     signale.info('current=%s', current);
-    await spawnAsync(`cd ${workspace}`);
+    await execAsync(`cd ${workspace}`);
     for (const command of commands) {
-        await spawnAsync(command);
+        await execAsync(command);
     }
-    await spawnAsync(`cd ${current}`);
+    await execAsync(`cd ${current}`);
 };
 
 export const getDiffFiles = async () => {
     const workspace = getWorkspace();
-    await spawnAsync(`git -C ${workspace} add --all`);
-    await spawnAsync(`git -C ${workspace} status --short -uno`);
-    return (await spawnAsync(`git -C ${workspace} status --short -uno`)).split(/\r\n|\n/).filter(line => line.match(/^[MDA]\s+/)).map(line => line.replace(/^[MDA]\s+/, ''));
+    await execAsync(`git -C ${workspace} add --all`);
+    await execAsync(`git -C ${workspace} status --short -uno`);
+    return (await execAsync(`git -C ${workspace} status --short -uno`)).split(/\r\n|\n/).filter(line => line.match(/^[MDA]\s+/)).map(line => line.replace(/^[MDA]\s+/, ''));
 };
 
-const spawnAsync = (command: string) => new Promise<string>((resolve, reject) => {
+const execAsync = (command: string) => new Promise<string>((resolve, reject) => {
     signale.info(`Run command: ${command}`);
 
-    const process = spawn(command);
-    let output = '';
-    process.stdout.on('data', data => {
-        console.log(data);
-        output += data;
-    });
-
-    process.on('close', code => {
-        if (code !== 0) reject(new Error(`command ${command} exited with code ${code}.`));
-        resolve(output);
+    exec(command, (error, stdout) => {
+        if (error) reject(new Error(`command ${command} exited with code ${error}.`));
+        resolve(stdout);
     });
 });
