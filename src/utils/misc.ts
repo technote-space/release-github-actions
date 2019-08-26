@@ -36,6 +36,10 @@ export const getBuildCommands = (dir: string): string[] => {
         commands.push('yarn install --production');
     }
 
+    if ('' === command) {
+        commands.push('rm -rdf .github');
+    }
+
     return commands;
 };
 

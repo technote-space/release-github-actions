@@ -177,6 +177,15 @@ describe('getBuildCommands', () => {
     });
 
     it('should get build commands 2', () => {
+        expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+            'yarn install',
+            'yarn build', // build command of package.json
+            'yarn install --production',
+            'rm -rdf .github',
+        ]);
+    });
+
+    it('should get build commands 3', () => {
         process.env.INPUT_BUILD_COMMAND = 'yarn build';
         expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
             'yarn install',
@@ -185,7 +194,7 @@ describe('getBuildCommands', () => {
         ]);
     });
 
-    it('should get build commands 3', () => {
+    it('should get build commands 4', () => {
         process.env.INPUT_BUILD_COMMAND = 'yarn install && yarn build';
         expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
             'yarn install',
@@ -193,7 +202,7 @@ describe('getBuildCommands', () => {
         ]);
     });
 
-    it('should get build commands 4', () => {
+    it('should get build commands 5', () => {
         process.env.INPUT_BUILD_COMMAND = 'test';
         expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
             'yarn install',
@@ -202,9 +211,10 @@ describe('getBuildCommands', () => {
         ]);
     });
 
-    it('should get build commands 5', () => {
+    it('should get build commands 6', () => {
         expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
             'yarn install --production',
+            'rm -rdf .github',
         ]);
     });
 });
