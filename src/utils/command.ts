@@ -32,7 +32,7 @@ const cloneForBranch = async (pushDir: string, branch: string, context: Context)
     signale.info(`Cloning the branch %s from the remote repo`, branch);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true, 'git clone');
+    await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true, 'git clone', true);
 };
 
 const config = async (pushDir: string) => {
@@ -96,10 +96,10 @@ const copyFiles = async (buildDir: string, pushDir: string) => {
     await execAsync(`rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`);
 };
 
-const execAsync = (command: string, quiet: boolean = false, altCommand: string | null = null) => new Promise<string>((resolve, reject) => {
+const execAsync = (command: string, quiet: boolean = false, altCommand: string | null = null, suppressError: boolean = false) => new Promise<string>((resolve, reject) => {
     if (quiet && 'string' === typeof altCommand) signale.info(`Run command: ${altCommand}`);
     if (!quiet) signale.info(`Run command: ${command}`);
-    exec(command + (quiet ? ' > /dev/null 2>&1' : ''), (error, stdout) => {
+    exec(command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : ''), (error, stdout) => {
         if (error) {
             if (quiet) {
                 if ('string' === typeof altCommand) reject(new Error(`command [${altCommand}] exited with code ${error.code}.`));
