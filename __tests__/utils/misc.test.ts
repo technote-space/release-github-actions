@@ -1,12 +1,35 @@
-import fs from 'fs';
 import path from 'path';
 import nock from 'nock';
-import tmp from 'tmp';
 import {encodeContent} from '../util';
-import {isTargetEvent, parseConfig, getCommitMessage, getCommitName, getCommitEmail, getCloneDepth, getWorkspace, getBuildCommands, isGitCloned, getGitUrl} from '../../src/utils/misc';
-import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL, DEFAULT_CLONE_DEPTH} from '../../src/constant';
+import {
+    isTargetEvent,
+    parseConfig,
+    getCommitMessage,
+    getCommitName,
+    getCommitEmail,
+    getWorkspace,
+    getBuildCommands,
+    getGitUrl,
+    detectBuildCommand,
+    getRepository,
+} from '../../src/utils/misc';
+import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL} from '../../src/constant';
 
 nock.disableNetConnect();
+
+const testEnv = () => {
+    const OLD_ENV = process.env;
+
+    beforeEach(() => {
+        jest.resetModules();
+        process.env = {...OLD_ENV};
+        delete process.env.NODE_ENV;
+    });
+
+    afterEach(() => {
+        process.env = OLD_ENV;
+    });
+};
 
 describe('isTargetEvent', () => {
     it('should return true', () => {
@@ -88,17 +111,7 @@ describe('parseConfig', () => {
 });
 
 describe('getCommitMessage', () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-        jest.resetModules();
-        process.env = {...OLD_ENV};
-        delete process.env.NODE_ENV;
-    });
-
-    afterEach(() => {
-        process.env = OLD_ENV;
-    });
+    testEnv();
 
     it('should get commit message', () => {
         process.env.INPUT_COMMIT_MESSAGE = 'test';
@@ -111,17 +124,7 @@ describe('getCommitMessage', () => {
 });
 
 describe('getCommitName', () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-        jest.resetModules();
-        process.env = {...OLD_ENV};
-        delete process.env.NODE_ENV;
-    });
-
-    afterEach(() => {
-        process.env = OLD_ENV;
-    });
+    testEnv();
 
     it('should get commit name', () => {
         process.env.INPUT_COMMIT_NAME = 'test';
@@ -134,17 +137,7 @@ describe('getCommitName', () => {
 });
 
 describe('getCommitEmail', () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-        jest.resetModules();
-        process.env = {...OLD_ENV};
-        delete process.env.NODE_ENV;
-    });
-
-    afterEach(() => {
-        process.env = OLD_ENV;
-    });
+    testEnv();
 
     it('should get commit email', () => {
         process.env.INPUT_COMMIT_EMAIL = 'test';
@@ -156,41 +149,8 @@ describe('getCommitEmail', () => {
     });
 });
 
-describe('getCloneDepth', () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-        jest.resetModules();
-        process.env = {...OLD_ENV};
-        delete process.env.NODE_ENV;
-    });
-
-    afterEach(() => {
-        process.env = OLD_ENV;
-    });
-
-    it('should get clone depth', () => {
-        process.env.INPUT_CLONE_DEPTH = '3';
-        expect(getCloneDepth()).toBe('3');
-    });
-
-    it('should get default clone depth', () => {
-        expect(getCloneDepth()).toBe(DEFAULT_CLONE_DEPTH);
-    });
-});
-
 describe('getWorkspace', () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-        jest.resetModules();
-        process.env = {...OLD_ENV};
-        delete process.env.NODE_ENV;
-    });
-
-    afterEach(() => {
-        process.env = OLD_ENV;
-    });
+    testEnv();
 
     it('should get workspace', () => {
         process.env.GITHUB_WORKSPACE = 'test';
@@ -204,17 +164,7 @@ describe('getWorkspace', () => {
 });
 
 describe('getBuildCommands', () => {
-    const OLD_ENV = process.env;
-
-    beforeEach(() => {
-        jest.resetModules();
-        process.env = {...OLD_ENV};
-        delete process.env.NODE_ENV;
-    });
-
-    afterEach(() => {
-        process.env = OLD_ENV;
-    });
+    testEnv();
 
     it('should get build commands', () => {
         process.env.INPUT_BUILD_COMMAND = 'test';
@@ -228,36 +178,9 @@ describe('getBuildCommands', () => {
     });
 });
 
-describe('isGitCloned', () => {
-    const OLD_ENV = process.env;
-    let dir;
-
-    beforeEach(() => {
-        jest.resetModules();
-        process.env = {...OLD_ENV};
-        delete process.env.NODE_ENV;
-        dir = tmp.dirSync();
-    });
-
-    afterEach(() => {
-        process.env = OLD_ENV;
-        dir.removeCallback();
-    });
-
-    it('should return true', () => {
-        fs.mkdirSync(path.resolve(dir.name, '.git'));
-        process.env.GITHUB_WORKSPACE = dir.name;
-        expect(isGitCloned()).toBeTruthy();
-    });
-
-    it('should return false', () => {
-        process.env.GITHUB_WORKSPACE = dir.name;
-        expect(isGitCloned()).toBeFalsy();
-    });
-});
-
 describe('getGitUrl', () => {
     it('should return git url', () => {
+        process.env.INPUT_ACCESS_TOKEN = 'test';
         expect(getGitUrl({
             payload: {
                 action: '',
@@ -277,6 +200,57 @@ describe('getGitUrl', () => {
                 owner: 'Hello',
                 repo: 'World',
             },
-        })).toBe('https://github.com/Hello/World.git');
+        })).toBe('https://test@github.com/Hello/World.git');
+    });
+});
+
+describe('detectBuildCommand', () => {
+    it('should return false 1', () => {
+        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toBeFalsy();
+    });
+
+    it('should return false 2', () => {
+        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test2'))).toBeFalsy();
+    });
+
+    it('should return false 2', () => {
+        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test3'))).toBeFalsy();
+    });
+
+    it('should detect build command 1', () => {
+        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toBe('test1');
+    });
+
+    it('should detect build command 1', () => {
+        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test5'))).toBe('test2');
+    });
+
+    it('should detect build command 1', () => {
+        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test6'))).toBe('test3');
+    });
+});
+
+describe('getRepository', () => {
+    it('should get repository', () => {
+        expect(getRepository({
+            payload: {
+                action: '',
+            },
+            eventName: '',
+            sha: '',
+            ref: '',
+            workflow: '',
+            action: '',
+            actor: '',
+            issue: {
+                owner: '',
+                repo: '',
+                number: 1,
+            },
+            repo: {
+                owner: 'Hello',
+                repo: 'World',
+            },
+        })).toBe('Hello/World');
     });
 });

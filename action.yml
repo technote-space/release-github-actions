@@ -2,8 +2,8 @@ name: Release GitHub Actions
 description: GitHub actions to auto release.
 author: technote-space
 inputs:
-  GITHUB_TOKEN:
-    description: Secret GitHub API token to use for making API requests.
+  ACCESS_TOKEN:
+    description: Secret GitHub Access Token to use for making push. This is not the same as GITHUB_TOKEN.
     required: true
   BUILD_COMMAND:
     description: Command to build.
@@ -11,9 +11,6 @@ inputs:
   COMMIT_MESSAGE:
     description: Commit message of build commit.
     default: 'feat: Build for release'
-  CLONE_DEPTH:
-    description: Git clone depth.
-    default: '50'
   COMMIT_NAME:
     description: Git commit name.
     default: 'GitHub Actions'
