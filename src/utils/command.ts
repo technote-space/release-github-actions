@@ -5,34 +5,34 @@ import {exec} from 'child_process';
 import {Context} from '@actions/github/lib/context';
 import {getGitUrl, getRepository, getBuildCommands, getWorkspace, getCommitMessage, getCommitName, getCommitEmail, detectBuildCommand} from './misc';
 
-export const deploy = async (name: string, context: Context) => {
+export const deploy = async (branch: string, context: Context) => {
     const workDir = path.resolve(getWorkspace(), '.work');
     const buildDir = path.resolve(workDir, 'build');
     const pushDir = path.resolve(workDir, 'build');
-    signale.info(`Deploying branch %s to %s`, name, getRepository(context));
+    signale.info(`Deploying branch %s to %s`, branch, getRepository(context));
 
     fs.mkdirSync(pushDir, {recursive: true});
     await prepareFiles(buildDir, pushDir, context);
-    await cloneForBranch(pushDir, name, context);
+    await cloneForBranch(pushDir, branch, context);
     await copyFiles(buildDir, pushDir);
     await config(pushDir);
     await commit(pushDir);
-    await push(pushDir, name, context);
+    await push(pushDir, branch, context);
 };
 
 export const prepareFiles = async (buildDir: string, pushDir: string, context: Context) => {
-    signale.info('Preparing files for release', name);
+    signale.info('Preparing files for release');
 
     fs.mkdirSync(buildDir, {recursive: true});
     await cloneForBuild(buildDir, context);
     await runBuild(buildDir);
 };
 
-const cloneForBranch = async (pushDir: string, name: string, context: Context) => {
-    signale.info(`Cloning the branch %s from the remote repo`, name);
+const cloneForBranch = async (pushDir: string, branch: string, context: Context) => {
+    signale.info(`Cloning the branch %s from the remote repo`, branch);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} clone --quiet --branch=${name} --depth=1 ${url} .`, true);
+    await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true);
 };
 
 const config = async (pushDir: string) => {
@@ -51,11 +51,11 @@ const commit = async (pushDir: string) => {
     await execAsync(`git -C ${pushDir} show --stat-count=10 HEAD`);
 };
 
-const push = async (pushDir: string, name: string, context: Context) => {
-    signale.info('Pushing to %s@%s', getRepository(context), name);
+const push = async (pushDir: string, branch: string, context: Context) => {
+    signale.info('Pushing to %s@%s', getRepository(context), branch);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${name}":"${name}"`, true);
+    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${branch}":"${branch}"`, true);
 };
 
 const cloneForBuild = async (buildDir: string, context: Context) => {
