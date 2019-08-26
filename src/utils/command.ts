@@ -71,7 +71,7 @@ const runBuild = async (buildDir: string) => {
     signale.info('=== Running build for release ===');
     let commands = getBuildCommands();
     const buildCommand = detectBuildCommand(buildDir);
-    const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install'));
+    const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length > 0;
     if (!hasInstallCommand) {
         commands.push('yarn install');
     }
