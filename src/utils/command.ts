@@ -88,9 +88,8 @@ const runBuild = async (buildDir: string) => {
     }
 
     const current = process.cwd();
-    await execAsync(`cd ${buildDir}`);
     for (const command of commands) {
-        await execAsync(command);
+        await execAsync(`cd ${buildDir} && ${command}`);
     }
     await execAsync(`cd ${current}`);
 };
