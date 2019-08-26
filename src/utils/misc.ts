@@ -9,17 +9,34 @@ export const isTargetEvent = (context: Context): boolean => TARGET_EVENT_NAME ==
 
 export const parseConfig = (content: string): object => yaml.safeLoad(Buffer.from(content, 'base64').toString()) || {};
 
-export const getRepository = (context: Context):string => `${context.repo.owner}/${context.repo.repo}`;
+export const getRepository = (context: Context): string => `${context.repo.owner}/${context.repo.repo}`;
 
 export const getGitUrl = (context: Context): string => {
     const token = getAccessToken();
     return `https://${token}@github.com/${context.repo.owner}/${context.repo.repo}.git`;
 };
 
-export const getBuildCommands = (): string[] => {
+export const getBuildCommands = (dir: string): string[] => {
     const command = getInput('BUILD_COMMAND');
-    if ('' === command) return [];
-    return command.split('&&').map(str => str.trim().replace(/\s{2,}/g, ' '));
+    let commands = '' === command ? [] : command.split('&&').map(normalizeCommand);
+
+    const buildCommand = detectBuildCommand(dir);
+    const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length > 0;
+
+    if (typeof buildCommand === 'string') {
+        commands = commands.filter(command => !command.startsWith(`npm run ${buildCommand}`) && !command.startsWith(`yarn ${buildCommand}`));
+        commands.push(`yarn ${buildCommand}`);
+    }
+
+    if (!hasInstallCommand && commands.length > 0) {
+        commands.unshift('yarn install');
+    }
+
+    if (!hasInstallCommand) {
+        commands.push('yarn install --production');
+    }
+
+    return commands;
 };
 
 export const getAccessToken = (): string => getInput('ACCESS_TOKEN', {required: true});
@@ -45,8 +62,10 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 
     const scripts = parsed['scripts'];
     for (const target of SEARCH_BUILD_COMMAND_TARGETS) {
-        if (target in scripts) return scripts[target].trim().replace(/\s{2,}/g, ' ');
+        if (target in scripts) return normalizeCommand(target);
     }
 
     return false;
 };
+
+const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');

@@ -8,7 +8,7 @@ import {getGitUrl, getRepository, getBuildCommands, getWorkspace, getCommitMessa
 export const deploy = async (branch: string, context: Context) => {
     const workDir = path.resolve(getWorkspace(), '.work');
     const buildDir = path.resolve(workDir, 'build');
-    const pushDir = path.resolve(workDir, 'build');
+    const pushDir = path.resolve(workDir, 'push');
     signale.info(`Deploying branch %s to %s`, branch, getRepository(context));
 
     fs.mkdirSync(pushDir, {recursive: true});
@@ -33,6 +33,23 @@ const cloneForBranch = async (pushDir: string, branch: string, context: Context)
 
     const url = getGitUrl(context);
     await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true, 'git clone', true);
+    if (!fs.existsSync(path.resolve(pushDir, '.git'))) {
+        await gitInit(pushDir);
+        await gitCheckout(pushDir, branch);
+    }
+};
+
+const gitInit = async (pushDir: string) => {
+    signale.info('Initializing local git repo');
+
+    await execAsync(`git -C ${pushDir} init .`);
+
+};
+
+const gitCheckout = async (pushDir: string, branch: string) => {
+    signale.info('Checking out orphan branch %s', branch);
+
+    await execAsync(`git -C ${pushDir} checkout --orphan "${branch}"`);
 };
 
 const config = async (pushDir: string) => {
@@ -69,22 +86,9 @@ const cloneForBuild = async (buildDir: string, context: Context) => {
 
 const runBuild = async (buildDir: string) => {
     signale.info('=== Running build for release ===');
-    let commands = getBuildCommands();
-    const buildCommand = detectBuildCommand(buildDir);
-    const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length > 0;
-    if (!hasInstallCommand) {
-        commands.push('yarn install');
-    }
-    if (typeof buildCommand === 'string') {
-        commands = commands.filter(command => !buildCommand.startsWith(`npm run ${command}`) && !buildCommand.startsWith(`yarn ${command}`));
-        commands.push(`yarn ${buildCommand}`);
-    }
-    if (!hasInstallCommand) {
-        commands.push('yarn install --production');
-    }
 
     const current = process.cwd();
-    for (const command of commands) {
+    for (const command of getBuildCommands(buildDir)) {
         await execAsync(`cd ${buildDir} && ${command}`);
     }
     await execAsync(`cd ${current}`);
@@ -97,14 +101,13 @@ const copyFiles = async (buildDir: string, pushDir: string) => {
 };
 
 const execAsync = (command: string, quiet: boolean = false, altCommand: string | null = null, suppressError: boolean = false) => new Promise<string>((resolve, reject) => {
-    if (quiet && 'string' === typeof altCommand) signale.info(`Run command: ${altCommand}`);
-    if (!quiet) signale.info(`Run command: ${command}`);
+    if ('string' === typeof altCommand) signale.info(`Run command: ${altCommand}`);
+    else if (!quiet) signale.info(`Run command: ${command}`);
     exec(command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : ''), (error, stdout) => {
         if (error) {
-            if (quiet) {
-                if ('string' === typeof altCommand) reject(new Error(`command [${altCommand}] exited with code ${error.code}.`));
-                else reject(new Error(`command exited with code ${error.code}.`));
-            } else reject(new Error(`command [${command}] exited with code ${error.code}.`));
+            if ('string' === typeof altCommand) reject(new Error(`command [${altCommand}] exited with code ${error.code}.`));
+            else if (!quiet) reject(new Error(`command [${command}] exited with code ${error.code}.`));
+            else reject(new Error(`command exited with code ${error.code}.`));
         } else {
             if (!quiet) console.log(stdout);
             resolve(stdout);
