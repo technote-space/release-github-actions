@@ -1,5 +1,4 @@
-#on: release
-on: project_card
+on: release
 name: Released
 jobs:
   release:
