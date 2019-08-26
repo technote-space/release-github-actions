@@ -12,7 +12,8 @@ export const deploy = async (branch: string, context: Context) => {
     const pushDir = path.resolve(workDir, 'push');
     signale.info(`Deploying branch %s to %s`, branch, getRepository(context));
 
-    rimraf(workDir);
+    rimraf(workDir, () => {
+    });
     fs.mkdirSync(pushDir, {recursive: true});
     await prepareFiles(buildDir, pushDir, context);
     await cloneForBranch(pushDir, branch, context);
