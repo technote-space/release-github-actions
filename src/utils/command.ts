@@ -8,7 +8,7 @@ import {getGitUrl, getRepository, getBuildCommands, getWorkspace, getCommitMessa
 export const deploy = async (branch: string, context: Context) => {
     const workDir = path.resolve(getWorkspace(), '.work');
     const buildDir = path.resolve(workDir, 'build');
-    const pushDir = path.resolve(workDir, 'build');
+    const pushDir = path.resolve(workDir, 'push');
     signale.info(`Deploying branch %s to %s`, branch, getRepository(context));
 
     fs.mkdirSync(pushDir, {recursive: true});
@@ -32,9 +32,7 @@ const cloneForBranch = async (pushDir: string, branch: string, context: Context)
     signale.info(`Cloning the branch %s from the remote repo`, branch);
 
     const url = getGitUrl(context);
-    await execAsync(`cd ${pushDir} && ls -lat`);
     await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true, 'git clone', true);
-    await execAsync(`cd ${pushDir} && ls -lat`);
     if (!fs.existsSync(path.resolve(pushDir, '.git'))) {
         await gitInit(pushDir);
         await gitCheckout(pushDir, branch);
