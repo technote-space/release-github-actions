@@ -166,15 +166,46 @@ describe('getWorkspace', () => {
 describe('getBuildCommands', () => {
     testEnv();
 
-    it('should get build commands', () => {
+    it('should get build commands 1', () => {
         process.env.INPUT_BUILD_COMMAND = 'test';
-        expect(getBuildCommands()).toEqual([
+        expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+            'yarn install',
             'test',
+            'yarn build', // build command of package.json
+            'yarn install --production',
         ]);
     });
 
-    it('should get empty', () => {
-        expect(getBuildCommands()).toEqual([]);
+    it('should get build commands 2', () => {
+        process.env.INPUT_BUILD_COMMAND = 'yarn build';
+        expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+            'yarn install',
+            'yarn build',
+            'yarn install --production',
+        ]);
+    });
+
+    it('should get build commands 3', () => {
+        process.env.INPUT_BUILD_COMMAND = 'yarn install && yarn build';
+        expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+            'yarn install',
+            'yarn build',
+        ]);
+    });
+
+    it('should get build commands 4', () => {
+        process.env.INPUT_BUILD_COMMAND = 'test';
+        expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
+            'yarn install',
+            'test',
+            'yarn install --production',
+        ]);
+    });
+
+    it('should get build commands 5', () => {
+        expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
+            'yarn install --production',
+        ]);
     });
 });
 
@@ -218,15 +249,15 @@ describe('detectBuildCommand', () => {
     });
 
     it('should detect build command 1', () => {
-        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toBe('test1');
+        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toBe('build');
     });
 
     it('should detect build command 1', () => {
-        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test5'))).toBe('test2');
+        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test5'))).toBe('production');
     });
 
     it('should detect build command 1', () => {
-        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test6'))).toBe('test3');
+        expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test6'))).toBe('prod');
     });
 });
 
