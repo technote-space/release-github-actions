@@ -40,7 +40,7 @@ jobs:
 ## Options
 ### BUILD_COMMAND
 Build command.  
-default: ''  
+default: `''`  
 - If package.json includes build or production or prod in scripts, the command is used for build.  
 - If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
 
@@ -53,13 +53,13 @@ yarn install --production
 ```
 
 ### COMMIT_MESSAGE
-Commit message.
-default: 'feat: Build for release'
+Commit message.  
+default: `'feat: Build for release'`
 
 ### COMMIT_NAME
-Commit name.
-default: 'GitHub Actions'
+Commit name.  
+default: `'GitHub Actions'`
 
 ### COMMIT_EMAIL
-Commit email.
-default: 'example@example.com'
+Commit email.  
+default: `'example@example.com'`
