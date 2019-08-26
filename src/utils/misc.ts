@@ -16,7 +16,7 @@ export const getGitUrl = (context: Context): string => {
     return `https://${token}@github.com/${context.repo.owner}/${context.repo.repo}.git`;
 };
 
-export const getBuildCommands = (dir: string): string[] => {
+export const getBuildCommands = (dir: string): readonly string[] => {
     const command = getInput('BUILD_COMMAND');
     let commands = '' === command ? [] : command.split('&&').map(normalizeCommand);
 
