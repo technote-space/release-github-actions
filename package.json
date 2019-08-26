@@ -22,6 +22,7 @@
     "@actions/core": "^1.0.0",
     "@actions/github": "^1.0.0",
     "js-yaml": "^3.13.1",
+    "rmdir": "^1.2.0",
     "signale": "^1.4.0"
   },
   "devDependencies": {
