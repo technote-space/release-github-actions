@@ -55,7 +55,7 @@ const push = async (pushDir: string, branch: string, context: Context) => {
     signale.info('Pushing to %s@%s', getRepository(context), branch);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${branch}":"${branch}"`, true, 'git push');
+    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${branch}":"${branch}"`, false, 'git push');
 };
 
 const cloneForBuild = async (buildDir: string, context: Context) => {
@@ -97,16 +97,13 @@ const copyFiles = async (buildDir: string, pushDir: string) => {
 };
 
 const execAsync = (command: string, quiet: boolean = false, altCommand: string | null = null, suppressError: boolean = false) => new Promise<string>((resolve, reject) => {
-    if (quiet && 'string' === typeof altCommand) signale.info(`Run command: ${altCommand}`);
+    if ('string' === typeof altCommand) signale.info(`Run command: ${altCommand}`);
     if (!quiet) signale.info(`Run command: ${command}`);
     exec(command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : ''), (error, stdout) => {
         if (error) {
-            if (quiet) {
-                console.log(stdout);
-                console.log(error.message);
-                if ('string' === typeof altCommand) reject(new Error(`command [${altCommand}] exited with code ${error.code}.`));
-                else reject(new Error(`command exited with code ${error.code}.`));
-            } else reject(new Error(`command [${command}] exited with code ${error.code}.`));
+            if ('string' === typeof altCommand) reject(new Error(`command [${altCommand}] exited with code ${error.code}.`));
+            else if (!quiet) reject(new Error(`command [${command}] exited with code ${error.code}.`));
+            else reject(new Error(`command exited with code ${error.code}.`));
         } else {
             if (!quiet) console.log(stdout);
             resolve(stdout);
