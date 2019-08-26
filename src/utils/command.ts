@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import rmdir from 'rmdir';
+import rimraf from 'rimraf';
 import signale from 'signale';
 import {exec} from 'child_process';
 import {Context} from '@actions/github/lib/context';
@@ -12,7 +12,7 @@ export const deploy = async (branch: string, context: Context) => {
     const pushDir = path.resolve(workDir, 'push');
     signale.info(`Deploying branch %s to %s`, branch, getRepository(context));
 
-    rmdir(workDir);
+    rimraf(workDir);
     fs.mkdirSync(pushDir, {recursive: true});
     await prepareFiles(buildDir, pushDir, context);
     await cloneForBranch(pushDir, branch, context);

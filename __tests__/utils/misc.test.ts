@@ -1,5 +1,4 @@
 import path from 'path';
-import nock from 'nock';
 import {encodeContent} from '../util';
 import {
     isTargetEvent,
@@ -14,8 +13,6 @@ import {
     getRepository,
 } from '../../src/utils/misc';
 import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL} from '../../src/constant';
-
-nock.disableNetConnect();
 
 const testEnv = () => {
     const OLD_ENV = process.env;
