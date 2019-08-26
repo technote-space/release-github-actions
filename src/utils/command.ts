@@ -102,6 +102,7 @@ const execAsync = (command: string, quiet: boolean = false, altCommand: string |
     exec(command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : ''), (error, stdout) => {
         if (error) {
             if (quiet) {
+                console.log(error.message);
                 if ('string' === typeof altCommand) reject(new Error(`command [${altCommand}] exited with code ${error.code}.`));
                 else reject(new Error(`command exited with code ${error.code}.`));
             } else reject(new Error(`command [${command}] exited with code ${error.code}.`));
