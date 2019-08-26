@@ -32,7 +32,9 @@ const cloneForBranch = async (pushDir: string, branch: string, context: Context)
     signale.info(`Cloning the branch %s from the remote repo`, branch);
 
     const url = getGitUrl(context);
+    await execAsync(`cd ${pushDir} && ls -lat`);
     await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true, 'git clone', true);
+    await execAsync(`cd ${pushDir} && ls -lat`);
     if (!fs.existsSync(path.resolve(pushDir, '.git'))) {
         await gitInit(pushDir);
         await gitCheckout(pushDir, branch);
