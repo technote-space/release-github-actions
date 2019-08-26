@@ -9,5 +9,6 @@ jobs:
       - name: Release GitHub Actions
         uses: technote-space/release-github-actions@pre
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BUILD_COMMAND: 'yarn install && yarn build && yarn install --production'
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_NAME: Technote
+          COMMIT_EMAIL: technote.space@gmail.com
