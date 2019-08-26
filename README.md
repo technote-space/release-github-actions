@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Release GitHub Actions
-        uses: technote-space/release-github-actions@v1.0.0
+        uses: technote-space/release-github-actions@v1.0.1
         with:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 ```
@@ -43,6 +43,7 @@ Build command.
 default: `''`  
 - If package.json includes build or production or prod in scripts, the command is used for build.  
 - If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
+- If command is not provided, `rm -rdf .github` command is added.
 
 so if `BUILD_COMMAND` is not provided and package.json has `build` script,
 the following commands are executed.
@@ -50,6 +51,7 @@ the following commands are executed.
 yarn install
 yarn build
 yarn install --production
+rm -rdf .github
 ```
 
 ### COMMIT_MESSAGE
