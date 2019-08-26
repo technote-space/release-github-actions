@@ -9,6 +9,6 @@ jobs:
       - name: Release GitHub Actions
         uses: technote-space/release-github-actions@pre
         with:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           COMMIT_NAME: Technote
           COMMIT_EMAIL: technote.space@gmail.com
