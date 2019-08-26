@@ -32,7 +32,7 @@ const cloneForBranch = async (pushDir: string, branch: string, context: Context)
     signale.info(`Cloning the branch %s from the remote repo`, branch);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true);
+    await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true, 'git clone');
 };
 
 const config = async (pushDir: string) => {
@@ -55,14 +55,14 @@ const push = async (pushDir: string, branch: string, context: Context) => {
     signale.info('Pushing to %s@%s', getRepository(context), branch);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${branch}":"${branch}"`, true);
+    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${branch}":"${branch}"`, true, 'git push');
 };
 
 const cloneForBuild = async (buildDir: string, context: Context) => {
     signale.info('Cloning the working commit from the remote repo for build');
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${buildDir} clone --depth=1 ${url} .`, true);
+    await execAsync(`git -C ${buildDir} clone --depth=1 ${url} .`, true, 'git clone');
     await execAsync(`git -C ${buildDir} fetch origin ${context.ref}`);
     await execAsync(`git -C ${buildDir} checkout -qf ${context.sha}`);
 };
@@ -72,8 +72,12 @@ const runBuild = async (buildDir: string) => {
     let commands = getBuildCommands();
     const buildCommand = detectBuildCommand(buildDir);
     const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length > 0;
+    commands.push('pwd');
+    commands.push('ls -lat');
     if (!hasInstallCommand) {
         commands.push('yarn install');
+        commands.push('pwd');
+        commands.push('ls -lat');
     }
     if (typeof buildCommand === 'string') {
         commands = commands.filter(command => !buildCommand.startsWith(`npm run ${command}`) && !buildCommand.startsWith(`yarn ${command}`));
@@ -97,9 +101,9 @@ const copyFiles = async (buildDir: string, pushDir: string) => {
     await execAsync(`rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`);
 };
 
-const execAsync = (command: string, quiet: boolean = false) => new Promise<string>((resolve, reject) => {
-    if (quiet) signale.info('Run command: *********');
-    else signale.info(`Run command: ${command}`);
+const execAsync = (command: string, quiet: boolean = false, altCommand: string | null = null) => new Promise<string>((resolve, reject) => {
+    if (quiet && 'string' === typeof altCommand) signale.info(`Run command: ${altCommand}`);
+    if (!quiet) signale.info(`Run command: ${command}`);
     exec(command + (quiet ? ' > /dev/null 2>&1' : ''), (error, stdout) => {
         if (error) reject(new Error(`command ${command} exited with code ${error}.`));
         resolve(stdout);
