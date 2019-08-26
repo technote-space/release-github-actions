@@ -72,12 +72,8 @@ const runBuild = async (buildDir: string) => {
     let commands = getBuildCommands();
     const buildCommand = detectBuildCommand(buildDir);
     const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length > 0;
-    commands.push('pwd');
-    commands.push('ls -lat');
     if (!hasInstallCommand) {
         commands.push('yarn install');
-        commands.push('pwd');
-        commands.push('ls -lat');
     }
     if (typeof buildCommand === 'string') {
         commands = commands.filter(command => !buildCommand.startsWith(`npm run ${command}`) && !buildCommand.startsWith(`yarn ${command}`));
@@ -104,8 +100,12 @@ const execAsync = (command: string, quiet: boolean = false, altCommand: string |
     if (quiet && 'string' === typeof altCommand) signale.info(`Run command: ${altCommand}`);
     if (!quiet) signale.info(`Run command: ${command}`);
     exec(command + (quiet ? ' > /dev/null 2>&1' : ''), (error, stdout) => {
-        if (error) reject(new Error(`command ${command} exited with code ${error}.`));
-        else {
+        if (error) {
+            if (quiet) {
+                if ('string' === typeof altCommand) reject(new Error(`command [${altCommand}] exited with code ${error.code}.`));
+                else reject(new Error(`command exited with code ${error.code}.`));
+            } else reject(new Error(`command [${command}] exited with code ${error.code}.`));
+        } else {
             if (!quiet) console.log(stdout);
             resolve(stdout);
         }
