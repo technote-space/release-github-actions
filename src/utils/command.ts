@@ -32,7 +32,7 @@ const cloneForBranch = async (pushDir: string, branch: string, context: Context)
     signale.info(`Cloning the branch %s from the remote repo`, branch);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true);
+    await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true, 'git clone', true);
 };
 
 const config = async (pushDir: string) => {
@@ -55,14 +55,14 @@ const push = async (pushDir: string, branch: string, context: Context) => {
     signale.info('Pushing to %s@%s', getRepository(context), branch);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${branch}":"${branch}"`, true);
+    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${branch}":"${branch}"`, true, 'git push');
 };
 
 const cloneForBuild = async (buildDir: string, context: Context) => {
     signale.info('Cloning the working commit from the remote repo for build');
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${buildDir} clone --depth=1 ${url} .`, true);
+    await execAsync(`git -C ${buildDir} clone --depth=1 ${url} .`, true, 'git clone');
     await execAsync(`git -C ${buildDir} fetch origin ${context.ref}`);
     await execAsync(`git -C ${buildDir} checkout -qf ${context.sha}`);
 };
@@ -71,12 +71,12 @@ const runBuild = async (buildDir: string) => {
     signale.info('=== Running build for release ===');
     let commands = getBuildCommands();
     const buildCommand = detectBuildCommand(buildDir);
-    const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install'));
+    const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length > 0;
     if (!hasInstallCommand) {
         commands.push('yarn install');
     }
     if (typeof buildCommand === 'string') {
-        commands = commands.filter(command => buildCommand.startsWith(`npm run ${command}`) || buildCommand.startsWith(`yarn ${command}`));
+        commands = commands.filter(command => !buildCommand.startsWith(`npm run ${command}`) && !buildCommand.startsWith(`yarn ${command}`));
         commands.push(`yarn ${buildCommand}`);
     }
     if (!hasInstallCommand) {
@@ -84,9 +84,8 @@ const runBuild = async (buildDir: string) => {
     }
 
     const current = process.cwd();
-    await execAsync(`cd ${buildDir}`);
     for (const command of commands) {
-        await execAsync(command);
+        await execAsync(`cd ${buildDir} && ${command}`);
     }
     await execAsync(`cd ${current}`);
 };
@@ -97,10 +96,18 @@ const copyFiles = async (buildDir: string, pushDir: string) => {
     await execAsync(`rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`);
 };
 
-const execAsync = (command: string, quiet: boolean = false) => new Promise<string>((resolve, reject) => {
+const execAsync = (command: string, quiet: boolean = false, altCommand: string | null = null, suppressError: boolean = false) => new Promise<string>((resolve, reject) => {
+    if (quiet && 'string' === typeof altCommand) signale.info(`Run command: ${altCommand}`);
     if (!quiet) signale.info(`Run command: ${command}`);
-    exec(command + (quiet ? ' > /dev/null 2>&1' : ''), (error, stdout) => {
-        if (error) reject(new Error(`command ${command} exited with code ${error}.`));
-        resolve(stdout);
+    exec(command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : ''), (error, stdout) => {
+        if (error) {
+            if (quiet) {
+                if ('string' === typeof altCommand) reject(new Error(`command [${altCommand}] exited with code ${error.code}.`));
+                else reject(new Error(`command exited with code ${error.code}.`));
+            } else reject(new Error(`command [${command}] exited with code ${error.code}.`));
+        } else {
+            if (!quiet) console.log(stdout);
+            resolve(stdout);
+        }
     });
 });
