@@ -76,7 +76,7 @@ const runBuild = async (buildDir: string) => {
         commands.push('yarn install');
     }
     if (typeof buildCommand === 'string') {
-        commands = commands.filter(command => buildCommand.startsWith(`npm run ${command}`) || buildCommand.startsWith(`yarn ${command}`));
+        commands = commands.filter(command => !buildCommand.startsWith(`npm run ${command}`) && !buildCommand.startsWith(`yarn ${command}`));
         commands.push(`yarn ${buildCommand}`);
     }
     if (!hasInstallCommand) {
@@ -98,7 +98,8 @@ const copyFiles = async (buildDir: string, pushDir: string) => {
 };
 
 const execAsync = (command: string, quiet: boolean = false) => new Promise<string>((resolve, reject) => {
-    if (!quiet) signale.info(`Run command: ${command}`);
+    if (quiet) signale.info('Run command: *********');
+    else signale.info(`Run command: ${command}`);
     exec(command + (quiet ? ' > /dev/null 2>&1' : ''), (error, stdout) => {
         if (error) reject(new Error(`command ${command} exited with code ${error}.`));
         resolve(stdout);
