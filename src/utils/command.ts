@@ -33,6 +33,23 @@ const cloneForBranch = async (pushDir: string, branch: string, context: Context)
 
     const url = getGitUrl(context);
     await execAsync(`git -C ${pushDir} clone --quiet --branch=${branch} --depth=1 ${url} .`, true, 'git clone', true);
+    if (!fs.existsSync(path.resolve(pushDir, '.git'))) {
+        await gitInit(pushDir);
+        await gitCheckout(pushDir, branch);
+    }
+};
+
+const gitInit = async (pushDir: string) => {
+    signale.info('Initializing local git repo');
+
+    await execAsync(`git -C ${pushDir} init .`);
+
+};
+
+const gitCheckout = async (pushDir: string, branch: string) => {
+    signale.info('Checking out orphan branch %s', branch);
+
+    await execAsync(`git -C ${pushDir} checkout --orphan "${branch}"`);
 };
 
 const config = async (pushDir: string) => {
@@ -55,7 +72,7 @@ const push = async (pushDir: string, branch: string, context: Context) => {
     signale.info('Pushing to %s@%s', getRepository(context), branch);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${branch}":"${branch}"`, false, 'git push');
+    await execAsync(`git -C ${pushDir} push --quiet "${url}" "${branch}":"${branch}"`, true, 'git push');
 };
 
 const cloneForBuild = async (buildDir: string, context: Context) => {
@@ -98,7 +115,7 @@ const copyFiles = async (buildDir: string, pushDir: string) => {
 
 const execAsync = (command: string, quiet: boolean = false, altCommand: string | null = null, suppressError: boolean = false) => new Promise<string>((resolve, reject) => {
     if ('string' === typeof altCommand) signale.info(`Run command: ${altCommand}`);
-    if (!quiet) signale.info(`Run command: ${command}`);
+    else if (!quiet) signale.info(`Run command: ${command}`);
     exec(command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : ''), (error, stdout) => {
         if (error) {
             if ('string' === typeof altCommand) reject(new Error(`command [${altCommand}] exited with code ${error.code}.`));
