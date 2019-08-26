@@ -106,6 +106,9 @@ const execAsync = (command: string, quiet: boolean = false, altCommand: string |
     if (!quiet) signale.info(`Run command: ${command}`);
     exec(command + (quiet ? ' > /dev/null 2>&1' : ''), (error, stdout) => {
         if (error) reject(new Error(`command ${command} exited with code ${error}.`));
-        resolve(stdout);
+        else {
+            if (!quiet) console.log(stdout);
+            resolve(stdout);
+        }
     });
 });
