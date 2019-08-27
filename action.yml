@@ -23,6 +23,9 @@ inputs:
   BRANCH_NAME:
     description: Branch name.
     default: 'gh-actions'
+  CLEAN_TARGETS:
+    description: Files or directories to delete before release. (Comma separated)
+    default: '.github,__tests__,src,.gitignore,*.js,*.json,*.lock'
 runs:
   using: node12
   main: lib/main.js

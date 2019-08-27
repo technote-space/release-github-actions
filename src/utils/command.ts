@@ -4,7 +4,19 @@ import signale from 'signale';
 import {exec} from 'child_process';
 import {GitHub} from '@actions/github/lib/github';
 import {Context} from '@actions/github/lib/context';
-import {getGitUrl, getRepository, getBuildCommands, getWorkspace, getCommitMessage, getCommitName, getCommitEmail, getBranchName} from './misc';
+import {
+    getGitUrl,
+    getRepository,
+    getBuildCommands,
+    getWorkspace,
+    getCommitMessage,
+    getCommitName,
+    getCommitEmail,
+    getBranchName,
+    getMajorTag,
+    getMinorTag,
+    uniqueArray,
+} from './misc';
 
 export const deploy = async (tagName: string, octokit: GitHub, context: Context) => {
     const workDir = path.resolve(getWorkspace(), '.work');
@@ -96,10 +108,15 @@ const push = async (pushDir: string, tagName: string, branchName: string, contex
     signale.info('Pushing to %s@%s (tag: %s)', getRepository(context), branchName, tagName);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} push --delete "${url}" tag ${tagName}`, true, 'git push --delete origin tag');
+    const tagNames = uniqueArray([tagName, getMajorTag(tagName), getMinorTag(tagName)]);
+    for (const tagName of tagNames) {
+        await execAsync(`git -C ${pushDir} push --delete "${url}" tag ${tagName}`, true, 'git push --delete origin tag', true);
+    }
     await execAsync(`git -C ${pushDir} tag -l | xargs git -C ${pushDir} tag -d`);
     await execAsync(`git -C ${pushDir} fetch "${url}" --tags`, true, 'git fetch origin --tags');
-    await execAsync(`git -C ${pushDir} tag ${tagName}`);
+    for (const tagName of tagNames) {
+        await execAsync(`git -C ${pushDir} tag ${tagName}`);
+    }
     await execAsync(`git -C ${pushDir} push --quiet --tags "${url}" "${branchName}":"refs/heads/${branchName}"`, true, `git push --tags "${branchName}":"refs/heads/${branchName}"`);
     return true;
 };
