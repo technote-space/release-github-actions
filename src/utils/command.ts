@@ -108,7 +108,7 @@ const push = async (pushDir: string, tagName: string, branchName: string, contex
     const url = getGitUrl(context);
     const tagNames = getCreateTags(tagName);
     for (const tagName of tagNames) {
-        await execAsync(`git -C ${pushDir} push --delete "${url}" tag ${tagName}`, true, 'git push --delete origin tag', true);
+        await execAsync(`git -C ${pushDir} push --delete "${url}" tag ${tagName}`, true, `git push --delete origin tag ${tagName}`, true);
     }
     await execAsync(`git -C ${pushDir} tag -l | xargs git -C ${pushDir} tag -d`);
     await execAsync(`git -C ${pushDir} fetch "${url}" --tags`, true, 'git fetch origin --tags');
