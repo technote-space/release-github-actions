@@ -32,6 +32,9 @@ inputs:
   CREATE_MINOR_VERSION_TAG:
     description: Whether to create minor version tag.
     default: true
+branding:
+  icon: 'tag'
+  color: 'green'
 runs:
   using: node12
   main: lib/main.js
