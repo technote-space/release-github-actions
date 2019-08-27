@@ -13,34 +13,28 @@ Once you publish the release, this action will automatically
 1. Change release tag
 
 ## Installation
-.github/workflows/release.yml
-```yaml
-on: release
-name: Release
-jobs:
-  release:
-    name: Release GitHub Actions
-    runs-on: ubuntu-latest
-    steps:
-      - name: Release GitHub Actions
-        uses: technote-space/release-github-actions@v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-```
+1. Setup workflow  
+   e.g. `.github/workflows/release.yml`
+   ```yaml
+   on: release
+   name: Release
+   jobs:
+     release:
+       name: Release GitHub Actions
+       runs-on: ubuntu-latest
+       steps:
+         - name: Release GitHub Actions
+           uses: technote-space/release-github-actions@v1
+           with:
+             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+             ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+   ```
 
-## ACCESS_TOKEN
+### Required parameter
+#### ACCESS_TOKEN
 1. Generate a [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with the public_repo or repo scope.
 (repo is required for private repositories).  
 1. [Save as secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
-
-## Details
-### Target event
-- release
-### Target action
-- published
-### Branch name
-- [BRANCH_NAME](#branch_name)
 
 ## Options
 ### BUILD_COMMAND
@@ -93,6 +87,12 @@ Whether to create minor version tag.
 default: `true`  
 Set to `false` if you do not want to create a minor version tag.  
 [Detail of tags](#tags)
+
+## Action event details
+### Target event
+- release
+### Target action
+- published
 
 ## Addition
 ### tags 
