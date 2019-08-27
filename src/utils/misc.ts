@@ -10,7 +10,7 @@ import {
     DEFAULT_COMMIT_NAME,
     DEFAULT_COMMIT_EMAIL,
     SEARCH_BUILD_COMMAND_TARGETS,
-    DEFAULT_BRANCH_NAME,
+    DEFAULT_BRANCH_NAME, DEFAULT_CLEAN_TARGETS,
 } from '../constant';
 
 export const isTargetEvent = (context: Context): boolean => TARGET_EVENT_NAME === context.eventName && TARGET_EVENT_ACTION === context.payload.action;
@@ -45,7 +45,7 @@ export const getBuildCommands = (dir: string): readonly string[] => {
     }
 
     if ('' === command) {
-        commands.push('rm -rdf .github');
+        commands.push(...getCleanTargets().map(target => `rm -rdf ${target}`));
     }
 
     return commands;
@@ -93,3 +93,5 @@ export const getMinorTag = (tagName: string): string => 'v' + getVersionFragment
 const getVersionFragments = (tagName: string): string[] => tagName.trim().replace(/^v?/gi, '').split('.');
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
+
+const getCleanTargets = (): string[] => [...new Set((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];

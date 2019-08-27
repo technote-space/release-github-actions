@@ -48,7 +48,7 @@ Build command.
 default: `''`  
 - If package.json includes build or production or prod in scripts, the command is used for build.  
 - If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
-- If command is not provided, `rm -rdf .github` command is added.
+- If command is not provided, some files are deleted (see [CLEAN_TARGETS](#clean_targets)).
 
 so if `BUILD_COMMAND` is not provided and package.json has `build` script,
 the following commands are executed.
@@ -57,6 +57,8 @@ yarn install
 yarn build
 yarn install --production
 rm -rdf .github
+...
+rm -rdf *.lock
 ```
 
 ### COMMIT_MESSAGE
