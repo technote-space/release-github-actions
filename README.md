@@ -94,6 +94,27 @@ Set to `false` if you do not want to create a minor version tag.
 ### Target action
 - published
 
+## Motivation
+Release package needs all dependencies like `node_modules`, but usually they are not committed.  
+So if you want to release `GitHub Actions`, you have to do following steps.  
+1. Develop locally on the branch for develop
+1. Build for release
+1. Commit all source code including dependencies like `node_modules`
+1. Add tags (consider major and minor versions)
+1. Push to GitHub
+1. Publish release
+
+It is very troublesome to do this steps for every release.  
+
+If you use this `GitHub Action`, the steps to do are simple.
+1. Develop locally on the branch for develop
+1. Publish release
+1. Wait for the automated steps to finish
+   1. Build for release
+   1. Commit all source code including dependencies like `node_modules`
+   1. Add tags (consider major and minor versions)
+   1. Push to GitHub
+
 ## Addition
 ### tags 
 Tag name format must be [Semantic Versioning](https://semver.org/).  
