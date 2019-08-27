@@ -94,4 +94,4 @@ const getVersionFragments = (tagName: string): string[] => tagName.trim().replac
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
-const getCleanTargets = (): string[] => [...new Set((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];
+const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];
