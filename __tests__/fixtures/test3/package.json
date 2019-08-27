@@ -1,8 +1,0 @@
-{
-  "name": "test",
-  "version": "0.0.1",
-  "scripts": {
-    "test1": "test1",
-    "test2": "test2"
-  }
-}
