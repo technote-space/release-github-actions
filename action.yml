@@ -25,7 +25,7 @@ inputs:
     default: 'gh-actions'
   CLEAN_TARGETS:
     description: Files or directories to delete before release. (Comma separated)
-    default: '.github,__tests__,src,.gitignore,*.js,*.json,*.lock'
+    default: '.github,__tests__,src,.gitignore,*.js,*.json,*.lock,_config.yml'
   CREATE_MAJOR_VERSION_TAG:
     description: Whether to create major version tag.
     default: true

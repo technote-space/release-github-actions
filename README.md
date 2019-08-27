@@ -73,7 +73,7 @@ default: `'gh-actions'`
 
 ### CLEAN_TARGETS
 Files or directories to delete before release (Comma separated).  
-default: `.github,__tests__,src,.gitignore,*.js,*.json,*.lock`  
+default: `.github,__tests__,src,.gitignore,*.js,*.json,*.lock,_config.yml`  
 Absolute path and `..` are not permitted to use.
 
 ### CREATE_MAJOR_VERSION_TAG
