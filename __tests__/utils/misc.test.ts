@@ -115,7 +115,7 @@ describe('getCommitMessage', () => {
         expect(getCommitMessage()).toBe('test');
     });
 
-    it('should get commit default message', () => {
+    it('should get default commit message', () => {
         expect(getCommitMessage()).toBe(DEFAULT_COMMIT_MESSAGE);
     });
 });
@@ -128,7 +128,7 @@ describe('getCommitName', () => {
         expect(getCommitName()).toBe('test');
     });
 
-    it('should get commit default name', () => {
+    it('should get default commit name', () => {
         expect(getCommitName()).toBe(DEFAULT_COMMIT_NAME);
     });
 });
@@ -141,7 +141,7 @@ describe('getCommitEmail', () => {
         expect(getCommitEmail()).toBe('test');
     });
 
-    it('should get commit default email', () => {
+    it('should get default commit email', () => {
         expect(getCommitEmail()).toBe(DEFAULT_COMMIT_EMAIL);
     });
 });
