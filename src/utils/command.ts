@@ -96,11 +96,11 @@ const push = async (pushDir: string, tagName: string, branchName: string, contex
     signale.info('Pushing to %s@%s (tag: %s)', getRepository(context), branchName, tagName);
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${pushDir} push --delete origin tag ${tagName}`);
+    await execAsync(`git -C ${pushDir} push --delete "${url}" tag ${tagName}`, true, 'git push --delete origin tag');
     await execAsync(`git -C ${pushDir} tag -l | xargs git -C ${pushDir} tag -d`);
-    await execAsync(`git -C ${pushDir} fetch origin --tags`);
+    await execAsync(`git -C ${pushDir} fetch "${url}" --tags`, true, 'git fetch origin --tags');
     await execAsync(`git -C ${pushDir} tag ${tagName}`);
-    await execAsync(`git -C ${pushDir} push --quiet --tags "${url}" "${branchName}":"refs/heads/${branchName}"`, true, 'git push');
+    await execAsync(`git -C ${pushDir} push --quiet --tags "${url}" "${branchName}":"refs/heads/${branchName}"`, true, `git push --tags "${branchName}":"refs/heads/${branchName}"`);
     return true;
 };
 
@@ -128,8 +128,8 @@ const cloneForBuild = async (buildDir: string, context: Context) => {
     signale.info('Cloning the working commit from the remote repo for build');
 
     const url = getGitUrl(context);
-    await execAsync(`git -C ${buildDir} clone --depth=1 ${url} .`, true, 'git clone');
-    await execAsync(`git -C ${buildDir} fetch origin ${context.ref}`);
+    await execAsync(`git -C ${buildDir} clone --depth=1 ${url} .`, true, 'git clone --depth=1');
+    await execAsync(`git -C ${buildDir} fetch "${url}" ${context.ref}`, true, `git fetch origin ${context.ref}`);
     await execAsync(`git -C ${buildDir} checkout -qf ${context.sha}`);
 };
 
