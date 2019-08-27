@@ -6,7 +6,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/technote-space/release-github-actions/blob/master/LICENSE)
 
 GitHub actions to auto release.  
-Once you publish the release, this action will run build and create branch automatically.
+Once you publish the release, this action will automatically
+1. Run build
+1. Create branch for release
+1. Change tag to release branch
+1. Change release tag
 
 ## Installation
 .github/workflows/release.yml
@@ -19,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Release GitHub Actions
-        uses: technote-space/release-github-actions@v1.0.3
+        uses: technote-space/release-github-actions@v1
         with:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 ```
