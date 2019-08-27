@@ -40,7 +40,7 @@ jobs:
 ### Target action
 - published
 ### Branch name
-- Tag name
+- [BRANCH_NAME](#branch_name)
 
 ## Options
 ### BUILD_COMMAND
@@ -72,6 +72,10 @@ default: `'GitHub Actions'`
 ### COMMIT_EMAIL
 Commit email.  
 default: `'example@example.com'`
+
+### BRANCH_NAME
+Branch name for GitHub Actions release.  
+default: `'gh-actions'`
 
 ### CLEAN_TARGETS
 Files or directories to delete before release (Comma separated).  
