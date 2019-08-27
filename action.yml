@@ -26,6 +26,12 @@ inputs:
   CLEAN_TARGETS:
     description: Files or directories to delete before release. (Comma separated)
     default: '.github,__tests__,src,.gitignore,*.js,*.json,*.lock'
+  CREATE_MAJOR_VERSION_TAG:
+    description: Whether to create major version tag.
+    default: true
+  CREATE_MINOR_VERSION_TAG:
+    description: Whether to create minor version tag.
+    default: true
 runs:
   using: node12
   main: lib/main.js

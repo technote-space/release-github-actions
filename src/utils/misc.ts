@@ -61,6 +61,21 @@ export const getCommitEmail = (): string => getInput('COMMIT_EMAIL') || DEFAULT_
 
 export const getBranchName = (): string => getInput('BRANCH_NAME') || DEFAULT_BRANCH_NAME;
 
+export const isCreateMajorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG') || 'true');
+
+export const isCreateMinorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MINOR_VERSION_TAG') || 'true');
+
+export const getCreateTags = (tagName: string): string[] => {
+    const tagNames = [tagName];
+    if (isCreateMajorVersionTag()) {
+        tagNames.push(getMajorTag(tagName));
+    }
+    if (isCreateMinorVersionTag()) {
+        tagNames.push(getMinorTag(tagName));
+    }
+    return uniqueArray(tagNames);
+};
+
 export const getWorkspace = (): string => process.env.GITHUB_WORKSPACE || '';
 
 export const detectBuildCommand = (dir: string): boolean | string => {
@@ -95,3 +110,5 @@ const getVersionFragments = (tagName: string): string[] => tagName.trim().replac
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
 const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];
+
+const getBoolValue = (input: string): boolean => !['false', '0'].includes(input.trim().toLowerCase());

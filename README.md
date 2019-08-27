@@ -40,7 +40,7 @@ jobs:
 ### Target action
 - published
 ### Branch name
-- Tag name
+- [BRANCH_NAME](#branch_name)
 
 ## Options
 ### BUILD_COMMAND
@@ -73,10 +73,26 @@ default: `'GitHub Actions'`
 Commit email.  
 default: `'example@example.com'`
 
+### BRANCH_NAME
+Branch name for GitHub Actions release.  
+default: `'gh-actions'`
+
 ### CLEAN_TARGETS
 Files or directories to delete before release (Comma separated).  
 default: `.github,__tests__,src,.gitignore,*.js,*.json,*.lock`  
 Absolute path and `..` are not permitted to use.
+
+### CREATE_MAJOR_VERSION_TAG
+Whether to create major version tag.  
+default: `true`  
+Set to `false` if you do not want to create a major version tag.  
+[Detail of tags](#tags)
+
+### CREATE_MINOR_VERSION_TAG
+Whether to create minor version tag.  
+default: `true`  
+Set to `false` if you do not want to create a minor version tag.  
+[Detail of tags](#tags)
 
 ## Addition
 ### tags 

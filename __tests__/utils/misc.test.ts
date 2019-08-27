@@ -16,6 +16,9 @@ import {
     getMajorTag,
     getMinorTag,
     uniqueArray,
+    isCreateMajorVersionTag,
+    isCreateMinorVersionTag,
+    getCreateTags,
 } from '../../src/utils/misc';
 import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL, DEFAULT_BRANCH_NAME} from '../../src/constant';
 import {describe} from 'jest-circus';
@@ -256,6 +259,8 @@ describe('getBuildCommands', () => {
 });
 
 describe('getGitUrl', () => {
+    testEnv();
+
     it('should return git url', () => {
         process.env.INPUT_ACCESS_TOKEN = 'test';
         expect(getGitUrl({
@@ -375,5 +380,84 @@ describe('uniqueArray', () => {
         expect(uniqueArray<number>([1, 2, 2, 3, 4, 3])).toEqual([1, 2, 3, 4]);
         expect(uniqueArray<string>(['1', '2', '2', '3', '4', '3'])).toEqual(['1', '2', '3', '4']);
         expect(uniqueArray<string>(['v1.2', 'v1', 'v1.2'])).toEqual(['v1.2', 'v1']);
+    });
+});
+
+describe('isCreateMajorVersionTag', () => {
+    testEnv();
+
+    it('should return true 1', () => {
+        expect(isCreateMajorVersionTag()).toBeTruthy();
+    });
+    it('should return true 2', () => {
+        process.env.INPUT_CREATE_MAJOR_VERSION_TAG = '1';
+        expect(isCreateMajorVersionTag()).toBeTruthy();
+    });
+    it('should return true 3', () => {
+        process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'abc';
+        expect(isCreateMajorVersionTag()).toBeTruthy();
+    });
+
+    it('should return false 1', () => {
+        process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
+        expect(isCreateMajorVersionTag()).toBeFalsy();
+    });
+
+    it('should return false 2', () => {
+        process.env.INPUT_CREATE_MAJOR_VERSION_TAG = '0';
+        expect(isCreateMajorVersionTag()).toBeFalsy();
+    });
+});
+
+describe('isCreateMinorVersionTag', () => {
+    testEnv();
+
+    it('should return true 1', () => {
+        expect(isCreateMinorVersionTag()).toBeTruthy();
+    });
+    it('should return true 2', () => {
+        process.env.INPUT_CREATE_MINOR_VERSION_TAG = '1';
+        expect(isCreateMinorVersionTag()).toBeTruthy();
+    });
+    it('should return true 3', () => {
+        process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'abc';
+        expect(isCreateMinorVersionTag()).toBeTruthy();
+    });
+
+    it('should return false 1', () => {
+        process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
+        expect(isCreateMinorVersionTag()).toBeFalsy();
+    });
+
+    it('should return false 2', () => {
+        process.env.INPUT_CREATE_MINOR_VERSION_TAG = '0';
+        expect(isCreateMinorVersionTag()).toBeFalsy();
+    });
+});
+
+describe('getCreateTags', () => {
+    testEnv();
+
+    it('should get create tags 1', () => {
+        expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1', 'v1.2']);
+    });
+    it('should get create tags 2', () => {
+        expect(getCreateTags('v1')).toEqual(['v1', 'v1.0']);
+    });
+    it('should get create tags 3', () => {
+        expect(getCreateTags('v1.2')).toEqual(['v1.2', 'v1']);
+    });
+    it('should get create tags 4', () => {
+        process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
+        expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1.2']);
+    });
+    it('should get create tags 5', () => {
+        process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
+        expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1']);
+    });
+    it('should get create tags 6', () => {
+        process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
+        process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
+        expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3']);
     });
 });
