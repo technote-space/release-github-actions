@@ -82,6 +82,16 @@ export const detectBuildCommand = (dir: string): boolean | string => {
     return false;
 };
 
+export const uniqueArray = <T>(array: T[]): T[] => [...new Set<T>(array)];
+
+export const isValidTagName = (tagName: string): boolean => /^v?\d+(\.\d+)*$/i.test(tagName);
+
+export const getMajorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).slice(0, 1).join('.');
+
+export const getMinorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0']).slice(0, 2).join('.');
+
+const getVersionFragments = (tagName: string): string[] => tagName.trim().replace(/^v?/gi, '').split('.');
+
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
-const getCleanTargets = (): string[] => [...new Set((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];
+const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];

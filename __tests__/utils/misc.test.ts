@@ -12,8 +12,13 @@ import {
     getGitUrl,
     detectBuildCommand,
     getRepository,
+    isValidTagName,
+    getMajorTag,
+    getMinorTag,
+    uniqueArray,
 } from '../../src/utils/misc';
 import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL, DEFAULT_BRANCH_NAME} from '../../src/constant';
+import {describe} from 'jest-circus';
 
 const testEnv = () => {
     const OLD_ENV = process.env;
@@ -324,5 +329,51 @@ describe('getRepository', () => {
                 repo: 'World',
             },
         })).toBe('Hello/World');
+    });
+});
+
+describe('isValidTagName', () => {
+    it('should return true', () => {
+        expect(isValidTagName('0')).toBeTruthy();
+        expect(isValidTagName('v12')).toBeTruthy();
+        expect(isValidTagName('1.2')).toBeTruthy();
+        expect(isValidTagName('V1.2.3')).toBeTruthy();
+        expect(isValidTagName('v12.23.34.45')).toBeTruthy();
+    });
+
+    it('should return false', () => {
+        expect(isValidTagName('')).toBeFalsy();
+        expect(isValidTagName('abc')).toBeFalsy();
+        expect(isValidTagName('v1.')).toBeFalsy();
+        expect(isValidTagName('v.9')).toBeFalsy();
+    });
+});
+
+describe('getMajorTag', () => {
+    it('should get major tag', () => {
+        expect(getMajorTag('0')).toBe('v0');
+        expect(getMajorTag('v12')).toBe('v12');
+        expect(getMajorTag('1.2')).toBe('v1');
+        expect(getMajorTag('V1.2.3')).toBe('v1');
+        expect(getMajorTag('v12.23.34.45')).toBe('v12');
+    });
+});
+
+describe('getMinorTag', () => {
+    it('should get minor tag', () => {
+        expect(getMinorTag('0')).toBe('v0.0');
+        expect(getMinorTag('v12')).toBe('v12.0');
+        expect(getMinorTag('1.2')).toBe('v1.2');
+        expect(getMinorTag('V1.2.3')).toBe('v1.2');
+        expect(getMinorTag('v12.23.34.45')).toBe('v12.23');
+    });
+});
+
+describe('uniqueArray', () => {
+    it('should return unique array', () => {
+        expect(uniqueArray([])).toEqual([]);
+        expect(uniqueArray<number>([1, 2, 2, 3, 4, 3])).toEqual([1, 2, 3, 4]);
+        expect(uniqueArray<string>(['1', '2', '2', '3', '4', '3'])).toEqual(['1', '2', '3', '4']);
+        expect(uniqueArray<string>(['v1.2', 'v1', 'v1.2'])).toEqual(['v1.2', 'v1']);
     });
 });
