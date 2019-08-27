@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Release GitHub Actions
-        uses: technote-space/release-github-actions@v1.0.2
+        uses: technote-space/release-github-actions@v1.0.3
         with:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 ```
