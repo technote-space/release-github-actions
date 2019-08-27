@@ -1,4 +1,4 @@
-import {setFailed} from '@actions/core';
+import {setFailed, getInput} from '@actions/core';
 import {context, GitHub} from '@actions/github';
 import signale from 'signale';
 import {deploy} from './utils/command';
@@ -13,13 +13,8 @@ async function run() {
             return;
         }
 
-        if (typeof process.env.GITHUB_TOKEN === 'undefined' || process.env.GITHUB_TOKEN === '') {
-            // noinspection ExceptionCaughtLocallyJS
-            throw new Error(`Input required and not supplied: GITHUB_TOKEN`);
-        }
-
         signale.info(`Tag name: ${context.payload.release.tag_name}`);
-        await deploy(context.payload.release.tag_name, new GitHub(process.env.GITHUB_TOKEN), context);
+        await deploy(context.payload.release.tag_name, new GitHub(getInput('GITHUB_TOKEN', {required: true})), context);
     } catch (error) {
         setFailed(error.message);
     }
