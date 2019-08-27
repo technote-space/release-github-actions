@@ -17,6 +17,9 @@ inputs:
   COMMIT_EMAIL:
     description: Git commit email.
     default: 'example@example.com'
+  BRANCH_NAME:
+    description: Branch name.
+    default: 'gh-actions'
 runs:
   using: node12
   main: lib/main.js

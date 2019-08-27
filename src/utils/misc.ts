@@ -3,7 +3,15 @@ import path from 'path';
 import yaml from 'js-yaml';
 import {getInput} from '@actions/core' ;
 import {Context} from '@actions/github/lib/context';
-import {TARGET_EVENT_NAME, TARGET_EVENT_ACTION, DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL, SEARCH_BUILD_COMMAND_TARGETS} from '../constant';
+import {
+    TARGET_EVENT_NAME,
+    TARGET_EVENT_ACTION,
+    DEFAULT_COMMIT_MESSAGE,
+    DEFAULT_COMMIT_NAME,
+    DEFAULT_COMMIT_EMAIL,
+    SEARCH_BUILD_COMMAND_TARGETS,
+    DEFAULT_BRANCH_NAME,
+} from '../constant';
 
 export const isTargetEvent = (context: Context): boolean => TARGET_EVENT_NAME === context.eventName && TARGET_EVENT_ACTION === context.payload.action;
 
@@ -50,6 +58,8 @@ export const getCommitMessage = (): string => getInput('COMMIT_MESSAGE') || DEFA
 export const getCommitName = (): string => getInput('COMMIT_NAME') || DEFAULT_COMMIT_NAME;
 
 export const getCommitEmail = (): string => getInput('COMMIT_EMAIL') || DEFAULT_COMMIT_EMAIL;
+
+export const getBranchName = (): string => getInput('BRANCH_NAME') || DEFAULT_BRANCH_NAME;
 
 export const getWorkspace = (): string => process.env.GITHUB_WORKSPACE || '';
 

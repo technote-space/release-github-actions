@@ -6,13 +6,14 @@ import {
     getCommitMessage,
     getCommitName,
     getCommitEmail,
+    getBranchName,
     getWorkspace,
     getBuildCommands,
     getGitUrl,
     detectBuildCommand,
     getRepository,
 } from '../../src/utils/misc';
-import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL} from '../../src/constant';
+import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL, DEFAULT_BRANCH_NAME} from '../../src/constant';
 
 const testEnv = () => {
     const OLD_ENV = process.env;
@@ -115,7 +116,7 @@ describe('getCommitMessage', () => {
         expect(getCommitMessage()).toBe('test');
     });
 
-    it('should get commit default message', () => {
+    it('should get default commit message', () => {
         expect(getCommitMessage()).toBe(DEFAULT_COMMIT_MESSAGE);
     });
 });
@@ -128,7 +129,7 @@ describe('getCommitName', () => {
         expect(getCommitName()).toBe('test');
     });
 
-    it('should get commit default name', () => {
+    it('should get default commit name', () => {
         expect(getCommitName()).toBe(DEFAULT_COMMIT_NAME);
     });
 });
@@ -141,8 +142,21 @@ describe('getCommitEmail', () => {
         expect(getCommitEmail()).toBe('test');
     });
 
-    it('should get commit default email', () => {
+    it('should get default commit email', () => {
         expect(getCommitEmail()).toBe(DEFAULT_COMMIT_EMAIL);
+    });
+});
+
+describe('getBranchName', () => {
+    testEnv();
+
+    it('should get branch name', () => {
+        process.env.INPUT_BRANCH_NAME = 'test';
+        expect(getBranchName()).toBe('test');
+    });
+
+    it('should get default branch name', () => {
+        expect(getBranchName()).toBe(DEFAULT_BRANCH_NAME);
     });
 });
 
