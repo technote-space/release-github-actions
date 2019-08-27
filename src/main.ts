@@ -1,5 +1,5 @@
-import {setFailed} from '@actions/core' ;
-import {context, GitHub} from '@actions/github' ;
+import {setFailed} from '@actions/core';
+import {context, GitHub} from '@actions/github';
 import signale from 'signale';
 import {deploy} from './utils/command';
 import {isTargetEvent} from './utils/misc';
