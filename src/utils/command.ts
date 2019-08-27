@@ -13,9 +13,7 @@ import {
     getCommitName,
     getCommitEmail,
     getBranchName,
-    getMajorTag,
-    getMinorTag,
-    uniqueArray,
+    getCreateTags,
 } from './misc';
 
 export const deploy = async (tagName: string, octokit: GitHub, context: Context) => {
@@ -108,7 +106,7 @@ const push = async (pushDir: string, tagName: string, branchName: string, contex
     signale.info('Pushing to %s@%s (tag: %s)', getRepository(context), branchName, tagName);
 
     const url = getGitUrl(context);
-    const tagNames = uniqueArray([tagName, getMajorTag(tagName), getMinorTag(tagName)]);
+    const tagNames = getCreateTags(tagName);
     for (const tagName of tagNames) {
         await execAsync(`git -C ${pushDir} push --delete "${url}" tag ${tagName}`, true, 'git push --delete origin tag', true);
     }
