@@ -193,6 +193,12 @@ describe('getBuildCommands', () => {
             'yarn build', // build command of package.json
             'yarn install --production',
             'rm -rdf .github',
+            'rm -rdf __tests__',
+            'rm -rdf src',
+            'rm -rdf .gitignore',
+            'rm -rdf *.js',
+            'rm -rdf *.json',
+            'rm -rdf *.lock',
         ]);
     });
 
@@ -226,6 +232,20 @@ describe('getBuildCommands', () => {
         expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
             'yarn install --production',
             'rm -rdf .github',
+            'rm -rdf __tests__',
+            'rm -rdf src',
+            'rm -rdf .gitignore',
+            'rm -rdf *.js',
+            'rm -rdf *.json',
+            'rm -rdf *.lock',
+        ]);
+    });
+
+    it('should get build commands 7', () => {
+        process.env.INPUT_CLEAN_TARGETS = 'test';
+        expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
+            'yarn install --production',
+            'rm -rdf test',
         ]);
     });
 });
