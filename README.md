@@ -25,6 +25,7 @@ jobs:
       - name: Release GitHub Actions
         uses: technote-space/release-github-actions@v1
         with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 ```
 
