@@ -10,7 +10,7 @@ import {
     DEFAULT_COMMIT_NAME,
     DEFAULT_COMMIT_EMAIL,
     SEARCH_BUILD_COMMAND_TARGETS,
-    DEFAULT_BRANCH_NAME, DEFAULT_CLEAN_TARGETS,
+    DEFAULT_BRANCH_NAME, DEFAULT_CLEAN_TARGETS, DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
 } from '../constant';
 
 export const isTargetEvent = (context: Context): boolean => TARGET_EVENT_NAME === context.eventName && TARGET_EVENT_ACTION === context.payload.action;
@@ -64,6 +64,12 @@ export const getBranchName = (): string => getInput('BRANCH_NAME') || DEFAULT_BR
 export const isCreateMajorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG') || 'true');
 
 export const isCreateMinorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MINOR_VERSION_TAG') || 'true');
+
+export const getOutputBuildInfoFilename = (): string => {
+    const filename = (getInput('OUTPUT_BUILD_INFO_FILENAME') || DEFAULT_OUTPUT_BUILD_INFO_FILENAME).trim();
+    if (filename.startsWith('/') || filename.includes('..')) return '';
+    return filename;
+};
 
 export const getCreateTags = (tagName: string): string[] => {
     const tagNames = [tagName];

@@ -88,6 +88,23 @@ default: `true`
 Set to `false` if you do not want to create a minor version tag.  
 [Detail of tags](#tags)
 
+### OUTPUT_BUILD_INFO_FILENAME
+Filename of build information.
+default: `''`  
+Absolute path and `..` are not permitted to use.  
+If this setting is not empty, following information is output with the file name.
+```json
+{
+  "tagName": "${tagName}",
+  "branch": "${branch}",
+  "tags": [
+    "${created_tag_1}",
+    "${created_tag_n}"
+  ],
+  "updated_at": "${updated_at}"
+}
+```
+
 ## Action event details
 ### Target event
 - release
