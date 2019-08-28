@@ -18,6 +18,7 @@ import {
     uniqueArray,
     isCreateMajorVersionTag,
     isCreateMinorVersionTag,
+    getOutputBuildInfoFilename,
     getCreateTags,
 } from '../../src/utils/misc';
 import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL, DEFAULT_BRANCH_NAME} from '../../src/constant';
@@ -434,6 +435,34 @@ describe('isCreateMinorVersionTag', () => {
     it('should return false 2', () => {
         process.env.INPUT_CREATE_MINOR_VERSION_TAG = '0';
         expect(isCreateMinorVersionTag()).toBeFalsy();
+    });
+});
+
+describe('getOutputBuildInfoFilename', () => {
+    testEnv();
+
+    it('should get filename', () => {
+        process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = 'test';
+        expect(getOutputBuildInfoFilename()).toBe('test');
+    });
+
+    it('should get empty 1', () => {
+        process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = '';
+        expect(getOutputBuildInfoFilename()).toBe('');
+    });
+
+    it('should get empty 2', () => {
+        expect(getOutputBuildInfoFilename()).toBe('');
+    });
+
+    it('should get empty 3', () => {
+        process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = '/tmp/test.json';
+        expect(getOutputBuildInfoFilename()).toBe('');
+    });
+
+    it('should get empty 4', () => {
+        process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = '../test.json';
+        expect(getOutputBuildInfoFilename()).toBe('');
     });
 });
 
