@@ -188,7 +188,7 @@ const copyFiles = async (buildDir: string, pushDir: string): Promise<boolean> =>
 };
 
 const checkDiff = async (pushDir: string): Promise<boolean> => {
-    return (await execAsync(`git -C ${pushDir} status --short -uno`)).split(/\r\n|\n/).filter(line => line.match(/^[MDA]\s+/)).length > 0;
+    return (await execAsync(`git -C ${pushDir} status --short -uno`, true, 'git status --short -uno')).split(/\r\n|\n/).filter(line => line.match(/^[MDA]\s+/)).length > 0;
 };
 
 const execAsync = (command: string, quiet: boolean = false, altCommand: string | null = null, suppressError: boolean = false) => new Promise<string>((resolve, reject) => {
