@@ -12,3 +12,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           COMMIT_NAME: Technote
           COMMIT_EMAIL: technote.space@gmail.com
+          OUTPUT_BUILD_INFO_FILENAME: build.json
