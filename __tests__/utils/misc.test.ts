@@ -19,6 +19,7 @@ import {
     isCreateMajorVersionTag,
     isCreateMinorVersionTag,
     getOutputBuildInfoFilename,
+    getBuildVersion,
     getCreateTags,
 } from '../../src/utils/misc';
 import {DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL, DEFAULT_BRANCH_NAME} from '../../src/constant';
@@ -463,6 +464,20 @@ describe('getOutputBuildInfoFilename', () => {
     it('should get empty 4', () => {
         process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = '../test.json';
         expect(getOutputBuildInfoFilename()).toBe('');
+    });
+});
+
+describe('getBuildVersion', () => {
+    it('should get build version', () => {
+        expect(getBuildVersion(path.resolve(__dirname, '..', 'fixtures', 'build1.json'))).toBe('v1.2.3');
+    });
+
+    it('should return false 1', () => {
+        expect(getBuildVersion(path.resolve(__dirname, '..', 'fixtures', 'build2.json'))).toBeFalsy();
+    });
+
+    it('should return false 2', () => {
+        expect(getBuildVersion(path.resolve(__dirname, '..', 'fixtures', 'build.test.json'))).toBeFalsy();
     });
 });
 

@@ -71,6 +71,19 @@ export const getOutputBuildInfoFilename = (): string => {
     return filename;
 };
 
+export const getBuildVersion = (filepath: string): string | boolean => {
+    if (!fs.existsSync(filepath)) {
+        return false;
+    }
+
+    const json = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+    if (json && 'tagName' in json) {
+        return json['tagName'];
+    }
+
+    return false;
+};
+
 export const getCreateTags = (tagName: string): string[] => {
     const tagNames = [tagName];
     if (isCreateMajorVersionTag()) {
