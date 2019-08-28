@@ -12,6 +12,16 @@ Once you publish the release, this action will automatically
 1. Change [tags](#tags) to release branch
 1. Change release tag
 
+## Screenshots
+1. Before publish release  
+   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png" alt="step1" width=500/>
+1. Publish release  
+   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png" alt="step2" width=500/>
+1. Running GitHub Action  
+   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png" alt="step3" width=500/>
+1. After running GitHub Action  
+   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png" alt="step4" width=500/>
+
 ## Installation
 1. Setup workflow  
    e.g. `.github/workflows/release.yml`
