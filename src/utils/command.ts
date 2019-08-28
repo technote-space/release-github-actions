@@ -56,7 +56,7 @@ const createBuildInfoFile = async (buildDir: string, tagName: string, branchName
         fs.mkdirSync(dir, {recursive: true});
     }
     fs.writeFileSync(filepath, JSON.stringify({
-        'version': tagName,
+        'tagName': tagName,
         'branch': branchName,
         'tags': getCreateTags(tagName),
         'updated_at': moment().toISOString(),
