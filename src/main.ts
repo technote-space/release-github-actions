@@ -12,7 +12,7 @@ async function run() {
             signale.info('Version: %s', version);
         }
         signale.info('Event: %s', context.eventName);
-        signale.info('Action: %s', context.action);
+        signale.info('Action: %s', context.payload.action);
         if (!isTargetEvent(context)) {
             signale.info('This is not target event.');
             return;
