@@ -13,34 +13,28 @@ Once you publish the release, this action will automatically
 1. Change release tag
 
 ## Installation
-.github/workflows/release.yml
-```yaml
-on: release
-name: Release
-jobs:
-  release:
-    name: Release GitHub Actions
-    runs-on: ubuntu-latest
-    steps:
-      - name: Release GitHub Actions
-        uses: technote-space/release-github-actions@v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-```
+1. Setup workflow  
+   e.g. `.github/workflows/release.yml`
+   ```yaml
+   on: release
+   name: Release
+   jobs:
+     release:
+       name: Release GitHub Actions
+       runs-on: ubuntu-latest
+       steps:
+         - name: Release GitHub Actions
+           uses: technote-space/release-github-actions@v1
+           with:
+             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+             ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+   ```
 
-## ACCESS_TOKEN
+### Required parameter
+#### ACCESS_TOKEN
 1. Generate a [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with the public_repo or repo scope.
 (repo is required for private repositories).  
 1. [Save as secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
-
-## Details
-### Target event
-- release
-### Target action
-- published
-### Branch name
-- [BRANCH_NAME](#branch_name)
 
 ## Options
 ### BUILD_COMMAND
@@ -79,7 +73,7 @@ default: `'gh-actions'`
 
 ### CLEAN_TARGETS
 Files or directories to delete before release (Comma separated).  
-default: `.github,__tests__,src,.gitignore,*.js,*.json,*.lock`  
+default: `.github,__tests__,src,.gitignore,*.js,*.json,*.lock,_config.yml`  
 Absolute path and `..` are not permitted to use.
 
 ### CREATE_MAJOR_VERSION_TAG
@@ -93,6 +87,50 @@ Whether to create minor version tag.
 default: `true`  
 Set to `false` if you do not want to create a minor version tag.  
 [Detail of tags](#tags)
+
+### OUTPUT_BUILD_INFO_FILENAME
+Filename of build information.
+default: `''`  
+Absolute path and `..` are not permitted to use.  
+If this setting is not empty, following information is output with the file name.
+```json
+{
+  "tagName": "${tagName}",
+  "branch": "${branch}",
+  "tags": [
+    "${created_tag_1}",
+    "${created_tag_n}"
+  ],
+  "updated_at": "${updated_at}"
+}
+```
+
+## Action event details
+### Target event
+- release
+### Target action
+- published
+
+## Motivation
+Release package needs all dependencies like `node_modules`, but usually they are not committed.  
+So if you want to release `GitHub Actions`, you have to do following steps.  
+1. Develop locally on the branch for develop
+1. Build for release
+1. Commit all source code including dependencies like `node_modules`
+1. Add tags (consider major and minor versions)
+1. Push to GitHub
+1. Publish release
+
+It is very troublesome to do this steps for every release.  
+
+If you use this `GitHub Action`, the steps to do are simple.
+1. Develop locally on the branch for develop
+1. Publish release
+1. Wait for the automated steps to finish
+   1. Build for release
+   1. Commit all source code including dependencies like `node_modules`
+   1. Add tags (consider major and minor versions)
+   1. Push to GitHub
 
 ## Addition
 ### tags 
