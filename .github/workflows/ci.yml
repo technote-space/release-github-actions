@@ -1,4 +1,9 @@
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - "*"
+    tags:
+      - "!*"
 
 name: Build
 
@@ -7,20 +12,13 @@ jobs:
     name: Jest
     runs-on: ubuntu-latest
     steps:
-      #       neutral status 78 has removed...
-      #       https://github.community/t5/GitHub-API-Development-and/GitHub-Actions-quot-neutral-quot-exit-code-is-incorrectly/td-p/29051
-      #      - name: Filter
-      #        run: if [[ ${GITHUB_EVENT_NAME} == "push" && ${GITHUB_REF} != "refs/heads/master" ]]; then exit 78; fi
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
       - name: Install Package dependencies
         run: yarn install
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
       - name: Run tests
         run: yarn cover
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
       - name: Send covarage
         run: yarn add coveralls && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
         env:
@@ -29,18 +27,17 @@ jobs:
           COVERALLS_SERVICE_JOB_ID: ${{ github.sha }}
           COVERALLS_GIT_COMMIT: ${{ github.sha }}
           COVERALLS_GIT_BRANCH: ${{ github.ref }}
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
       - uses: 8398a7/action-slack@v1
         with:
           type: failure
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: (github.event_name == 'pull_request' || github.ref == 'refs/heads/master') && failure()
+        if: failure()
       - uses: 8398a7/action-slack@v1
         with:
           type: success
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: (github.event_name == 'pull_request' || github.ref == 'refs/heads/master') && success()
+        if: success()
