@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import signale from 'signale';
+import moment from 'moment';
 import {exec} from 'child_process';
 import {GitHub} from '@actions/github/lib/github';
 import {Context} from '@actions/github/lib/context';
@@ -14,6 +15,7 @@ import {
     getCommitEmail,
     getBranchName,
     getCreateTags,
+    getOutputBuildInfoFilename,
 } from './misc';
 
 export const deploy = async (tagName: string, octokit: GitHub, context: Context) => {
@@ -25,7 +27,8 @@ export const deploy = async (tagName: string, octokit: GitHub, context: Context)
 
     fs.mkdirSync(pushDir, {recursive: true});
     if (!await cloneForBranch(pushDir, branchName, context)) return;
-    if (!await prepareFiles(buildDir, pushDir, context)) return;
+    if (!await prepareFiles(buildDir, pushDir, tagName, context)) return;
+    if (!await createBuildInfoFile(buildDir, tagName, branchName)) return;
     if (!await copyFiles(buildDir, pushDir)) return;
     if (!await config(pushDir)) return;
     if (!await commit(pushDir)) return;
@@ -33,12 +36,31 @@ export const deploy = async (tagName: string, octokit: GitHub, context: Context)
     await updateRelease(tagName, octokit, context);
 };
 
-export const prepareFiles = async (buildDir: string, pushDir: string, context: Context): Promise<boolean> => {
+export const prepareFiles = async (buildDir: string, pushDir: string, tagName: string, context: Context): Promise<boolean> => {
     signale.info('Preparing files for release');
 
     fs.mkdirSync(buildDir, {recursive: true});
     await cloneForBuild(buildDir, context);
     await runBuild(buildDir);
+    return true;
+};
+
+const createBuildInfoFile = async (buildDir: string, tagName: string, branchName: string): Promise<boolean> => {
+    const filename = getOutputBuildInfoFilename();
+    if (!filename) return true;
+
+    signale.info('Creating build info file');
+    const filepath = path.resolve(buildDir, filename);
+    const dir = path.dirname(filepath);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, {recursive: true});
+    }
+    fs.writeFileSync(filepath, JSON.stringify({
+        'version': tagName,
+        'branch': branchName,
+        'tags': getCreateTags(tagName),
+        'updated_at': moment().toISOString(),
+    }));
     return true;
 };
 
@@ -108,7 +130,7 @@ const push = async (pushDir: string, tagName: string, branchName: string, contex
     const url = getGitUrl(context);
     const tagNames = getCreateTags(tagName);
     for (const tagName of tagNames) {
-        await execAsync(`git -C ${pushDir} push --delete "${url}" tag ${tagName}`, true, 'git push --delete origin tag', true);
+        await execAsync(`git -C ${pushDir} push --delete "${url}" tag ${tagName}`, true, `git push --delete origin tag ${tagName}`, true);
     }
     await execAsync(`git -C ${pushDir} tag -l | xargs git -C ${pushDir} tag -d`);
     await execAsync(`git -C ${pushDir} fetch "${url}" --tags`, true, 'git fetch origin --tags');
