@@ -207,6 +207,7 @@ describe('getBuildCommands', () => {
             'rm -rdf *.js',
             'rm -rdf *.json',
             'rm -rdf *.lock',
+            'rm -rdf _config.yml',
         ]);
     });
 
@@ -246,6 +247,7 @@ describe('getBuildCommands', () => {
             'rm -rdf *.js',
             'rm -rdf *.json',
             'rm -rdf *.lock',
+            'rm -rdf _config.yml',
         ]);
     });
 
