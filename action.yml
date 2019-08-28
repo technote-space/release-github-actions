@@ -1,5 +1,5 @@
 name: Release GitHub Actions
-description: GitHub actions to auto release.
+description: This is a GitHub Action that automates the release of GitHub Action.
 author: technote-space
 inputs:
   GITHUB_TOKEN:

@@ -5,7 +5,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/technote-space/release-github-actions/badge)](https://www.codefactor.io/repository/github/technote-space/release-github-actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/technote-space/release-github-actions/blob/master/LICENSE)
 
-GitHub action for release automation.  
+This is a GitHub Action that automates the release of GitHub Action.  
 Once you publish the release, this action will automatically
 1. Run build
 1. Create branch for release
