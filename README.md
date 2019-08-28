@@ -5,12 +5,22 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/technote-space/release-github-actions/badge)](https://www.codefactor.io/repository/github/technote-space/release-github-actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/technote-space/release-github-actions/blob/master/LICENSE)
 
-GitHub actions to auto release.  
+GitHub action for release automation.  
 Once you publish the release, this action will automatically
 1. Run build
 1. Create branch for release
 1. Change [tags](#tags) to release branch
 1. Change release tag
+
+## Screenshots
+1. Before publish release  
+   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png" alt="step1" width=500/>
+1. Publish release  
+   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png" alt="step2" width=500/>
+1. Running GitHub Action  
+   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png" alt="step3" width=500/>
+1. After running GitHub Action  
+   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png" alt="step4" width=500/>
 
 ## Installation
 1. Setup workflow  
@@ -30,8 +40,8 @@ Once you publish the release, this action will automatically
              ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
    ```
 
-### Required parameter
-#### ACCESS_TOKEN
+## Required parameter
+### ACCESS_TOKEN
 1. Generate a [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with the public_repo or repo scope.
 (repo is required for private repositories).  
 1. [Save as secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
@@ -52,7 +62,7 @@ yarn build
 yarn install --production
 rm -rdf .github
 ...
-rm -rdf *.lock
+rm -rdf _config.yml
 ```
 
 ### COMMIT_MESSAGE
@@ -89,7 +99,7 @@ Set to `false` if you do not want to create a minor version tag.
 [Detail of tags](#tags)
 
 ### OUTPUT_BUILD_INFO_FILENAME
-Filename of build information.
+Filename of build information.  
 default: `''`  
 Absolute path and `..` are not permitted to use.  
 If this setting is not empty, following information is output with the file name.
@@ -99,6 +109,7 @@ If this setting is not empty, following information is output with the file name
   "branch": "${branch}",
   "tags": [
     "${created_tag_1}",
+    "...",
     "${created_tag_n}"
   ],
   "updated_at": "${updated_at}"
