@@ -4,8 +4,7 @@ import yaml from 'js-yaml';
 import {getInput} from '@actions/core' ;
 import {Context} from '@actions/github/lib/context';
 import {
-    TARGET_EVENT_NAME,
-    TARGET_EVENT_ACTION,
+    TARGET_EVENTS,
     DEFAULT_COMMIT_MESSAGE,
     DEFAULT_COMMIT_NAME,
     DEFAULT_COMMIT_EMAIL,
@@ -13,7 +12,7 @@ import {
     DEFAULT_BRANCH_NAME, DEFAULT_CLEAN_TARGETS, DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
 } from '../constant';
 
-export const isTargetEvent = (context: Context): boolean => TARGET_EVENT_NAME === context.eventName && TARGET_EVENT_ACTION === context.payload.action;
+export const isTargetEvent = (context: Context): boolean => 'string' === typeof context.payload.action && context.eventName in TARGET_EVENTS && TARGET_EVENTS[context.eventName] === context.payload.action;
 
 export const parseConfig = (content: string): object => yaml.safeLoad(Buffer.from(content, 'base64').toString()) || {};
 
