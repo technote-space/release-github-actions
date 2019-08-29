@@ -9,7 +9,9 @@ import {
     DEFAULT_COMMIT_NAME,
     DEFAULT_COMMIT_EMAIL,
     SEARCH_BUILD_COMMAND_TARGETS,
-    DEFAULT_BRANCH_NAME, DEFAULT_CLEAN_TARGETS, DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
+    DEFAULT_BRANCH_NAME,
+    DEFAULT_CLEAN_TARGETS,
+    DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
 } from '../constant';
 
 export const isTargetEvent = (context: Context): boolean => 'string' === typeof context.payload.action && context.eventName in TARGET_EVENTS && TARGET_EVENTS[context.eventName] === context.payload.action;
