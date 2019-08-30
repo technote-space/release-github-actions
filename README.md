@@ -12,6 +12,9 @@ Once you publish the release, this action will automatically
 1. Change [tags](#tags) to release branch
 1. Change release tag
 
+<!-- START doctoc -->
+<!-- END doctoc -->
+
 ## Screenshots
 1. Before publish release  
    <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png" alt="step1" width=500/>
