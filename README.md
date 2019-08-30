@@ -12,8 +12,34 @@ Once you publish the release, this action will automatically
 1. Change [tags](#tags) to release branch
 1. Change release tag
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Screenshots](#screenshots)
+- [Installation](#installation)
+- [Required parameter](#required-parameter)
+  - [ACCESS_TOKEN](#access_token)
+- [Options](#options)
+  - [BUILD_COMMAND](#build_command)
+  - [COMMIT_MESSAGE](#commit_message)
+  - [COMMIT_NAME](#commit_name)
+  - [COMMIT_EMAIL](#commit_email)
+  - [BRANCH_NAME](#branch_name)
+  - [CLEAN_TARGETS](#clean_targets)
+  - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
+  - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
+  - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
+- [Action event details](#action-event-details)
+  - [Target event](#target-event)
+  - [Target action](#target-action)
+- [Motivation](#motivation)
+- [Addition](#addition)
+  - [tags](#tags)
+- [Sample GitHub Actions](#sample-github-actions)
+- [Author](#author)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Screenshots
 1. Before publish release  
