@@ -1,5 +1,5 @@
 on: push
-name: Push
+name: TOC Generator
 jobs:
   assignAuthor:
     name: TOC Generator
