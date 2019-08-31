@@ -183,6 +183,7 @@ The following tags will be created or attached to latest release.
   - e.g. `v1.2`
 
 ## GitHub Actions using this Action
+- [Release GitHub Actions](https://github.com/technote-space/release-github-actions)
 - [Auto card labeler](https://github.com/technote-space/auto-card-labeler)
 - [Assign Author](https://github.com/technote-space/assign-author)
 - [TOC Generator](https://github.com/technote-space/toc-generator)
