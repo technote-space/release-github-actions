@@ -14,7 +14,7 @@ Once you publish the release, this action will automatically
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
+**Table of Contents**
 
 - [Screenshots](#screenshots)
 - [Installation](#installation)
