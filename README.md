@@ -107,7 +107,7 @@ Commit email.
 default: `'example@example.com'`
 
 ### BRANCH_NAME
-Branch name for GitHub Actions release.  
+Branch name for GitHub Action release.  
 default: `'gh-actions'`
 
 ### CLEAN_TARGETS
@@ -152,8 +152,8 @@ If this setting is not empty, following information is output with the file name
 - published
 
 ## Motivation
-Release package needs all dependencies like `node_modules`, but usually they are not committed.  
-So if you want to release `GitHub Actions`, you have to do following steps.  
+Release package needs all build files and dependencies like `node_modules`, but are not usually committed.  
+So if you want to release `GitHub Action`, you have to do following steps.  
 1. Develop locally on the branch for develop
 1. Build for release
 1. Commit all source code including dependencies like `node_modules`
@@ -163,7 +163,7 @@ So if you want to release `GitHub Actions`, you have to do following steps.
 
 It is very troublesome to do this steps for every release.  
 
-If you use this `GitHub Action`, the steps to do are simple.
+If you use this `GitHub Action`, the steps to do are simpler.
 1. Develop locally on the branch for develop
 1. Publish release
 1. Wait for the automated steps to finish
