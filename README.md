@@ -36,7 +36,7 @@ Once you publish the release, this action will automatically
 - [Motivation](#motivation)
 - [Addition](#addition)
   - [tags](#tags)
-- [Sample GitHub Actions](#sample-github-actions)
+- [GitHub Actions using this Action](#github-actions-using-this-action)
 - [Author](#author)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
