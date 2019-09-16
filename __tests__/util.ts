@@ -1,15 +1,53 @@
-export const encodeContent = (content: string) => Buffer.from(content).toString('base64');
+import { Context } from '@actions/github/lib/context';
+import * as fs from "fs";
+import * as path from "path";
 
-export const testEnv = () => {
-    const OLD_ENV = process.env;
+export const encodeContent = (content: string): string => Buffer.from(content).toString('base64');
 
-    beforeEach(() => {
-        jest.resetModules();
-        process.env = {...OLD_ENV};
-        delete process.env.NODE_ENV;
-    });
+export const testEnv = (): void => {
+	const OLD_ENV = process.env;
 
-    afterEach(() => {
-        process.env = OLD_ENV;
-    });
+	beforeEach(() => {
+		jest.resetModules();
+		process.env = {...OLD_ENV};
+		delete process.env.NODE_ENV;
+	});
+
+	afterEach(() => {
+		process.env = OLD_ENV;
+	});
+};
+
+export const getContext = (override: object): Context => Object.assign({
+	payload: {
+		action: '',
+	},
+	eventName: '',
+	sha: '',
+	ref: '',
+	workflow: '',
+	action: '',
+	actor: '',
+	issue: {
+		owner: '',
+		repo: '',
+		number: 1,
+	},
+	repo: {
+		owner: '',
+		repo: '',
+	},
+}, override);
+
+export const getApiFixture = (name: string): object => JSON.parse(fs.readFileSync(path.resolve(__dirname, `./fixtures/${name}.json`)).toString());
+
+export const disableNetConnect = (nock): void => {
+	beforeEach(() => {
+		nock.disableNetConnect();
+	});
+
+	afterEach(() => {
+		nock.cleanAll();
+		nock.enableNetConnect();
+	});
 };
