@@ -8,6 +8,10 @@ import {
 
 import { getContext, testEnv, disableNetConnect, getApiFixture } from '../util';
 
+afterEach(() => {
+	global.mockChildProcess.stdout = 'stdout';
+});
+
 describe('updateRelease', () => {
 	disableNetConnect(nock);
 
@@ -104,8 +108,6 @@ describe('deploy', () => {
 		expect(execMock).toBeCalled();
 		expect(fn1).toBeCalledTimes(0);
 		expect(fn2).toBeCalledTimes(0);
-
-		global.mockChildProcess.stdout = 'stdout';
 	});
 
 	it('should commit', async() => {
@@ -141,7 +143,5 @@ describe('deploy', () => {
 		expect(execMock).toBeCalled();
 		expect(fn1).toBeCalledTimes(1);
 		expect(fn2).toBeCalledTimes(1);
-
-		global.mockChildProcess.stdout = 'stdout';
 	});
 });
