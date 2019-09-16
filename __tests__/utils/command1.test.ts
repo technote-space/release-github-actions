@@ -16,10 +16,10 @@ import {
 } from '../../src/utils/command';
 import { getContext, testEnv } from '../util';
 
-const fs = require('fs');
-
 let exists = false;
 beforeAll(() => {
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
+	const fs = require('fs');
 	jest.spyOn(fs, 'writeFileSync').mockImplementation(jest.fn());
 	jest.spyOn(fs, 'mkdirSync').mockImplementation(jest.fn());
 	jest.spyOn(fs, 'existsSync').mockImplementation(() => exists);
@@ -27,6 +27,10 @@ beforeAll(() => {
 
 afterAll(() => {
 	jest.restoreAllMocks();
+});
+
+afterEach(() => {
+	global.mockChildProcess.stdout = 'stdout';
 });
 
 describe('getCommand', () => {
@@ -241,6 +245,7 @@ describe('createBuildInfoFile', () => {
 
 	it('should do nothing', async() => {
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = '/';
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const writeMock = jest.spyOn(require('fs'), 'writeFileSync');
 
 		await createBuildInfoFile('test-build-dir', 'v1.2.3', 'test-branch');
@@ -250,7 +255,9 @@ describe('createBuildInfoFile', () => {
 
 	it('should write file', async() => {
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = 'info.json';
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const mkdirMock = jest.spyOn(require('fs'), 'mkdirSync');
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const writeMock = jest.spyOn(require('fs'), 'writeFileSync');
 
 		await createBuildInfoFile('test-build-dir', 'v1.2.3', 'test-branch');
@@ -262,7 +269,9 @@ describe('createBuildInfoFile', () => {
 	it('should not create dir', async() => {
 		exists = true;
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = 'info.json';
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const mkdirMock = jest.spyOn(require('fs'), 'mkdirSync');
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const writeMock = jest.spyOn(require('fs'), 'writeFileSync');
 
 		await createBuildInfoFile('test-build-dir', 'v1.2.3', 'test-branch');
@@ -286,8 +295,6 @@ describe('getCurrentBranchName', () => {
 		exists = true;
 
 		expect(await getCurrentBranchName('test-push-dir')).toBe('test-branch');
-
-		global.mockChildProcess.stdout = 'stdout';
 	});
 });
 
@@ -326,8 +333,6 @@ describe('commit', () => {
 		expect(execMock.mock.calls[0][0]).toBe('git -C test-push-dir add --all --force');
 		expect(execMock.mock.calls[1][0]).toBe('git -C test-push-dir status --short -uno');
 		expect(consoleLogMock).toBeCalledTimes(1);
-
-		global.mockChildProcess.stdout = 'stdout';
 	});
 
 	it('should return true', async() => {
@@ -343,8 +348,6 @@ describe('commit', () => {
 		expect(execMock.mock.calls[2][0]).toBe('git -C test-push-dir commit -qm "feat: Build for release"');
 		expect(execMock.mock.calls[3][0]).toBe('git -C test-push-dir show --stat-count=10 HEAD');
 		expect(consoleLogMock).toBeCalledTimes(3);
-
-		global.mockChildProcess.stdout = 'stdout';
 	});
 });
 
