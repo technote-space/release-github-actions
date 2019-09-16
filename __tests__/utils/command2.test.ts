@@ -8,10 +8,6 @@ import {
 
 import { getContext, testEnv, disableNetConnect, getApiFixture } from '../util';
 
-afterEach(() => {
-	global.mockChildProcess.stdout = 'stdout';
-});
-
 describe('updateRelease', () => {
 	disableNetConnect(nock);
 
@@ -74,6 +70,22 @@ describe('updateRelease', () => {
 describe('deploy', () => {
 	disableNetConnect(nock);
 	testEnv();
+
+	beforeAll(() => {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const fs = require('fs');
+		jest.spyOn(fs, 'writeFileSync').mockImplementation(jest.fn());
+		jest.spyOn(fs, 'mkdirSync').mockImplementation(jest.fn());
+		jest.spyOn(fs, 'existsSync').mockImplementation(() => false);
+	});
+
+	afterAll(() => {
+		jest.restoreAllMocks();
+	});
+
+	afterEach(() => {
+		global.mockChildProcess.stdout = 'stdout';
+	});
 
 	it('should not commit', async() => {
 		process.env.INPUT_ACCESS_TOKEN = 'test-token';
