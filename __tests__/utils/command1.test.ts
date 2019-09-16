@@ -29,10 +29,6 @@ afterAll(() => {
 	jest.restoreAllMocks();
 });
 
-afterEach(() => {
-	global.mockChildProcess.stdout = 'stdout';
-});
-
 describe('getCommand', () => {
 	it('should get command', () => {
 		expect(getCommand('test', false, false)).toBe('test');
@@ -284,6 +280,10 @@ describe('createBuildInfoFile', () => {
 });
 
 describe('getCurrentBranchName', () => {
+	afterEach(() => {
+		global.mockChildProcess.stdout = 'stdout';
+	});
+
 	it('should return empty', async() => {
 		exists = false;
 
@@ -322,6 +322,10 @@ describe('config', () => {
 });
 
 describe('commit', () => {
+	afterEach(() => {
+		global.mockChildProcess.stdout = 'stdout';
+	});
+
 	it('should return false if there is no diff', async() => {
 		global.mockChildProcess.stdout = '';
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
