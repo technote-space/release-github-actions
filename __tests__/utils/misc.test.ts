@@ -2,17 +2,21 @@ import path from 'path';
 import { encodeContent, testEnv } from '../util';
 import {
 	isTargetEvent,
+	isRelease,
 	parseConfig,
 	getCommitMessage,
 	getCommitName,
 	getCommitEmail,
 	getBranchName,
 	getFetchDepth,
+	isTestTag,
+	getTestTag,
 	getWorkspace,
 	getBuildCommands,
 	getGitUrl,
 	detectBuildCommand,
 	getRepository,
+	getTagName,
 	isValidTagName,
 	getMajorTag,
 	getMinorTag,
@@ -30,98 +34,71 @@ import {
 	DEFAULT_BRANCH_NAME,
 	DEFAULT_FETCH_DEPTH,
 } from '../../src/constant';
+import { getContext } from '../util';
 
 describe('isTargetEvent', () => {
 	it('should return true 1', () => {
-		expect(isTargetEvent({
+		expect(isTargetEvent(getContext({
 			payload: {
 				action: 'published',
 			},
 			eventName: 'release',
-			sha: '',
-			ref: '',
-			workflow: '',
-			action: '',
-			actor: '',
-			issue: {
-				owner: '',
-				repo: '',
-				number: 1,
-			},
-			repo: {
-				owner: '',
-				repo: '',
-			},
-		})).toBeTruthy();
+		}))).toBeTruthy();
 	});
 
 	it('should return true 2', () => {
-		expect(isTargetEvent({
+		expect(isTargetEvent(getContext({
 			payload: {
 				action: 'rerequested',
 			},
 			eventName: 'release',
-			sha: '',
-			ref: '',
-			workflow: '',
-			action: '',
-			actor: '',
-			issue: {
-				owner: '',
-				repo: '',
-				number: 1,
-			},
-			repo: {
-				owner: '',
-				repo: '',
-			},
-		})).toBeTruthy();
+		}))).toBeTruthy();
 	});
 
-	it('should return false', () => {
-		expect(isTargetEvent({
+	it('should return true 3', () => {
+		expect(isTargetEvent(getContext({
+			eventName: 'push',
+			ref: 'refs/tags/test',
+		}))).toBeTruthy();
+	});
+
+	it('should return false 1', () => {
+		expect(isTargetEvent(getContext({
 			payload: {
 				action: 'published',
 			},
 			eventName: 'push',
-			sha: '',
-			ref: '',
-			workflow: '',
-			action: '',
-			actor: '',
-			issue: {
-				owner: '',
-				repo: '',
-				number: 1,
-			},
-			repo: {
-				owner: '',
-				repo: '',
-			},
-		})).toBeFalsy();
+		}))).toBeFalsy();
 	});
 
-	it('should return false', () => {
-		expect(isTargetEvent({
+	it('should return false 2', () => {
+		expect(isTargetEvent(getContext({
 			payload: {
 				action: 'created',
 			},
 			eventName: 'release',
-			sha: '',
-			ref: '',
-			workflow: '',
-			action: '',
-			actor: '',
-			issue: {
-				owner: '',
-				repo: '',
-				number: 1,
-			},
-			repo: {
-				owner: '',
-				repo: '',
-			},
-		})).toBeFalsy();
+		}))).toBeFalsy();
+	});
+
+	it('should return false 3', () => {
+		expect(isTargetEvent(getContext({
+			eventName: 'push',
+			ref: 'refs/heads/test',
+		}))).toBeFalsy();
+	});
+});
+
+describe('isRelease', () => {
+	it('should return true', () => {
+		expect(isRelease(getContext({
+			eventName: 'release',
+		}))).toBeTruthy();
+	});
+
+	it('should return false', () => {
+		expect(isRelease(getContext({
+			eventName: 'push',
+		}))).toBeFalsy();
 	});
 });
 
@@ -200,6 +177,29 @@ describe('getFetchDepth', () => {
 	it('should get default fetch depth 2', () => {
 		process.env.INPUT_FETCH_DEPTH = 'test';
 		expect(getFetchDepth()).toBe(DEFAULT_FETCH_DEPTH);
+	});
+});
+
+describe('isTestTag', () => {
+	testEnv();
+
+	it('should return true', () => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		expect(isTestTag('test/v1.2.3')).toBe(true);
+	});
+
+	it('should return false', () => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		expect(isTestTag('v1.2.3')).toBe(false);
+	});
+});
+
+describe('getTestTag', () => {
+	testEnv();
+
+	it('should get test tag', () => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		expect(getTestTag('test/v1.2.3')).toBe('v1.2.3');
 	});
 });
 
@@ -300,26 +300,12 @@ describe('getGitUrl', () => {
 
 	it('should return git url', () => {
 		process.env.INPUT_ACCESS_TOKEN = 'test';
-		expect(getGitUrl({
-			payload: {
-				action: '',
-			},
-			eventName: '',
-			sha: '',
-			ref: '',
-			workflow: '',
-			action: '',
-			actor: '',
-			issue: {
-				owner: '',
-				repo: '',
-				number: 1,
-			},
+		expect(getGitUrl(getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
 			},
-		})).toBe('https://test@github.com/Hello/World.git');
+		}))).toBe('https://test@github.com/Hello/World.git');
 	});
 });
 
@@ -351,31 +337,39 @@ describe('detectBuildCommand', () => {
 
 describe('getRepository', () => {
 	it('should get repository', () => {
-		expect(getRepository({
-			payload: {
-				action: '',
-			},
-			eventName: '',
-			sha: '',
-			ref: '',
-			workflow: '',
-			action: '',
-			actor: '',
-			issue: {
-				owner: '',
-				repo: '',
-				number: 1,
-			},
+		expect(getRepository(getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
 			},
-		})).toBe('Hello/World');
+		}))).toBe('Hello/World');
+	});
+});
+
+describe('getTagName', () => {
+	it('should get release tag name', () => {
+		expect(getTagName(getContext({
+			eventName: 'release',
+			payload: {
+				release: {
+					'tag_name': 'test',
+				},
+			},
+		}))).toBe('test');
+	});
+
+	it('should get tag name', () => {
+		expect(getTagName(getContext({
+			eventName: 'push',
+			ref: 'refs/tags/test',
+		}))).toBe('test');
 	});
 });
 
 describe('isValidTagName', () => {
-	it('should return true', () => {
+	testEnv();
+
+	it('should return true 1', () => {
 		expect(isValidTagName('0')).toBeTruthy();
 		expect(isValidTagName('v12')).toBeTruthy();
 		expect(isValidTagName('1.2')).toBeTruthy();
@@ -383,11 +377,23 @@ describe('isValidTagName', () => {
 		expect(isValidTagName('v12.23.34.45')).toBeTruthy();
 	});
 
-	it('should return false', () => {
+	it('should return true 2', () => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		expect(isValidTagName('test/v12')).toBeTruthy();
+		expect(isValidTagName('test/1.2')).toBeTruthy();
+	});
+
+	it('should return false 1', () => {
 		expect(isValidTagName('')).toBeFalsy();
 		expect(isValidTagName('abc')).toBeFalsy();
 		expect(isValidTagName('v1.')).toBeFalsy();
 		expect(isValidTagName('v.9')).toBeFalsy();
+	});
+
+	it('should return false 2', () => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		expect(isValidTagName('test/')).toBeFalsy();
+		expect(isValidTagName('test/abc')).toBeFalsy();
 	});
 });
 
@@ -521,23 +527,40 @@ describe('getCreateTags', () => {
 	it('should get create tags 1', () => {
 		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1', 'v1.2']);
 	});
+
 	it('should get create tags 2', () => {
 		expect(getCreateTags('v1')).toEqual(['v1', 'v1.0']);
 	});
+
 	it('should get create tags 3', () => {
 		expect(getCreateTags('v1.2')).toEqual(['v1.2', 'v1']);
 	});
+
 	it('should get create tags 4', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
 		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1.2']);
 	});
+
 	it('should get create tags 5', () => {
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
 		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1']);
 	});
+
 	it('should get create tags 6', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
 		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3']);
+	});
+
+	it('should get create tags 7', () => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		expect(getCreateTags('test/v1.2.3')).toEqual(['test/v1.2.3', 'test/v1', 'test/v1.2']);
+	});
+
+	it('should get create tags 8', () => {
+		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
+		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		expect(getCreateTags('test/v1.2.3')).toEqual(['test/v1.2.3']);
 	});
 });

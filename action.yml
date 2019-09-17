@@ -38,6 +38,9 @@ inputs:
   FETCH_DEPTH:
     description: fetch depth
     default: '3'
+  TEST_TAG_PREFIX:
+    description: Tag name prefix for test
+    default: ''
 branding:
   icon: 'tag'
   color: 'green'
