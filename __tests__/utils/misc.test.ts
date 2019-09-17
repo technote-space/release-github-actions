@@ -187,11 +187,11 @@ describe('getBuildCommands', () => {
 			'yarn install',
 			'yarn build', // build command of package.json
 			'yarn install --production',
-			'rm -rdf .github',
+			'rm -rdf .[!.]*',
 			'rm -rdf __tests__',
 			'rm -rdf src',
-			'rm -rdf .gitignore',
 			'rm -rdf *.js',
+			'rm -rdf *.ts',
 			'rm -rdf *.json',
 			'rm -rdf *.lock',
 			'rm -rdf _config.yml',
@@ -227,11 +227,11 @@ describe('getBuildCommands', () => {
 	it('should get build commands 6', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
-			'rm -rdf .github',
+			'rm -rdf .[!.]*',
 			'rm -rdf __tests__',
 			'rm -rdf src',
-			'rm -rdf .gitignore',
 			'rm -rdf *.js',
+			'rm -rdf *.ts',
 			'rm -rdf *.json',
 			'rm -rdf *.lock',
 			'rm -rdf _config.yml',
