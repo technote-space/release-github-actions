@@ -27,7 +27,7 @@ async function run(): Promise<void> {
 			return;
 		}
 
-		await deploy(context.payload.release.tag_name, new GitHub(getInput('GITHUB_TOKEN', {required: true})), context);
+		await deploy(new GitHub(getInput('GITHUB_TOKEN', {required: true})), context);
 	} catch (error) {
 		setFailed(error.message);
 	}

@@ -9,7 +9,7 @@ import {
 
 import { getContext, testEnv, disableNetConnect, getApiFixture } from '../util';
 
-const common = async(callback: Function, isExist: boolean, method: (string, GitHub, Context) => Promise<void>): Promise<void> => {
+const common = async(callback: Function, isExist: boolean, method: (GitHub, Context) => Promise<void>): Promise<void> => {
 	const execMock = jest.spyOn(global.mockChildProcess, 'exec');
 	const fn1 = jest.fn();
 	const fn2 = jest.fn();
@@ -19,17 +19,19 @@ const common = async(callback: Function, isExist: boolean, method: (string, GitH
 			fn1();
 			return getApiFixture(isExist ? 'repos.listReleases2' : 'repos.listReleases1');
 		})
-		.patch('/repos/Hello/World/releases/1', body => {
-			expect(body).toHaveProperty('draft');
-			expect(body.draft).toBeFalsy();
-			return body;
-		})
+		.patch('/repos/Hello/World/releases/1')
 		.reply(200, () => {
 			fn2();
 			return getApiFixture('repos.updateRelease');
 		});
 
-	await method('v1.2.3', new GitHub(''), getContext({
+	await method(new GitHub(''), getContext({
+		eventName: 'release',
+		payload: {
+			release: {
+				'tag_name': 'v1.2.3',
+			},
+		},
 		repo: {
 			owner: 'Hello',
 			repo: 'World',

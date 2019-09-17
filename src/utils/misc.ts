@@ -13,9 +13,25 @@ import {
 	DEFAULT_CLEAN_TARGETS,
 	DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
 	DEFAULT_FETCH_DEPTH,
+	DEFAULT_TEST_TAG_PREFIX,
 } from '../constant';
 
-export const isTargetEvent = (context: Context): boolean => 'string' === typeof context.payload.action && context.eventName in TARGET_EVENTS && TARGET_EVENTS[context.eventName].includes(context.payload.action);
+export const isTargetEventName = (events: object, context: Context): boolean => context.eventName in events;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isTargetEventAction = (action: string | any[] | Function, context: Context): boolean => {
+	if (Array.isArray(action)) {
+		return action.some(item => isTargetEventAction(item, context));
+	}
+	if (typeof action === 'function') {
+		return action(context);
+	}
+	return '*' === action || context.payload.action === action;
+};
+
+export const isTargetEvent = (context: Context): boolean => isTargetEventName(TARGET_EVENTS, context) && isTargetEventAction(TARGET_EVENTS[context.eventName], context);
+
+export const isRelease = (context: Context): boolean => 'release' === context.eventName;
 
 export const parseConfig = (content: string): object => yaml.safeLoad(Buffer.from(content, 'base64').toString()) || {};
 
@@ -98,6 +114,16 @@ export const getFetchDepth = (): string => {
 	return DEFAULT_FETCH_DEPTH;
 };
 
+const escapeRegExp = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+export const getTestTagPrefix = (): string => getInput('TEST_TAG_PREFIX') || DEFAULT_TEST_TAG_PREFIX;
+
+const getTestTagPrefixRegExp = (): RegExp => new RegExp('^' + escapeRegExp(getTestTagPrefix()));
+
+export const isTestTag = (tagName: string): boolean => !!getTestTagPrefix() && getTestTagPrefixRegExp().test(tagName);
+
+export const getTestTag = (tagName: string): string => tagName.replace(getTestTagPrefixRegExp(), '');
+
 const getBoolValue = (input: string): boolean => !['false', '0'].includes(input.trim().toLowerCase());
 
 export const isCreateMajorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG') || 'true');
@@ -135,17 +161,30 @@ export const getMajorTag = (tagName: string): string => 'v' + getVersionFragment
 // eslint-disable-next-line no-magic-numbers
 export const getMinorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0']).slice(0, 2).join('.');
 
+export const isSemanticVersioningTagName = (tagName: string): boolean => /^v?\d+(\.\d+)*$/i.test(tagName);
+
+export const isValidTagName = (tagName: string): boolean => isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && isSemanticVersioningTagName(getTestTag(tagName)));
+
 export const getCreateTags = (tagName: string): string[] => {
 	const tagNames = [tagName];
-	if (isCreateMajorVersionTag()) {
-		tagNames.push(getMajorTag(tagName));
-	}
-	if (isCreateMinorVersionTag()) {
-		tagNames.push(getMinorTag(tagName));
+	if (isTestTag(tagName)) {
+		if (isCreateMajorVersionTag()) {
+			tagNames.push(getTestTagPrefix() + getMajorTag(getTestTag(tagName)));
+		}
+		if (isCreateMinorVersionTag()) {
+			tagNames.push(getTestTagPrefix() + getMinorTag(getTestTag(tagName)));
+		}
+	} else {
+		if (isCreateMajorVersionTag()) {
+			tagNames.push(getMajorTag(tagName));
+		}
+		if (isCreateMinorVersionTag()) {
+			tagNames.push(getMinorTag(tagName));
+		}
 	}
 	return uniqueArray(tagNames);
 };
 
 export const getWorkspace = (): string => process.env.GITHUB_WORKSPACE || '';
 
-export const isValidTagName = (tagName: string): boolean => /^v?\d+(\.\d+)*$/i.test(tagName);
+export const getTagName = (context: Context): string => isRelease(context) ? context.payload.release.tag_name : context.ref.replace(/^refs\/tags\//, '');

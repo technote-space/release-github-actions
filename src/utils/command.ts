@@ -17,6 +17,7 @@ import {
 	getCreateTags,
 	getOutputBuildInfoFilename,
 	getFetchDepth,
+	getTagName,
 } from './misc';
 
 export const getCommand = (command: string, quiet: boolean, suppressError: boolean): string => command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : '');
@@ -96,7 +97,7 @@ const runBuild = async(buildDir: string): Promise<void> => {
 	}
 };
 
-export const prepareFiles = async(buildDir: string, pushDir: string, tagName: string, context: Context): Promise<void> => {
+export const prepareFiles = async(buildDir: string, pushDir: string, context: Context): Promise<void> => {
 	signale.info('Preparing files for release');
 
 	fs.mkdirSync(buildDir, {recursive: true});
@@ -222,14 +223,24 @@ export const push = async(pushDir: string, tagName: string, branchName: string, 
 	});
 };
 
-export const updateRelease = async(tagName: string, octokit: GitHub, context: Context): Promise<void> => {
+const getParams = (context: Context): { workDir: string; buildDir: string; pushDir: string; branchName: string; tagName: string } => {
+	const workDir = path.resolve(getWorkspace(), '.work');
+	const buildDir = path.resolve(workDir, 'build');
+	const pushDir = path.resolve(workDir, 'push');
+	const branchName = getBranchName();
+	const tagName = getTagName(context);
+	return {workDir, buildDir, pushDir, branchName, tagName};
+};
+
+export const updateRelease = async(octokit: GitHub, context: Context): Promise<void> => {
+	const {tagName} = getParams(context);
 	const releases = await octokit.repos.listReleases({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
 	});
 	const release = releases.data.find(release => release.tag_name === tagName);
 	if (!release) {
-		signale.warn('There is no release that has tag name: %s', tagName);
+		signale.info('There is no release that has tag name: %s', tagName);
 		return;
 	}
 
@@ -237,7 +248,6 @@ export const updateRelease = async(tagName: string, octokit: GitHub, context: Co
 		owner: context.repo.owner,
 		repo: context.repo.repo,
 		'release_id': release.id,
-		draft: false,
 	});
 };
 
@@ -247,36 +257,30 @@ export const copyFiles = async(buildDir: string, pushDir: string): Promise<void>
 	await execAsync({command: `rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`});
 };
 
-const getParams = (): { buildDir: string; pushDir: string; branchName: string } => {
-	const workDir = path.resolve(getWorkspace(), '.work');
-	const buildDir = path.resolve(workDir, 'build');
-	const pushDir = path.resolve(workDir, 'push');
-	const branchName = getBranchName();
-	return {buildDir, pushDir, branchName};
-};
-
-const prepareCommit = async(tagName: string, context: Context): Promise<void> => {
-	const {buildDir, pushDir, branchName} = getParams();
+export const prepareCommit = async(tagName: string, context: Context): Promise<void> => {
+	const {workDir, buildDir, pushDir, branchName} = getParams(context);
+	await execAsync({command: `rm -rdf ${workDir}`});
 	fs.mkdirSync(pushDir, {recursive: true});
 	await cloneForBranch(pushDir, branchName, context);
 	await checkBranch(pushDir, branchName, await getCurrentBranchName(pushDir));
-	await prepareFiles(buildDir, pushDir, tagName, context);
+	await prepareFiles(buildDir, pushDir, context);
 	await createBuildInfoFile(buildDir, tagName, branchName);
 	await copyFiles(buildDir, pushDir);
 };
 
 const executeCommit = async(tagName: string, octokit: GitHub, context: Context): Promise<void> => {
-	const {pushDir, branchName} = getParams();
+	const {pushDir, branchName} = getParams(context);
 	await config(pushDir);
 	if (!await commit(pushDir)) {
 		return;
 	}
 	await push(pushDir, tagName, branchName, context);
-	await updateRelease(tagName, octokit, context);
+	await updateRelease(octokit, context);
 };
 
-export const deploy = async(tagName: string, octokit: GitHub, context: Context): Promise<void> => {
-	const {branchName} = getParams();
+export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
+	const {branchName, tagName} = getParams(context);
+	signale.info('Tag name: %s', tagName);
 	signale.info('Deploying branch %s to %s', branchName, getRepository(context));
 
 	await prepareCommit(tagName, context);

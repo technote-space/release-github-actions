@@ -202,7 +202,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_ACCESS_TOKEN = 'test-token';
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
 
-		await prepareFiles('test-build-dir', 'test-push-dir', 'v1.2.3', getContext({
+		await prepareFiles('test-build-dir', 'test-push-dir', getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
