@@ -7,6 +7,7 @@ import {
 	getCommitName,
 	getCommitEmail,
 	getBranchName,
+	getFetchDepth,
 	getWorkspace,
 	getBuildCommands,
 	getGitUrl,
@@ -22,7 +23,13 @@ import {
 	getBuildVersion,
 	getCreateTags,
 } from '../../src/utils/misc';
-import { DEFAULT_COMMIT_MESSAGE, DEFAULT_COMMIT_NAME, DEFAULT_COMMIT_EMAIL, DEFAULT_BRANCH_NAME } from '../../src/constant';
+import {
+	DEFAULT_COMMIT_MESSAGE,
+	DEFAULT_COMMIT_NAME,
+	DEFAULT_COMMIT_EMAIL,
+	DEFAULT_BRANCH_NAME,
+	DEFAULT_FETCH_DEPTH,
+} from '../../src/constant';
 
 describe('isTargetEvent', () => {
 	it('should return true', () => {
@@ -152,6 +159,24 @@ describe('getBranchName', () => {
 
 	it('should get default branch name', () => {
 		expect(getBranchName()).toBe(DEFAULT_BRANCH_NAME);
+	});
+});
+
+describe('getFetchDepth', () => {
+	testEnv();
+
+	it('should get fetch depth', () => {
+		process.env.INPUT_FETCH_DEPTH = '10';
+		expect(getFetchDepth()).toBe('10');
+	});
+
+	it('should get default fetch depth 1', () => {
+		expect(getFetchDepth()).toBe(DEFAULT_FETCH_DEPTH);
+	});
+
+	it('should get default fetch depth 2', () => {
+		process.env.INPUT_FETCH_DEPTH = 'test';
+		expect(getFetchDepth()).toBe(DEFAULT_FETCH_DEPTH);
 	});
 });
 

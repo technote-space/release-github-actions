@@ -166,7 +166,7 @@ describe('cloneForBranch', () => {
 		}));
 
 		expect(execMock).toBeCalledTimes(1);
-		expect(execMock.mock.calls[0][0]).toBe('git -C test-dir clone --quiet --branch=test-branch --depth=1 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1 || :');
+		expect(execMock.mock.calls[0][0]).toBe('git -C test-dir clone --quiet --branch=test-branch --depth=3 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1 || :');
 	});
 });
 
@@ -212,7 +212,7 @@ describe('prepareFiles', () => {
 		}));
 
 		expect(execMock).toBeCalledTimes(12);
-		expect(execMock.mock.calls[0][0]).toBe('git -C test-build-dir clone --depth=1 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1');
+		expect(execMock.mock.calls[0][0]).toBe('git -C test-build-dir clone --depth=3 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1');
 		expect(execMock.mock.calls[1][0]).toBe('git -C test-build-dir fetch "https://test-token@github.com/Hello/World.git" refs/heads/test > /dev/null 2>&1');
 		expect(execMock.mock.calls[2][0]).toBe('git -C test-build-dir checkout -qf test-sha');
 

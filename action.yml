@@ -35,6 +35,9 @@ inputs:
   OUTPUT_BUILD_INFO_FILENAME:
     description: Filename of build information.
     default: ''
+  FETCH_DEPTH:
+    description: fetch depth
+    default: '3'
 branding:
   icon: 'tag'
   color: 'green'
