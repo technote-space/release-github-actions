@@ -36,7 +36,7 @@ inputs:
     description: Filename of build information.
     default: ''
   FETCH_DEPTH:
-    description: fetch depth
+    description: Limit fetching to the specified number of commits from the tip of each remote branch history.
     default: '3'
   TEST_TAG_PREFIX:
     description: Tag name prefix for test
