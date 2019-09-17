@@ -166,7 +166,7 @@ describe('cloneForBranch', () => {
 		}));
 
 		expect(execMock).toBeCalledTimes(1);
-		expect(execMock.mock.calls[0][0]).toBe('git -C test-dir clone --quiet --branch=test-branch --depth=3 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1 || :');
+		expect(execMock.mock.calls[0][0]).toBe('git -C test-dir clone --branch=test-branch --depth=3 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1 || :');
 	});
 });
 
@@ -379,6 +379,6 @@ describe('push', () => {
 		expect(execMock.mock.calls[5][0]).toBe('git -C test-push-dir tag v1.2.3');
 		expect(execMock.mock.calls[6][0]).toBe('git -C test-push-dir tag v1');
 		expect(execMock.mock.calls[7][0]).toBe('git -C test-push-dir tag v1.2');
-		expect(execMock.mock.calls[8][0]).toBe('git -C test-push-dir push --quiet --tags "https://test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1');
+		expect(execMock.mock.calls[8][0]).toBe('git -C test-push-dir push --tags "https://test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1');
 	});
 });

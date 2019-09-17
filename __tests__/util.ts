@@ -19,9 +19,7 @@ export const testEnv = (): void => {
 };
 
 export const getContext = (override: object): Context => Object.assign({
-	payload: {
-		action: '',
-	},
+	payload: {},
 	eventName: '',
 	sha: '',
 	ref: '',

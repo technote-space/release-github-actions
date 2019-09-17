@@ -148,7 +148,12 @@ export const cloneForBranch = async(pushDir: string, branchName: string, context
 
 	const url = getGitUrl(context);
 	const depth = getFetchDepth();
-	await execAsync({command: `git -C ${pushDir} clone --quiet --branch=${branchName} --depth=${depth} ${url} .`, quiet: true, altCommand: 'git clone', suppressError: true});
+	await execAsync({
+		command: `git -C ${pushDir} clone --branch=${branchName} --depth=${depth} ${url} .`,
+		quiet: true,
+		altCommand: `git clone --branch=${branchName} --depth=${depth}`,
+		suppressError: true,
+	});
 };
 
 export const checkBranch = async(pushDir: string, branchName: string, clonedBranch: string): Promise<void> => {
@@ -211,7 +216,7 @@ export const push = async(pushDir: string, tagName: string, branchName: string, 
 		await execAsync({command: `git -C ${pushDir} tag ${tagName}`});
 	}
 	await execAsync({
-		command: `git -C ${pushDir} push --quiet --tags "${url}" "${branchName}":"refs/heads/${branchName}"`,
+		command: `git -C ${pushDir} push --tags "${url}" "${branchName}":"refs/heads/${branchName}"`,
 		quiet: true,
 		altCommand: `git push --tags "${branchName}":"refs/heads/${branchName}"`,
 	});
