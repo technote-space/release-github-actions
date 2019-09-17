@@ -1,6 +1,6 @@
 on:
-  push: 
-    branches: 
+  push:
+    branches:
       - refs/tags/*
 name: Release
 jobs:
