@@ -22,3 +22,7 @@ jest.mock('child_process', () => ({
 	...jest.requireActual('child_process'),
 	exec: global.mockChildProcess.exec,
 }));
+
+global.console.log = jest.fn();
+global.console.warn = jest.fn();
+global.console.error = jest.fn();
