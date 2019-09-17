@@ -16,6 +16,7 @@ import {
 	getBranchName,
 	getCreateTags,
 	getOutputBuildInfoFilename,
+	getFetchDepth,
 } from './misc';
 
 export const getCommand = (command: string, quiet: boolean, suppressError: boolean): string => command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : '');
@@ -81,7 +82,8 @@ const cloneForBuild = async(buildDir: string, context: Context): Promise<void> =
 	signale.info('Cloning the working commit from the remote repo for build');
 
 	const url = getGitUrl(context);
-	await execAsync({command: `git -C ${buildDir} clone --depth=1 ${url} .`, quiet: true, altCommand: 'git clone --depth=1'});
+	const depth = getFetchDepth();
+	await execAsync({command: `git -C ${buildDir} clone --depth=${depth} ${url} .`, quiet: true, altCommand: `git clone --depth=${depth}`});
 	await execAsync({command: `git -C ${buildDir} fetch "${url}" ${context.ref}`, quiet: true, altCommand: `git fetch origin ${context.ref}`});
 	await execAsync({command: `git -C ${buildDir} checkout -qf ${context.sha}`});
 };
@@ -145,7 +147,8 @@ export const cloneForBranch = async(pushDir: string, branchName: string, context
 	signale.info('Cloning the branch %s from the remote repo', branchName);
 
 	const url = getGitUrl(context);
-	await execAsync({command: `git -C ${pushDir} clone --quiet --branch=${branchName} --depth=1 ${url} .`, quiet: true, altCommand: 'git clone', suppressError: true});
+	const depth = getFetchDepth();
+	await execAsync({command: `git -C ${pushDir} clone --quiet --branch=${branchName} --depth=${depth} ${url} .`, quiet: true, altCommand: 'git clone', suppressError: true});
 };
 
 export const checkBranch = async(pushDir: string, branchName: string, clonedBranch: string): Promise<void> => {

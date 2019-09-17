@@ -12,6 +12,7 @@ import {
 	DEFAULT_BRANCH_NAME,
 	DEFAULT_CLEAN_TARGETS,
 	DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
+	DEFAULT_FETCH_DEPTH,
 } from '../constant';
 
 export const isTargetEvent = (context: Context): boolean => 'string' === typeof context.payload.action && context.eventName in TARGET_EVENTS && TARGET_EVENTS[context.eventName] === context.payload.action;
@@ -88,6 +89,14 @@ export const getCommitName = (): string => getInput('COMMIT_NAME') || DEFAULT_CO
 export const getCommitEmail = (): string => getInput('COMMIT_EMAIL') || DEFAULT_COMMIT_EMAIL;
 
 export const getBranchName = (): string => getInput('BRANCH_NAME') || DEFAULT_BRANCH_NAME;
+
+export const getFetchDepth = (): string => {
+	const depth = getInput('FETCH_DEPTH');
+	if (depth && /^\d+$/.test(depth)) {
+		return depth;
+	}
+	return DEFAULT_FETCH_DEPTH;
+};
 
 const getBoolValue = (input: string): boolean => !['false', '0'].includes(input.trim().toLowerCase());
 
