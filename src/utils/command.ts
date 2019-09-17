@@ -239,23 +239,38 @@ export const copyFiles = async(buildDir: string, pushDir: string): Promise<void>
 	await execAsync({command: `rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`});
 };
 
-export const deploy = async(tagName: string, octokit: GitHub, context: Context): Promise<void> => {
+const getParams = (): { buildDir: string; pushDir: string; branchName: string } => {
 	const workDir = path.resolve(getWorkspace(), '.work');
 	const buildDir = path.resolve(workDir, 'build');
 	const pushDir = path.resolve(workDir, 'push');
 	const branchName = getBranchName();
-	signale.info('Deploying branch %s to %s', branchName, getRepository(context));
+	return {buildDir, pushDir, branchName};
+};
 
+const prepareCommit = async(tagName: string, context: Context): Promise<void> => {
+	const {buildDir, pushDir, branchName} = getParams();
 	fs.mkdirSync(pushDir, {recursive: true});
 	await cloneForBranch(pushDir, branchName, context);
 	await checkBranch(pushDir, branchName, await getCurrentBranchName(pushDir));
 	await prepareFiles(buildDir, pushDir, tagName, context);
 	await createBuildInfoFile(buildDir, tagName, branchName);
 	await copyFiles(buildDir, pushDir);
+};
+
+const executeCommit = async(tagName: string, octokit: GitHub, context: Context): Promise<void> => {
+	const {pushDir, branchName} = getParams();
 	await config(pushDir);
 	if (!await commit(pushDir)) {
 		return;
 	}
 	await push(pushDir, tagName, branchName, context);
 	await updateRelease(tagName, octokit, context);
+};
+
+export const deploy = async(tagName: string, octokit: GitHub, context: Context): Promise<void> => {
+	const {branchName} = getParams();
+	signale.info('Deploying branch %s to %s', branchName, getRepository(context));
+
+	await prepareCommit(tagName, context);
+	await executeCommit(tagName, octokit, context);
 };
