@@ -13,7 +13,10 @@ export const TARGET_EVENTS = {
 		'published',
 		'rerequested',
 	],
-	'push': (context: Context): boolean => /^refs\/tags\//.test(context.ref),
+	'push': [
+		(context: Context): boolean => /^refs\/tags\//.test(context.ref),
+		'rerequested',
+	],
 };
 export const SEARCH_BUILD_COMMAND_TARGETS = [
 	'build',

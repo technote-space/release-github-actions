@@ -30,9 +30,10 @@ Once you publish the release, this action will automatically
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
+  - [FETCH_DEPTH](#fetch_depth)
+  - [TEST_TAG_PREFIX](#test_tag_prefix)
 - [Action event details](#action-event-details)
-  - [Target event](#target-event)
-  - [Target action](#target-action)
+  - [Target events](#target-events)
 - [Motivation](#motivation)
 - [Addition](#addition)
   - [tags](#tags)
@@ -145,11 +146,24 @@ If this setting is not empty, following information is output with the file name
 }
 ```
 
+### FETCH_DEPTH
+Limit fetching to the specified number of commits from the tip of each remote branch history.  
+default: `3`  
+
+### TEST_TAG_PREFIX
+Tag name prefix for test.  
+default: `''`  
+ex. `'test/'`
+
 ## Action event details
-### Target event
-- release
-### Target action
-- published
+### Target events
+- release: published
+- release: rerequested
+- push: *
+  - tags
+    - semantic versioning tag
+    - [test tag](#test_tag_prefix)
+- push: rerequested
 
 ## Motivation
 Release package needs all build files and dependencies like `node_modules`, but are not usually committed.  

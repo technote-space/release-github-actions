@@ -9,7 +9,7 @@ import {
 
 import { getContext, testEnv, disableNetConnect, getApiFixture } from '../util';
 
-const common = async(callback: Function, isExist: boolean, method: (GitHub, Context) => Promise<void>): Promise<void> => {
+const common = async(callback: Function, isExist: boolean, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
 	const execMock = jest.spyOn(global.mockChildProcess, 'exec');
 	const fn1 = jest.fn();
 	const fn2 = jest.fn();
@@ -29,7 +29,7 @@ const common = async(callback: Function, isExist: boolean, method: (GitHub, Cont
 		eventName: 'release',
 		payload: {
 			release: {
-				'tag_name': 'v1.2.3',
+				'tag_name': tagName,
 			},
 		},
 		repo: {
@@ -81,14 +81,25 @@ describe('deploy', () => {
 		global.mockChildProcess.stdout = 'stdout';
 	});
 
+	it('should do nothing', async() => {
+		process.env.INPUT_ACCESS_TOKEN = 'test-token';
+		global.mockChildProcess.stdout = '';
+
+		await common((fn1, fn2, execMock) => {
+			expect(execMock).not.toBeCalled();
+			expect(fn1).not.toBeCalled();
+			expect(fn2).not.toBeCalled();
+		}, true, deploy, 'abc');
+	});
+
 	it('should not commit', async() => {
 		process.env.INPUT_ACCESS_TOKEN = 'test-token';
 		global.mockChildProcess.stdout = '';
 
 		await common((fn1, fn2, execMock) => {
 			expect(execMock).toBeCalled();
-			expect(fn1).toBeCalledTimes(0);
-			expect(fn2).toBeCalledTimes(0);
+			expect(fn1).not.toBeCalled();
+			expect(fn2).not.toBeCalled();
 		}, true, deploy);
 	});
 
