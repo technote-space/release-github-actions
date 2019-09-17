@@ -18,6 +18,7 @@ import {
 	getOutputBuildInfoFilename,
 	getFetchDepth,
 	getTagName,
+	isValidTagName,
 } from './misc';
 
 export const getCommand = (command: string, quiet: boolean, suppressError: boolean): string => command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : '');
@@ -281,6 +282,12 @@ const executeCommit = async(tagName: string, octokit: GitHub, context: Context):
 export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
 	const {branchName, tagName} = getParams(context);
 	signale.info('Tag name: %s', tagName);
+
+	if (!isValidTagName(tagName)) {
+		signale.info('This tag name is invalid.');
+		return;
+	}
+
 	signale.info('Deploying branch %s to %s', branchName, getRepository(context));
 
 	await prepareCommit(tagName, context);
