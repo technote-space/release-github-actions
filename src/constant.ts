@@ -6,7 +6,10 @@ export const DEFAULT_CLEAN_TARGETS = '.github,__tests__,src,.gitignore,*.js,*.js
 export const DEFAULT_OUTPUT_BUILD_INFO_FILENAME = '';
 export const DEFAULT_FETCH_DEPTH = '3';
 export const TARGET_EVENTS = {
-	'release': 'published',
+	'release': [
+		'published',
+		'rerequested',
+	],
 };
 export const SEARCH_BUILD_COMMAND_TARGETS = [
 	'build',

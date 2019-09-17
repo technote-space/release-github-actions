@@ -32,10 +32,33 @@ import {
 } from '../../src/constant';
 
 describe('isTargetEvent', () => {
-	it('should return true', () => {
+	it('should return true 1', () => {
 		expect(isTargetEvent({
 			payload: {
 				action: 'published',
+			},
+			eventName: 'release',
+			sha: '',
+			ref: '',
+			workflow: '',
+			action: '',
+			actor: '',
+			issue: {
+				owner: '',
+				repo: '',
+				number: 1,
+			},
+			repo: {
+				owner: '',
+				repo: '',
+			},
+		})).toBeTruthy();
+	});
+
+	it('should return true 2', () => {
+		expect(isTargetEvent({
+			payload: {
+				action: 'rerequested',
 			},
 			eventName: 'release',
 			sha: '',

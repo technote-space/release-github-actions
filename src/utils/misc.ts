@@ -15,7 +15,7 @@ import {
 	DEFAULT_FETCH_DEPTH,
 } from '../constant';
 
-export const isTargetEvent = (context: Context): boolean => 'string' === typeof context.payload.action && context.eventName in TARGET_EVENTS && TARGET_EVENTS[context.eventName] === context.payload.action;
+export const isTargetEvent = (context: Context): boolean => 'string' === typeof context.payload.action && context.eventName in TARGET_EVENTS && TARGET_EVENTS[context.eventName].includes(context.payload.action);
 
 export const parseConfig = (content: string): object => yaml.safeLoad(Buffer.from(content, 'base64').toString()) || {};
 
