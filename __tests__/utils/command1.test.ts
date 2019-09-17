@@ -1,4 +1,5 @@
 /* eslint-disable no-magic-numbers */
+import global from '../global';
 import {
 	getCommand,
 	getRejectedErrorMessage,

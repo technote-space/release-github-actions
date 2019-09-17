@@ -1,16 +1,4 @@
-declare module NodeJS {
-	interface Global {
-		mockSignale: {
-			info: jest.Mock,
-			warn: jest.Mock
-		},
-		mockChildProcess: {
-			exec: jest.Mock,
-			stdout: string,
-			stderr: string
-		}
-	}
-}
+import global from './__tests__/global';
 
 global.mockSignale = {
 	info: jest.fn(),
