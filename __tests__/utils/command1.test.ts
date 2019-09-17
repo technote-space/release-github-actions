@@ -218,15 +218,15 @@ describe('prepareFiles', () => {
 
 		expect(execMock.mock.calls[3][0]).toBe('yarn install --production');
 		expect(execMock.mock.calls[3][1]).toEqual({cwd: 'test-build-dir'});
-		expect(execMock.mock.calls[4][0]).toBe('rm -rdf .github');
+		expect(execMock.mock.calls[4][0]).toBe('rm -rdf .[!.]*');
 		expect(execMock.mock.calls[4][1]).toEqual({cwd: 'test-build-dir'});
 		expect(execMock.mock.calls[5][0]).toBe('rm -rdf __tests__');
 		expect(execMock.mock.calls[5][1]).toEqual({cwd: 'test-build-dir'});
 		expect(execMock.mock.calls[6][0]).toBe('rm -rdf src');
 		expect(execMock.mock.calls[6][1]).toEqual({cwd: 'test-build-dir'});
-		expect(execMock.mock.calls[7][0]).toBe('rm -rdf .gitignore');
+		expect(execMock.mock.calls[7][0]).toBe('rm -rdf *.js');
 		expect(execMock.mock.calls[7][1]).toEqual({cwd: 'test-build-dir'});
-		expect(execMock.mock.calls[8][0]).toBe('rm -rdf *.js');
+		expect(execMock.mock.calls[8][0]).toBe('rm -rdf *.ts');
 		expect(execMock.mock.calls[8][1]).toEqual({cwd: 'test-build-dir'});
 		expect(execMock.mock.calls[9][0]).toBe('rm -rdf *.json');
 		expect(execMock.mock.calls[9][1]).toEqual({cwd: 'test-build-dir'});
