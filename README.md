@@ -145,11 +145,24 @@ If this setting is not empty, following information is output with the file name
 }
 ```
 
+### FETCH_DEPTH
+Limit fetching to the specified number of commits from the tip of each remote branch history.  
+default: `3`  
+
+### TEST_TAG_PREFIX
+Tag name prefix for test.  
+default: `''`  
+ex. `'test/'`
+
 ## Action event details
-### Target event
-- release
-### Target action
-- published
+### Target events
+- release: published
+- release: rerequested
+- push: *
+  - tags
+    - semantic versioning tag
+    - [test tag](#test_tag_prefix)
+- push: rerequested
 
 ## Motivation
 Release package needs all build files and dependencies like `node_modules`, but are not usually committed.  
