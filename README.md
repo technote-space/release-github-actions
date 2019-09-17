@@ -36,6 +36,7 @@ Once you publish the release, this action will automatically
 - [Motivation](#motivation)
 - [Addition](#addition)
   - [tags](#tags)
+  - [Re-run](#re-run)
 - [GitHub Actions using this Action](#github-actions-using-this-action)
 - [Author](#author)
 
