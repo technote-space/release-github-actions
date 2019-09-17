@@ -43,13 +43,13 @@ Once you publish the release, this action will automatically
 
 ## Screenshots
 1. Before publish release  
-   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png" alt="step1" width=500/>
+   ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
 1. Publish release  
-   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png" alt="step2" width=500/>
+   ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
 1. Running GitHub Action  
-   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png" alt="step3" width=500/>
+   ![Running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
 1. After running GitHub Action  
-   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png" alt="step4" width=500/>
+   ![After running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
 ## Installation
 1. Setup workflow  
