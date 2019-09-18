@@ -73,7 +73,7 @@ Once you publish the release, this action will automatically
 ## Required parameter
 ### ACCESS_TOKEN
 1. Generate a [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with the public_repo or repo scope.
-(repo is required for private repositories).  
+(repo is required for private repositories.)  
 1. [Save as secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
 
 ## Options
