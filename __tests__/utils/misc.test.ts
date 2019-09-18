@@ -39,10 +39,8 @@ import { getContext } from '../util';
 describe('isTargetEvent', () => {
 	it('should return true 1', () => {
 		expect(isTargetEvent(getContext({
-			payload: {
-				action: 'published',
-			},
-			eventName: 'release',
+			eventName: 'push',
+			ref: 'refs/tags/test',
 		}))).toBeTruthy();
 	});
 
@@ -51,23 +49,23 @@ describe('isTargetEvent', () => {
 			payload: {
 				action: 'rerequested',
 			},
-			eventName: 'release',
+			eventName: 'push',
 		}))).toBeTruthy();
 	});
 
 	it('should return true 3', () => {
 		expect(isTargetEvent(getContext({
-			eventName: 'push',
-			ref: 'refs/tags/test',
+			payload: {
+				action: 'published',
+			},
+			eventName: 'release',
 		}))).toBeTruthy();
 	});
 
 	it('should return false 1', () => {
 		expect(isTargetEvent(getContext({
-			payload: {
-				action: 'published',
-			},
 			eventName: 'push',
+			ref: 'refs/heads/test',
 		}))).toBeFalsy();
 	});
 
@@ -77,13 +75,6 @@ describe('isTargetEvent', () => {
 				action: 'created',
 			},
 			eventName: 'release',
-		}))).toBeFalsy();
-	});
-
-	it('should return false 3', () => {
-		expect(isTargetEvent(getContext({
-			eventName: 'push',
-			ref: 'refs/heads/test',
 		}))).toBeFalsy();
 	});
 });
@@ -347,6 +338,13 @@ describe('getRepository', () => {
 });
 
 describe('getTagName', () => {
+	it('should get tag name', () => {
+		expect(getTagName(getContext({
+			eventName: 'push',
+			ref: 'refs/tags/test',
+		}))).toBe('test');
+	});
+
 	it('should get release tag name', () => {
 		expect(getTagName(getContext({
 			eventName: 'release',
@@ -355,13 +353,6 @@ describe('getTagName', () => {
 					'tag_name': 'test',
 				},
 			},
-		}))).toBe('test');
-	});
-
-	it('should get tag name', () => {
-		expect(getTagName(getContext({
-			eventName: 'push',
-			ref: 'refs/tags/test',
 		}))).toBe('test');
 	});
 });
