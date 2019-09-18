@@ -42,9 +42,22 @@ const signale = new Signale({
 	},
 });
 
+const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
+	const workDir = path.resolve(getWorkspace(), '.work');
+	const buildDir = path.resolve(workDir, 'build');
+	const pushDir = path.resolve(workDir, 'push');
+	const branchName = getBranchName();
+	return {workDir, buildDir, pushDir, branchName};
+};
+
+export const replaceDirectory = (message: string): string => {
+	const {workDir, buildDir, pushDir} = getParams();
+	return message.replace(buildDir, '[Build Directory]').replace(pushDir, '[Push Directory]').replace(workDir, '[Working Directory]');
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const output = (type: 'info' | 'process' | 'command', message: string, ...args: any[]): void => {
-	signale[type](message, ...args);
+	signale[type](replaceDirectory(message), ...args);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -120,14 +133,6 @@ export const execAsync = (args: {
 		exec(getCommand(command, quiet, suppressError), {cwd}, execCallback(command, altCommand, quiet, suppressOutput, resolve, reject));
 	}
 });
-
-const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
-	const workDir = path.resolve(getWorkspace(), '.work');
-	const buildDir = path.resolve(workDir, 'build');
-	const pushDir = path.resolve(workDir, 'push');
-	const branchName = getBranchName();
-	return {workDir, buildDir, pushDir, branchName};
-};
 
 const cloneForBuild = async(context: Context): Promise<void> => {
 	startProcess('Cloning the working commit from the remote repo for build');
