@@ -17,6 +17,7 @@ import {
 	getCommitEmail,
 	getBranchName,
 	getCreateTags,
+	getOriginalTagPrefix,
 	getOutputBuildInfoFilename,
 	getFetchDepth,
 	getTagName,
@@ -273,6 +274,16 @@ export const push = async(context: Context): Promise<void> => {
 	startProcess('Pushing to %s@%s (tag: %s)', getRepository(context), branchName, tagName);
 
 	const url = getGitUrl(context);
+	const prefix = getOriginalTagPrefix();
+	if (prefix) {
+		await execAsync({command: `git -C ${pushDir} tag ${prefix}${tagName} ${tagName}`});
+		await execAsync({
+			command: `git -C ${pushDir} push "${url}" "refs/tags/${prefix}${tagName}"`,
+			quiet: true,
+			altCommand: `git push "refs/tags/${prefix}${tagName}"`,
+		});
+	}
+
 	const tagNames = getCreateTags(tagName);
 	for (const tagName of tagNames) {
 		await execAsync({
