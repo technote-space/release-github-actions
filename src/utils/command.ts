@@ -5,6 +5,7 @@ import signale from 'signale';
 import { exec, ExecException } from 'child_process';
 import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
+import { ReposListReleasesResponseItem } from '@octokit/rest';
 import {
 	getGitUrl,
 	getRepository,
@@ -248,22 +249,26 @@ export const push = async(context: Context): Promise<void> => {
 	});
 };
 
-export const updateRelease = async(octokit: GitHub, context: Context): Promise<void> => {
+const findRelease = async(octokit: GitHub, context: Context): Promise<ReposListReleasesResponseItem | undefined> => {
 	const tagName = getTagName(context);
 	const releases = await octokit.repos.listReleases({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
 	});
-	const release = releases.data.find(release => release.tag_name === tagName);
-	if (!release) {
-		signale.info('There is no release that has tag name: %s', tagName);
+	return releases.data.find(release => release.tag_name === tagName);
+};
+
+export const updateRelease = async(release: ReposListReleasesResponseItem | undefined, octokit: GitHub, context: Context): Promise<void> => {
+	if (!release || release.draft) {
 		return;
 	}
 
+	signale.info('Re-publishing release');
 	await octokit.repos.updateRelease({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
 		'release_id': release.id,
+		draft: false,
 	});
 };
 
@@ -285,13 +290,13 @@ export const prepareCommit = async(context: Context): Promise<void> => {
 	await copyFiles();
 };
 
-const executeCommit = async(octokit: GitHub, context: Context): Promise<boolean> => {
+const executeCommit = async(release: ReposListReleasesResponseItem | undefined, octokit: GitHub, context: Context): Promise<boolean> => {
 	await config();
 	if (!await commit()) {
 		return false;
 	}
 	await push(context);
-	await updateRelease(octokit, context);
+	await updateRelease(release, octokit, context);
 	return true;
 };
 
@@ -307,6 +312,7 @@ export const deploy = async(octokit: GitHub, context: Context): Promise<void> =>
 
 	signale.info('Deploying branch %s to %s', branchName, getRepository(context));
 
+	const release = await findRelease(octokit, context);
 	await prepareCommit(context);
-	await executeCommit(octokit, context);
+	await executeCommit(release, octokit, context);
 };
