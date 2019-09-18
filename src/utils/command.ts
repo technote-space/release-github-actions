@@ -285,13 +285,14 @@ export const prepareCommit = async(context: Context): Promise<void> => {
 	await copyFiles();
 };
 
-const executeCommit = async(octokit: GitHub, context: Context): Promise<void> => {
+const executeCommit = async(octokit: GitHub, context: Context): Promise<boolean> => {
 	await config();
 	if (!await commit()) {
-		return;
+		return false;
 	}
 	await push(context);
 	await updateRelease(octokit, context);
+	return true;
 };
 
 export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
