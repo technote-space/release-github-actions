@@ -134,21 +134,21 @@ describe('execCallback', () => {
 
 describe('execAsync', () => {
 	it('should show run command', async() => {
-		const infoCount = global.mockSignale.info.mock.calls.length;
+		const infoCount = global.mockSignale.command.mock.calls.length;
 		await execAsync({command: 'test'});
-		expect(global.mockSignale.info.mock.calls.length).toBe(infoCount + 1);
+		expect(global.mockSignale.command.mock.calls.length).toBe(infoCount + 1);
 	});
 
 	it('should show run alt command', async() => {
-		const infoCount = global.mockSignale.info.mock.calls.length;
+		const infoCount = global.mockSignale.command.mock.calls.length;
 		await execAsync({command: 'test', altCommand: 'alt'});
-		expect(global.mockSignale.info.mock.calls.length).toBe(infoCount + 1);
+		expect(global.mockSignale.command.mock.calls.length).toBe(infoCount + 1);
 	});
 
 	it('should not show run command', async() => {
-		const infoCount = global.mockSignale.info.mock.calls.length;
+		const infoCount = global.mockSignale.command.mock.calls.length;
 		await execAsync({command: 'test', quiet: true});
-		expect(global.mockSignale.info.mock.calls.length).toBe(infoCount);
+		expect(global.mockSignale.command.mock.calls.length).toBe(infoCount);
 	});
 });
 
