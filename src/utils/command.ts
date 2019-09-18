@@ -301,15 +301,13 @@ const executeCommit = async(release: ReposListReleasesResponseItem | undefined, 
 };
 
 export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
-	const {branchName} = getParams();
 	const tagName = getTagName(context);
-	signale.info('Tag name: %s', tagName);
-
 	if (!isValidTagName(tagName)) {
 		signale.info('This tag name is invalid.');
 		return;
 	}
 
+	const {branchName} = getParams();
 	signale.info('Deploying branch %s to %s', branchName, getRepository(context));
 
 	const release = await findRelease(octokit, context);

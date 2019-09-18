@@ -3,7 +3,7 @@ import { setFailed, getInput } from '@actions/core';
 import { context, GitHub } from '@actions/github';
 import signale from 'signale';
 import { deploy } from './utils/command';
-import { getBuildVersion, isTargetEvent } from './utils/misc';
+import { getBuildVersion, isTargetEvent, getTagName } from './utils/misc';
 
 /**
  * run
@@ -16,6 +16,7 @@ async function run(): Promise<void> {
 		}
 		signale.info('Event: %s', context.eventName);
 		signale.info('Action: %s', context.payload.action);
+		signale.info('Tag name: %s', getTagName(context));
 		if (!isTargetEvent(context)) {
 			signale.info('This is not target event.');
 			return;
