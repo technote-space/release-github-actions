@@ -259,12 +259,8 @@ describe('createBuildInfoFile', () => {
 		const writeMock = jest.spyOn(require('fs'), 'writeFileSync');
 
 		await createBuildInfoFile(getContext({
-			payload: {
-				release: {
-					'tag_name': 'v1.2.3',
-				},
-			},
-			eventName: 'release',
+			eventName: 'push',
+			ref: 'refs/tags/v1.2.3',
 		}));
 
 		expect(writeMock).not.toBeCalled();
@@ -280,12 +276,8 @@ describe('createBuildInfoFile', () => {
 		const writeMock = jest.spyOn(require('fs'), 'writeFileSync');
 
 		await createBuildInfoFile(getContext({
-			payload: {
-				release: {
-					'tag_name': 'v1.2.3',
-				},
-			},
-			eventName: 'release',
+			eventName: 'push',
+			ref: 'refs/tags/v1.2.3',
 		}));
 
 		expect(mkdirMock).toBeCalledTimes(1);
@@ -303,12 +295,8 @@ describe('createBuildInfoFile', () => {
 		exists = true;
 
 		await createBuildInfoFile(getContext({
-			payload: {
-				release: {
-					'tag_name': 'v1.2.3',
-				},
-			},
-			eventName: 'release',
+			eventName: 'push',
+			ref: 'refs/tags/v1.2.3',
 		}));
 
 		expect(mkdirMock).toBeCalledTimes(0);
@@ -413,12 +401,8 @@ describe('push', () => {
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
 
 		await push(getContext({
-			payload: {
-				release: {
-					'tag_name': 'v1.2.3',
-				},
-			},
-			eventName: 'release',
+			eventName: 'push',
+			ref: 'refs/tags/v1.2.3',
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
