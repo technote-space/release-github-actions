@@ -3,7 +3,7 @@ import { setFailed, getInput } from '@actions/core';
 import { context, GitHub } from '@actions/github';
 import signale from 'signale';
 import { deploy } from './utils/command';
-import { getBuildVersion, isTargetEvent, getTagName } from './utils/misc';
+import { getBuildVersion, isTargetEvent, getTagName, isValidTagName } from './utils/misc';
 
 /**
  * run
@@ -11,14 +11,16 @@ import { getBuildVersion, isTargetEvent, getTagName } from './utils/misc';
 async function run(): Promise<void> {
 	try {
 		const version = getBuildVersion(path.resolve(__dirname, '..', 'build.json'));
+		const tagName = getTagName(context);
 		if ('string' === typeof version) {
 			signale.info('Version: %s', version);
 		}
 		signale.info('Event: %s', context.eventName);
 		signale.info('Action: %s', context.payload.action);
-		signale.info('Tag name: %s', getTagName(context));
-		if (!isTargetEvent(context)) {
-			signale.info('This is not target event.');
+		signale.info('Tag name: %s', tagName);
+
+		if (!isTargetEvent(context) || !isValidTagName(tagName)) {
+			signale.complete('This is not target event.');
 			return;
 		}
 

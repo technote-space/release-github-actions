@@ -19,7 +19,6 @@ import {
 	getOutputBuildInfoFilename,
 	getFetchDepth,
 	getTagName,
-	isValidTagName,
 } from './misc';
 
 export const getCommand = (command: string, quiet: boolean, suppressError: boolean): string => command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : '');
@@ -301,12 +300,6 @@ const executeCommit = async(release: ReposListReleasesResponseItem | undefined, 
 };
 
 export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
-	const tagName = getTagName(context);
-	if (!isValidTagName(tagName)) {
-		signale.info('This tag name is invalid.');
-		return;
-	}
-
 	const {branchName} = getParams();
 	signale.info('Deploying branch %s to %s', branchName, getRepository(context));
 
