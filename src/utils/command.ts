@@ -80,9 +80,18 @@ export const execAsync = (args: {
 	}
 });
 
-const cloneForBuild = async(buildDir: string, context: Context): Promise<void> => {
+const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
+	const workDir = path.resolve(getWorkspace(), '.work');
+	const buildDir = path.resolve(workDir, 'build');
+	const pushDir = path.resolve(workDir, 'push');
+	const branchName = getBranchName();
+	return {workDir, buildDir, pushDir, branchName};
+};
+
+const cloneForBuild = async(context: Context): Promise<void> => {
 	signale.info('Cloning the working commit from the remote repo for build');
 
+	const {buildDir} = getParams();
 	const url = getGitUrl(context);
 	const depth = getFetchDepth();
 	await execAsync({command: `git -C ${buildDir} clone --depth=${depth} ${url} .`, quiet: true, altCommand: `git clone --depth=${depth}`});
@@ -98,19 +107,24 @@ const runBuild = async(buildDir: string): Promise<void> => {
 	}
 };
 
-export const prepareFiles = async(buildDir: string, pushDir: string, context: Context): Promise<void> => {
+export const prepareFiles = async(context: Context): Promise<void> => {
 	signale.info('Preparing files for release');
 
+	const {buildDir} = getParams();
+
 	fs.mkdirSync(buildDir, {recursive: true});
-	await cloneForBuild(buildDir, context);
+	await cloneForBuild(context);
 	await runBuild(buildDir);
 };
 
-export const createBuildInfoFile = async(buildDir: string, tagName: string, branchName: string): Promise<void> => {
+export const createBuildInfoFile = async(context: Context): Promise<void> => {
 	const filename = getOutputBuildInfoFilename();
 	if (!filename) {
 		return;
 	}
+
+	const {buildDir, branchName} = getParams();
+	const tagName = getTagName(context);
 
 	signale.info('Creating build info file');
 	const filepath = path.resolve(buildDir, filename);
@@ -126,26 +140,30 @@ export const createBuildInfoFile = async(buildDir: string, tagName: string, bran
 	}));
 };
 
-export const getCurrentBranchName = async(pushDir: string): Promise<string> => {
+export const getCurrentBranchName = async(): Promise<string> => {
+	const {pushDir} = getParams();
 	if (!fs.existsSync(path.resolve(pushDir, '.git'))) {
 		return '';
 	}
 	return (await execAsync({command: `git -C ${pushDir} branch -a | grep -E '^\\*' | cut -b 3-`})).trim();
 };
 
-const gitInit = async(pushDir: string): Promise<void> => {
+const gitInit = async(): Promise<void> => {
+	const {pushDir} = getParams();
 	signale.info('Initializing local git repo');
 
 	await execAsync({command: `git -C ${pushDir} init .`});
 };
 
-const gitCheckout = async(pushDir: string, branchName: string): Promise<void> => {
+const gitCheckout = async(): Promise<void> => {
+	const {pushDir, branchName} = getParams();
 	signale.info('Checking out orphan branch %s', branchName);
 
 	await execAsync({command: `git -C ${pushDir} checkout --orphan "${branchName}"`});
 };
 
-export const cloneForBranch = async(pushDir: string, branchName: string, context: Context): Promise<void> => {
+export const cloneForBranch = async(context: Context): Promise<void> => {
+	const {pushDir, branchName} = getParams();
 	signale.info('Cloning the branch %s from the remote repo', branchName);
 
 	const url = getGitUrl(context);
@@ -158,19 +176,21 @@ export const cloneForBranch = async(pushDir: string, branchName: string, context
 	});
 };
 
-export const checkBranch = async(pushDir: string, branchName: string, clonedBranch: string): Promise<void> => {
+export const checkBranch = async(clonedBranch: string): Promise<void> => {
+	const {pushDir, branchName} = getParams();
 	if (branchName !== clonedBranch) {
 		signale.info('remote branch %s not found.', branchName);
 		signale.info('now branch: %s', clonedBranch);
 
 		await execAsync({command: `rm -rdf ${pushDir}`});
 		fs.mkdirSync(pushDir, {recursive: true});
-		await gitInit(pushDir);
-		await gitCheckout(pushDir, branchName);
+		await gitInit();
+		await gitCheckout();
 	}
 };
 
-export const config = async(pushDir: string): Promise<void> => {
+export const config = async(): Promise<void> => {
+	const {pushDir} = getParams();
 	const name = getCommitName();
 	const email = getCommitEmail();
 	signale.info('Configuring git committer to be %s <%s>', name, email);
@@ -179,7 +199,8 @@ export const config = async(pushDir: string): Promise<void> => {
 	await execAsync({command: `git -C ${pushDir} config user.email "${email}"`});
 };
 
-const checkDiff = async(pushDir: string): Promise<boolean> => {
+const checkDiff = async(): Promise<boolean> => {
+	const {pushDir} = getParams();
 	return !!(await execAsync({
 		command: `git -C ${pushDir} status --short -uno`,
 		quiet: false,
@@ -187,10 +208,11 @@ const checkDiff = async(pushDir: string): Promise<boolean> => {
 	})).split(/\r\n|\n/).filter(line => line.match(/^[MDA]\s+/)).length;
 };
 
-export const commit = async(pushDir: string): Promise<boolean> => {
+export const commit = async(): Promise<boolean> => {
+	const {pushDir} = getParams();
 	const message = getCommitMessage();
 	await execAsync({command: `git -C ${pushDir} add --all --force`});
-	if (!await checkDiff(pushDir)) {
+	if (!await checkDiff()) {
 		signale.info('There is no diff.');
 		return false;
 	}
@@ -199,7 +221,9 @@ export const commit = async(pushDir: string): Promise<boolean> => {
 	return true;
 };
 
-export const push = async(pushDir: string, tagName: string, branchName: string, context: Context): Promise<void> => {
+export const push = async(context: Context): Promise<void> => {
+	const {pushDir, branchName} = getParams();
+	const tagName = getTagName(context);
 	signale.info('Pushing to %s@%s (tag: %s)', getRepository(context), branchName, tagName);
 
 	const url = getGitUrl(context);
@@ -224,17 +248,8 @@ export const push = async(pushDir: string, tagName: string, branchName: string, 
 	});
 };
 
-const getParams = (context: Context): { workDir: string; buildDir: string; pushDir: string; branchName: string; tagName: string } => {
-	const workDir = path.resolve(getWorkspace(), '.work');
-	const buildDir = path.resolve(workDir, 'build');
-	const pushDir = path.resolve(workDir, 'push');
-	const branchName = getBranchName();
-	const tagName = getTagName(context);
-	return {workDir, buildDir, pushDir, branchName, tagName};
-};
-
 export const updateRelease = async(octokit: GitHub, context: Context): Promise<void> => {
-	const {tagName} = getParams(context);
+	const tagName = getTagName(context);
 	const releases = await octokit.repos.listReleases({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
@@ -252,35 +267,36 @@ export const updateRelease = async(octokit: GitHub, context: Context): Promise<v
 	});
 };
 
-export const copyFiles = async(buildDir: string, pushDir: string): Promise<void> => {
+export const copyFiles = async(): Promise<void> => {
+	const {buildDir, pushDir} = getParams();
 	signale.info('=== Copying %s contents to %s ===', buildDir, pushDir);
 
 	await execAsync({command: `rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`});
 };
 
-export const prepareCommit = async(tagName: string, context: Context): Promise<void> => {
-	const {workDir, buildDir, pushDir, branchName} = getParams(context);
+export const prepareCommit = async(context: Context): Promise<void> => {
+	const {workDir, pushDir} = getParams();
 	await execAsync({command: `rm -rdf ${workDir}`});
 	fs.mkdirSync(pushDir, {recursive: true});
-	await cloneForBranch(pushDir, branchName, context);
-	await checkBranch(pushDir, branchName, await getCurrentBranchName(pushDir));
-	await prepareFiles(buildDir, pushDir, context);
-	await createBuildInfoFile(buildDir, tagName, branchName);
-	await copyFiles(buildDir, pushDir);
+	await cloneForBranch(context);
+	await checkBranch(await getCurrentBranchName());
+	await prepareFiles(context);
+	await createBuildInfoFile(context);
+	await copyFiles();
 };
 
-const executeCommit = async(tagName: string, octokit: GitHub, context: Context): Promise<void> => {
-	const {pushDir, branchName} = getParams(context);
-	await config(pushDir);
-	if (!await commit(pushDir)) {
+const executeCommit = async(octokit: GitHub, context: Context): Promise<void> => {
+	await config();
+	if (!await commit()) {
 		return;
 	}
-	await push(pushDir, tagName, branchName, context);
+	await push(context);
 	await updateRelease(octokit, context);
 };
 
 export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
-	const {branchName, tagName} = getParams(context);
+	const {branchName} = getParams();
+	const tagName = getTagName(context);
 	signale.info('Tag name: %s', tagName);
 
 	if (!isValidTagName(tagName)) {
@@ -290,6 +306,6 @@ export const deploy = async(octokit: GitHub, context: Context): Promise<void> =>
 
 	signale.info('Deploying branch %s to %s', branchName, getRepository(context));
 
-	await prepareCommit(tagName, context);
-	await executeCommit(tagName, octokit, context);
+	await prepareCommit(context);
+	await executeCommit(octokit, context);
 };
