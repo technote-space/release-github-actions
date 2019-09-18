@@ -31,8 +31,6 @@ export const isTargetEventAction = (action: string | any[] | Function, context: 
 
 export const isTargetEvent = (context: Context): boolean => isTargetEventName(TARGET_EVENTS, context) && isTargetEventAction(TARGET_EVENTS[context.eventName], context);
 
-export const isRelease = (context: Context): boolean => 'release' === context.eventName;
-
 export const parseConfig = (content: string): object => yaml.safeLoad(Buffer.from(content, 'base64').toString()) || {};
 
 export const getRepository = (context: Context): string => `${context.repo.owner}/${context.repo.repo}`;
@@ -187,4 +185,4 @@ export const getCreateTags = (tagName: string): string[] => {
 
 export const getWorkspace = (): string => process.env.GITHUB_WORKSPACE || '';
 
-export const getTagName = (context: Context): string => isRelease(context) ? context.payload.release.tag_name : context.ref.replace(/^refs\/tags\//, '');
+export const getTagName = (context: Context): string => context.ref.replace(/^refs\/tags\//, '');

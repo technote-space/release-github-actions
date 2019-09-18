@@ -2,7 +2,6 @@ import path from 'path';
 import { encodeContent, testEnv } from '../util';
 import {
 	isTargetEvent,
-	isRelease,
 	parseConfig,
 	getCommitMessage,
 	getCommitName,
@@ -39,10 +38,8 @@ import { getContext } from '../util';
 describe('isTargetEvent', () => {
 	it('should return true 1', () => {
 		expect(isTargetEvent(getContext({
-			payload: {
-				action: 'published',
-			},
-			eventName: 'release',
+			eventName: 'push',
+			ref: 'refs/tags/test',
 		}))).toBeTruthy();
 	});
 
@@ -51,30 +48,21 @@ describe('isTargetEvent', () => {
 			payload: {
 				action: 'rerequested',
 			},
-			eventName: 'release',
-		}))).toBeTruthy();
-	});
-
-	it('should return true 3', () => {
-		expect(isTargetEvent(getContext({
 			eventName: 'push',
-			ref: 'refs/tags/test',
 		}))).toBeTruthy();
 	});
 
 	it('should return false 1', () => {
 		expect(isTargetEvent(getContext({
-			payload: {
-				action: 'published',
-			},
 			eventName: 'push',
+			ref: 'refs/heads/test',
 		}))).toBeFalsy();
 	});
 
 	it('should return false 2', () => {
 		expect(isTargetEvent(getContext({
 			payload: {
-				action: 'created',
+				action: 'published',
 			},
 			eventName: 'release',
 		}))).toBeFalsy();
@@ -82,22 +70,10 @@ describe('isTargetEvent', () => {
 
 	it('should return false 3', () => {
 		expect(isTargetEvent(getContext({
-			eventName: 'push',
-			ref: 'refs/heads/test',
-		}))).toBeFalsy();
-	});
-});
-
-describe('isRelease', () => {
-	it('should return true', () => {
-		expect(isRelease(getContext({
+			payload: {
+				action: 'created',
+			},
 			eventName: 'release',
-		}))).toBeTruthy();
-	});
-
-	it('should return false', () => {
-		expect(isRelease(getContext({
-			eventName: 'push',
 		}))).toBeFalsy();
 	});
 });
@@ -347,17 +323,6 @@ describe('getRepository', () => {
 });
 
 describe('getTagName', () => {
-	it('should get release tag name', () => {
-		expect(getTagName(getContext({
-			eventName: 'release',
-			payload: {
-				release: {
-					'tag_name': 'test',
-				},
-			},
-		}))).toBe('test');
-	});
-
 	it('should get tag name', () => {
 		expect(getTagName(getContext({
 			eventName: 'push',
