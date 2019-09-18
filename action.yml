@@ -25,7 +25,7 @@ inputs:
     default: 'gh-actions'
   CLEAN_TARGETS:
     description: Files or directories to delete before release. (Comma separated)
-    default: '.github,__tests__,src,.gitignore,*.js,*.json,*.lock,_config.yml'
+    default: '.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml'
   CREATE_MAJOR_VERSION_TAG:
     description: Whether to create major version tag.
     default: true
@@ -34,6 +34,12 @@ inputs:
     default: true
   OUTPUT_BUILD_INFO_FILENAME:
     description: Filename of build information.
+    default: ''
+  FETCH_DEPTH:
+    description: Limit fetching to the specified number of commits from the tip of each remote branch history.
+    default: '3'
+  TEST_TAG_PREFIX:
+    description: Tag name prefix for test
     default: ''
 branding:
   icon: 'tag'

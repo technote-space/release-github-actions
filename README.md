@@ -10,11 +10,11 @@ Once you publish the release, this action will automatically
 1. Run build
 1. Create branch for release
 1. Change [tags](#tags) to release branch
-1. Change release tag
+1. If there is release which has same tag name and has been published, re-publish it (Because if the tag is changed, the release will be in a draft state).
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
+**Table of Contents**
 
 - [Screenshots](#screenshots)
 - [Installation](#installation)
@@ -30,32 +30,33 @@ Once you publish the release, this action will automatically
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
+  - [FETCH_DEPTH](#fetch_depth)
+  - [TEST_TAG_PREFIX](#test_tag_prefix)
 - [Action event details](#action-event-details)
-  - [Target event](#target-event)
-  - [Target action](#target-action)
+  - [Target events](#target-events)
 - [Motivation](#motivation)
 - [Addition](#addition)
   - [tags](#tags)
-- [Sample GitHub Actions](#sample-github-actions)
+- [GitHub Actions using this Action](#github-actions-using-this-action)
 - [Author](#author)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Screenshots
 1. Before publish release  
-   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png" alt="step1" width=500/>
-1. Publish release  
-   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png" alt="step2" width=500/>
+   ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
+1. Publish release (Create tag)  
+   ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
 1. Running GitHub Action  
-   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png" alt="step3" width=500/>
+   ![Running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
 1. After running GitHub Action  
-   <img src="https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png" alt="step4" width=500/>
+   ![After running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
 ## Installation
 1. Setup workflow  
    e.g. `.github/workflows/release.yml`
    ```yaml
-   on: release
+   on: push
    name: Release
    jobs:
      release:
@@ -89,7 +90,7 @@ the following commands are executed.
 yarn install
 yarn build
 yarn install --production
-rm -rdf .github
+rm -rdf .[!.]*
 ...
 rm -rdf _config.yml
 ```
@@ -107,12 +108,12 @@ Commit email.
 default: `'example@example.com'`
 
 ### BRANCH_NAME
-Branch name for GitHub Actions release.  
+Branch name for GitHub Action release.  
 default: `'gh-actions'`
 
 ### CLEAN_TARGETS
 Files or directories to delete before release (Comma separated).  
-default: `.github,__tests__,src,.gitignore,*.js,*.json,*.lock,_config.yml`  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 Absolute path and `..` are not permitted to use.
 
 ### CREATE_MAJOR_VERSION_TAG
@@ -145,15 +146,26 @@ If this setting is not empty, following information is output with the file name
 }
 ```
 
+### FETCH_DEPTH
+Limit fetching to the specified number of commits from the tip of each remote branch history.  
+default: `3`  
+
+### TEST_TAG_PREFIX
+Tag name prefix for test.  
+default: `''`  
+ex. `'test/'`
+
 ## Action event details
-### Target event
-- release
-### Target action
-- published
+### Target events
+- push: *
+  - tags
+    - semantic versioning tag (e.g. `v1.2.3`)
+    - [test tag](#test_tag_prefix) (e.g. `test/v1.2.3`)
+- push: rerequested
 
 ## Motivation
-Release package needs all dependencies like `node_modules`, but usually they are not committed.  
-So if you want to release `GitHub Actions`, you have to do following steps.  
+Release package needs all build files and dependencies like `node_modules`, but are not usually committed.  
+So if you want to release `GitHub Action`, you have to do following steps.  
 1. Develop locally on the branch for develop
 1. Build for release
 1. Commit all source code including dependencies like `node_modules`
@@ -163,9 +175,9 @@ So if you want to release `GitHub Actions`, you have to do following steps.
 
 It is very troublesome to do this steps for every release.  
 
-If you use this `GitHub Action`, the steps to do are simple.
+If you use this `GitHub Action`, the steps to do are simpler.
 1. Develop locally on the branch for develop
-1. Publish release
+1. Publish release (Create tag)
 1. Wait for the automated steps to finish
    1. Build for release
    1. Commit all source code including dependencies like `node_modules`
@@ -175,16 +187,18 @@ If you use this `GitHub Action`, the steps to do are simple.
 ## Addition
 ### tags 
 Tag name format must be [Semantic Versioning](https://semver.org/).  
-The following tags will be created or attached to latest release.
+The following tags will be created.
 - tag name
 - major tag name (generated by tag name)
   - e.g. `v1`
 - minor tag name (generated by tag name)
   - e.g. `v1.2`
 
-## Sample GitHub Actions
+## GitHub Actions using this Action
+- [Release GitHub Actions](https://github.com/technote-space/release-github-actions)
 - [Auto card labeler](https://github.com/technote-space/auto-card-labeler)
 - [Assign Author](https://github.com/technote-space/assign-author)
+- [TOC Generator](https://github.com/technote-space/toc-generator)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  
