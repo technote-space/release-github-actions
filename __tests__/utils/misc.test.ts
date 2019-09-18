@@ -2,6 +2,7 @@ import path from 'path';
 import { encodeContent, testEnv } from '../util';
 import {
 	isTargetEvent,
+	isRelease,
 	parseConfig,
 	getCommitMessage,
 	getCommitName,
@@ -52,6 +53,15 @@ describe('isTargetEvent', () => {
 		}))).toBeTruthy();
 	});
 
+	it('should return true 3', () => {
+		expect(isTargetEvent(getContext({
+			payload: {
+				action: 'published',
+			},
+			eventName: 'release',
+		}))).toBeTruthy();
+	});
+
 	it('should return false 1', () => {
 		expect(isTargetEvent(getContext({
 			eventName: 'push',
@@ -62,18 +72,23 @@ describe('isTargetEvent', () => {
 	it('should return false 2', () => {
 		expect(isTargetEvent(getContext({
 			payload: {
-				action: 'published',
+				action: 'created',
 			},
 			eventName: 'release',
 		}))).toBeFalsy();
 	});
+});
 
-	it('should return false 3', () => {
-		expect(isTargetEvent(getContext({
-			payload: {
-				action: 'created',
-			},
+describe('isRelease', () => {
+	it('should return true', () => {
+		expect(isRelease(getContext({
 			eventName: 'release',
+		}))).toBeTruthy();
+	});
+
+	it('should return false', () => {
+		expect(isRelease(getContext({
+			eventName: 'push',
 		}))).toBeFalsy();
 	});
 });
@@ -327,6 +342,17 @@ describe('getTagName', () => {
 		expect(getTagName(getContext({
 			eventName: 'push',
 			ref: 'refs/tags/test',
+		}))).toBe('test');
+	});
+
+	it('should get release tag name', () => {
+		expect(getTagName(getContext({
+			eventName: 'release',
+			payload: {
+				release: {
+					'tag_name': 'test',
+				},
+			},
 		}))).toBe('test');
 	});
 });
