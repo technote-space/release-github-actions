@@ -5,6 +5,7 @@ global.mockSignale = {
 	log: jest.fn(),
 	process: jest.fn(),
 	command: jest.fn(),
+	warn: jest.fn(),
 };
 jest.mock('signale', () => ({
 	...jest.requireActual('signale'),
@@ -15,6 +16,7 @@ jest.mock('signale', () => ({
 				log: global.mockSignale.log,
 				process: global.mockSignale.process,
 				command: global.mockSignale.command,
+				warn: global.mockSignale.warn,
 			};
 		}
 	},

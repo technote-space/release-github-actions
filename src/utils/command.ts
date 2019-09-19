@@ -57,7 +57,7 @@ export const replaceDirectory = (message: string): string => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const output = (type: 'info' | 'process' | 'command', message: string, ...args: any[]): void => {
+const output = (type: 'info' | 'process' | 'command' | 'warn', message: string, ...args: any[]): void => {
 	signale[type](replaceDirectory(message), ...args);
 };
 
@@ -69,6 +69,12 @@ const note = (message: string, ...args: any[]): void => output('process', `[${me
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const displayCommand = (message: string, ...args: any[]): void => output('command', `  > ${message}`, ...args);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const displayStdout = (message: string, ...args: any[]): void => output('command', `   >> ${message}`, ...args);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const displayStderr = (message: string, ...args: any[]): void => output('warn', `   >> ${message}`, ...args);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const startProcess = (message: string, ...args: any[]): void => {
@@ -103,9 +109,11 @@ export const execCallback = (
 		reject(getRejectedErrorMessage(command, altCommand, quiet, error));
 	} else {
 		if (!quiet && !suppressOutput) {
-			console.log(stdout);
+			if (stdout) {
+				displayStdout(stdout);
+			}
 			if (stderr) {
-				console.error(stderr);
+				displayStderr(stderr);
 			}
 		}
 		resolve(stdout);

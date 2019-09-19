@@ -141,49 +141,53 @@ describe('execCallback', () => {
 	it('should output', () => {
 		const resolve = jest.fn();
 		const reject = jest.fn();
-		const consoleLogMock = jest.spyOn(console, 'log');
-		const consoleErrorMock = jest.spyOn(console, 'error');
+		const commandMock = jest.spyOn(global.mockSignale, 'command');
+		const warnMock = jest.spyOn(global.mockSignale, 'warn');
 
 		const callback = execCallback('test', 'alt', false, false, resolve, reject);
 		callback(null, 'stdout', '');
 		expect(resolve).toBeCalledWith('stdout');
 		expect(reject).not.toBeCalled();
-		expect(consoleLogMock).toBeCalledWith('stdout');
-		expect(consoleErrorMock).not.toBeCalled();
+		expect(commandMock).toBeCalledWith('   >> stdout');
+		expect(warnMock).not.toBeCalled();
 	});
 
 	it('should output error', () => {
 		const resolve = jest.fn();
 		const reject = jest.fn();
-		const consoleLogMock = jest.spyOn(console, 'log');
-		const consoleErrorMock = jest.spyOn(console, 'error');
+		const commandMock = jest.spyOn(global.mockSignale, 'command');
+		const warnMock = jest.spyOn(global.mockSignale, 'warn');
 
 		const callback = execCallback('test', 'alt', false, false, resolve, reject);
 		callback(null, 'stdout', 'stderr');
 		expect(resolve).toBeCalledWith('stdout');
 		expect(reject).not.toBeCalled();
-		expect(consoleLogMock).toBeCalledWith('stdout');
-		expect(consoleErrorMock).toBeCalledWith('stderr');
+		expect(commandMock).toBeCalledWith('   >> stdout');
+		expect(warnMock).toBeCalledWith('   >> stderr');
 	});
 });
 
 describe('execAsync', () => {
 	it('should show run command', async() => {
-		const infoCount = global.mockSignale.command.mock.calls.length;
+		const commandMock = jest.spyOn(global.mockSignale, 'command');
 		await execAsync({command: 'test'});
-		expect(global.mockSignale.command.mock.calls.length).toBe(infoCount + 1);
+		expect(commandMock).toBeCalledTimes(2);
+		expect(commandMock.mock.calls[0][0]).toBe('  > test');
+		expect(commandMock.mock.calls[1][0]).toBe('   >> stdout');
 	});
 
 	it('should show run alt command', async() => {
-		const infoCount = global.mockSignale.command.mock.calls.length;
+		const commandMock = jest.spyOn(global.mockSignale, 'command');
 		await execAsync({command: 'test', altCommand: 'alt'});
-		expect(global.mockSignale.command.mock.calls.length).toBe(infoCount + 1);
+		expect(commandMock).toBeCalledTimes(2);
+		expect(commandMock.mock.calls[0][0]).toBe('  > alt');
+		expect(commandMock.mock.calls[1][0]).toBe('   >> stdout');
 	});
 
 	it('should not show run command', async() => {
-		const infoCount = global.mockSignale.command.mock.calls.length;
+		const commandMock = jest.spyOn(global.mockSignale, 'command');
 		await execAsync({command: 'test', quiet: true});
-		expect(global.mockSignale.command.mock.calls.length).toBe(infoCount);
+		expect(commandMock).not.toBeCalled();
 	});
 });
 
@@ -397,24 +401,26 @@ describe('commit', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		global.mockChildProcess.stdout = '';
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
-		const consoleLogMock = jest.spyOn(console, 'log');
+		const commandMock = jest.spyOn(global.mockSignale, 'command');
 
-		await commit();
+		expect(await commit()).toBeFalsy();
 
 		const dir = path.resolve('test-dir/.work/push');
 		expect(execMock).toBeCalledTimes(2);
 		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} add --all --force`);
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} status --short -uno`);
-		expect(consoleLogMock).toBeCalledTimes(1);
+		expect(commandMock).toBeCalledTimes(2);
+		expect(commandMock.mock.calls[0][0]).toBe('  > git -C <Push Directory> add --all --force');
+		expect(commandMock.mock.calls[1][0]).toBe('  > git -C <Push Directory> status --short -uno');
 	});
 
 	it('should return true', async() => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		global.mockChildProcess.stdout = 'A test.txt';
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
-		const consoleLogMock = jest.spyOn(console, 'log');
+		const commandMock = jest.spyOn(global.mockSignale, 'command');
 
-		await commit();
+		expect(await commit()).toBeTruthy();
 
 		const dir = path.resolve('test-dir/.work/push');
 		expect(execMock).toBeCalledTimes(4);
@@ -422,7 +428,14 @@ describe('commit', () => {
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} status --short -uno`);
 		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} commit -qm "feat: Build for release"`);
 		expect(execMock.mock.calls[3][0]).toBe(`git -C ${dir} show --stat-count=10 HEAD`);
-		expect(consoleLogMock).toBeCalledTimes(3);
+		expect(commandMock).toBeCalledTimes(7);
+		expect(commandMock.mock.calls[0][0]).toBe('  > git -C <Push Directory> add --all --force');
+		expect(commandMock.mock.calls[1][0]).toBe('   >> A test.txt');
+		expect(commandMock.mock.calls[2][0]).toBe('  > git -C <Push Directory> status --short -uno');
+		expect(commandMock.mock.calls[3][0]).toBe('  > git -C <Push Directory> commit -qm "feat: Build for release"');
+		expect(commandMock.mock.calls[4][0]).toBe('   >> A test.txt');
+		expect(commandMock.mock.calls[5][0]).toBe('  > git -C <Push Directory> show --stat-count=10 HEAD');
+		expect(commandMock.mock.calls[6][0]).toBe('   >> A test.txt');
 	});
 });
 
@@ -474,17 +487,18 @@ describe('push', () => {
 		}));
 
 		const dir = path.resolve('test-dir/.work/push');
-		expect(execMock).toBeCalledTimes(11);
-		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} tag original/v1.2.3 v1.2.3`);
-		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} push "https://test-token@github.com/Hello/World.git" "refs/tags/original/v1.2.3" > /dev/null 2>&1`);
-		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} push --delete "https://test-token@github.com/Hello/World.git" tag v1.2.3 > /dev/null 2>&1 || :`);
-		expect(execMock.mock.calls[3][0]).toBe(`git -C ${dir} push --delete "https://test-token@github.com/Hello/World.git" tag v1 > /dev/null 2>&1 || :`);
-		expect(execMock.mock.calls[4][0]).toBe(`git -C ${dir} push --delete "https://test-token@github.com/Hello/World.git" tag v1.2 > /dev/null 2>&1 || :`);
-		expect(execMock.mock.calls[5][0]).toBe(`git -C ${dir} tag -l | xargs git -C ${dir} tag -d`);
-		expect(execMock.mock.calls[6][0]).toBe(`git -C ${dir} fetch "https://test-token@github.com/Hello/World.git" --tags > /dev/null 2>&1`);
-		expect(execMock.mock.calls[7][0]).toBe(`git -C ${dir} tag v1.2.3`);
-		expect(execMock.mock.calls[8][0]).toBe(`git -C ${dir} tag v1`);
-		expect(execMock.mock.calls[9][0]).toBe(`git -C ${dir} tag v1.2`);
-		expect(execMock.mock.calls[10][0]).toBe(`git -C ${dir} push --tags "https://test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1`);
+		expect(execMock).toBeCalledTimes(12);
+		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} fetch "https://test-token@github.com/Hello/World.git" --tags > /dev/null 2>&1`);
+		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} tag original/v1.2.3 v1.2.3`);
+		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} push "https://test-token@github.com/Hello/World.git" "refs/tags/original/v1.2.3" > /dev/null 2>&1`);
+		expect(execMock.mock.calls[3][0]).toBe(`git -C ${dir} push --delete "https://test-token@github.com/Hello/World.git" tag v1.2.3 > /dev/null 2>&1 || :`);
+		expect(execMock.mock.calls[4][0]).toBe(`git -C ${dir} push --delete "https://test-token@github.com/Hello/World.git" tag v1 > /dev/null 2>&1 || :`);
+		expect(execMock.mock.calls[5][0]).toBe(`git -C ${dir} push --delete "https://test-token@github.com/Hello/World.git" tag v1.2 > /dev/null 2>&1 || :`);
+		expect(execMock.mock.calls[6][0]).toBe(`git -C ${dir} tag -l | xargs git -C ${dir} tag -d`);
+		expect(execMock.mock.calls[7][0]).toBe(`git -C ${dir} fetch "https://test-token@github.com/Hello/World.git" --tags > /dev/null 2>&1`);
+		expect(execMock.mock.calls[8][0]).toBe(`git -C ${dir} tag v1.2.3`);
+		expect(execMock.mock.calls[9][0]).toBe(`git -C ${dir} tag v1`);
+		expect(execMock.mock.calls[10][0]).toBe(`git -C ${dir} tag v1.2`);
+		expect(execMock.mock.calls[11][0]).toBe(`git -C ${dir} push --tags "https://test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1`);
 	});
 });
