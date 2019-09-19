@@ -148,7 +148,7 @@ describe('execCallback', () => {
 		callback(null, 'stdout', '');
 		expect(resolve).toBeCalledWith('stdout');
 		expect(reject).not.toBeCalled();
-		expect(commandMock).toBeCalledWith('   >> stdout');
+		expect(commandMock).toBeCalledWith('    >> stdout');
 		expect(warnMock).not.toBeCalled();
 	});
 
@@ -162,8 +162,8 @@ describe('execCallback', () => {
 		callback(null, 'stdout', 'stderr');
 		expect(resolve).toBeCalledWith('stdout');
 		expect(reject).not.toBeCalled();
-		expect(commandMock).toBeCalledWith('   >> stdout');
-		expect(warnMock).toBeCalledWith('   >> stderr');
+		expect(commandMock).toBeCalledWith('    >> stdout');
+		expect(warnMock).toBeCalledWith('    >> stderr');
 	});
 });
 
@@ -173,7 +173,7 @@ describe('execAsync', () => {
 		await execAsync({command: 'test'});
 		expect(commandMock).toBeCalledTimes(2);
 		expect(commandMock.mock.calls[0][0]).toBe('  > test');
-		expect(commandMock.mock.calls[1][0]).toBe('   >> stdout');
+		expect(commandMock.mock.calls[1][0]).toBe('    >> stdout');
 	});
 
 	it('should show run alt command', async() => {
@@ -181,7 +181,7 @@ describe('execAsync', () => {
 		await execAsync({command: 'test', altCommand: 'alt'});
 		expect(commandMock).toBeCalledTimes(2);
 		expect(commandMock.mock.calls[0][0]).toBe('  > alt');
-		expect(commandMock.mock.calls[1][0]).toBe('   >> stdout');
+		expect(commandMock.mock.calls[1][0]).toBe('    >> stdout');
 	});
 
 	it('should not show run command', async() => {
@@ -430,12 +430,12 @@ describe('commit', () => {
 		expect(execMock.mock.calls[3][0]).toBe(`git -C ${dir} show --stat-count=10 HEAD`);
 		expect(commandMock).toBeCalledTimes(7);
 		expect(commandMock.mock.calls[0][0]).toBe('  > git -C <Push Directory> add --all --force');
-		expect(commandMock.mock.calls[1][0]).toBe('   >> A test.txt');
+		expect(commandMock.mock.calls[1][0]).toBe('    >> A test.txt');
 		expect(commandMock.mock.calls[2][0]).toBe('  > git -C <Push Directory> status --short -uno');
 		expect(commandMock.mock.calls[3][0]).toBe('  > git -C <Push Directory> commit -qm "feat: Build for release"');
-		expect(commandMock.mock.calls[4][0]).toBe('   >> A test.txt');
+		expect(commandMock.mock.calls[4][0]).toBe('    >> A test.txt');
 		expect(commandMock.mock.calls[5][0]).toBe('  > git -C <Push Directory> show --stat-count=10 HEAD');
-		expect(commandMock.mock.calls[6][0]).toBe('   >> A test.txt');
+		expect(commandMock.mock.calls[6][0]).toBe('    >> A test.txt');
 	});
 });
 
