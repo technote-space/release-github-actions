@@ -58,7 +58,7 @@ export const replaceDirectory = (message: string): string => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const output = (type: 'info' | 'process' | 'command' | 'warn', message: string, ...args: any[]): void => {
-	signale[type](replaceDirectory(message), ...args);
+	signale[type](replaceDirectory(message), ...args.map(arg => replaceDirectory(arg)));
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,10 +71,10 @@ const note = (message: string, ...args: any[]): void => output('process', `[${me
 const displayCommand = (message: string, ...args: any[]): void => output('command', `  > ${message}`, ...args);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const displayStdout = (message: string, ...args: any[]): void => output('command', `   >> ${message}`, ...args);
+const displayStdout = (message: string): void => message.split(/\r?\n/).forEach(like => output('command', `   >> ${like}`));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const displayStderr = (message: string, ...args: any[]): void => output('warn', `   >> ${message}`, ...args);
+const displayStderr = (message: string): void => message.split(/\r?\n/).forEach(like => output('warn', `   >> ${like}`));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const startProcess = (message: string, ...args: any[]): void => {
