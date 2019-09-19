@@ -39,21 +39,21 @@ describe('replaceDirectory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const buildDir = path.resolve('test-dir/.work/build');
 
-		expect(replaceDirectory(`git -C ${buildDir} fetch`)).toBe('git -C <Build Directory> fetch');
+		expect(replaceDirectory(`git -C ${buildDir} fetch`)).toBe('git fetch');
 	});
 
 	it('should replace build directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const pushDir = path.resolve('test-dir/.work/push');
 
-		expect(replaceDirectory(`git -C ${pushDir} fetch`)).toBe('git -C <Push Directory> fetch');
+		expect(replaceDirectory(`git -C ${pushDir} fetch`)).toBe('git fetch');
 	});
 
 	it('should replace working directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const workDir = path.resolve('test-dir/.work');
 
-		expect(replaceDirectory(`git -C ${workDir} fetch`)).toBe('git -C <Working Directory> fetch');
+		expect(replaceDirectory(`git -C ${workDir} fetch`)).toBe('git fetch');
 	});
 
 	it('should replace directories', () => {
@@ -448,8 +448,8 @@ describe('commit', () => {
 		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} add --all --force`);
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} status --short -uno`);
 		expect(commandMock).toBeCalledTimes(2);
-		expect(commandMock.mock.calls[0][0]).toBe('  > git -C <Push Directory> add --all --force');
-		expect(commandMock.mock.calls[1][0]).toBe('  > git -C <Push Directory> status --short -uno');
+		expect(commandMock.mock.calls[0][0]).toBe('  > git add --all --force');
+		expect(commandMock.mock.calls[1][0]).toBe('  > git status --short -uno');
 	});
 
 	it('should return true', async() => {
@@ -467,12 +467,12 @@ describe('commit', () => {
 		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} commit -qm "feat: Build for release"`);
 		expect(execMock.mock.calls[3][0]).toBe(`git -C ${dir} show --stat-count=10 HEAD`);
 		expect(commandMock).toBeCalledTimes(7);
-		expect(commandMock.mock.calls[0][0]).toBe('  > git -C <Push Directory> add --all --force');
+		expect(commandMock.mock.calls[0][0]).toBe('  > git add --all --force');
 		expect(commandMock.mock.calls[1][0]).toBe('    >> A test.txt');
-		expect(commandMock.mock.calls[2][0]).toBe('  > git -C <Push Directory> status --short -uno');
-		expect(commandMock.mock.calls[3][0]).toBe('  > git -C <Push Directory> commit -qm "feat: Build for release"');
+		expect(commandMock.mock.calls[2][0]).toBe('  > git status --short -uno');
+		expect(commandMock.mock.calls[3][0]).toBe('  > git commit -qm "feat: Build for release"');
 		expect(commandMock.mock.calls[4][0]).toBe('    >> A test.txt');
-		expect(commandMock.mock.calls[5][0]).toBe('  > git -C <Push Directory> show --stat-count=10 HEAD');
+		expect(commandMock.mock.calls[5][0]).toBe('  > git show --stat-count=10 HEAD');
 		expect(commandMock.mock.calls[6][0]).toBe('    >> A test.txt');
 	});
 });

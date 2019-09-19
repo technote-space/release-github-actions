@@ -45,7 +45,7 @@ const signale = new Signale({
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
-	return Object.keys(directories).reduce((value, directory) => value.replace(directory, directories[directory]), message);
+	return Object.keys(directories).reduce((value, directory) => value.replace(` -C ${directory}`, '').replace(directory, directories[directory]), message);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -144,7 +144,7 @@ const cloneForBuild = async(context: Context): Promise<void> => {
 	await execAsync({command: `git -C ${buildDir} clone --depth=${depth} ${url} .`, quiet: true, altCommand: `git clone --depth=${depth}`});
 	await execAsync({command: `git -C ${buildDir} fetch "${url}" ${context.ref}`, quiet: true, altCommand: `git fetch origin ${context.ref}`});
 	if (context.sha) {
-	await execAsync({command: `git -C ${buildDir} checkout -qf ${context.sha}`});
+		await execAsync({command: `git -C ${buildDir} checkout -qf ${context.sha}`});
 	}
 };
 
