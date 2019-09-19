@@ -32,6 +32,7 @@ Once you publish the release, this action will automatically
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
+  - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [Action event details](#action-event-details)
   - [Target events](#target-events)
 - [Motivation](#motivation)
