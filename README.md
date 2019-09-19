@@ -154,12 +154,12 @@ default: `3`
 ### TEST_TAG_PREFIX
 Prefix for test tag.  
 default: `''`  
-ex. `'test/'`
+e.g. `'test/'`
 
 ### ORIGINAL_TAG_PREFIX
 Prefix to add when leaving the original tag.  
 default: `''`  
-ex. `'original/'`
+e.g. `'original/'`
 
 ## Action event details
 ### Target events
