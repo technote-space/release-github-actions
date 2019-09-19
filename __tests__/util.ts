@@ -2,8 +2,6 @@ import { Context } from '@actions/github/lib/context';
 import fs from 'fs';
 import path from 'path';
 
-export const encodeContent = (content: string): string => Buffer.from(content).toString('base64');
-
 export const testEnv = (): void => {
 	const OLD_ENV = process.env;
 
