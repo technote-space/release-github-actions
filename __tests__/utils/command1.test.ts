@@ -284,13 +284,13 @@ describe('prepareFiles', () => {
 		const dir = path.resolve('test-dir/.work/build');
 		expect(execMock).toBeCalledTimes(12);
 		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} clone --depth=3 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1`);
-		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} fetch "https://test-token@github.com/Hello/World.git" refs/heads/test > /dev/null 2>&1`);
+		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} fetch --depth=3 https://test-token@github.com/Hello/World.git refs/heads/test > /dev/null 2>&1`);
 		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} checkout -qf test-sha`);
 
 		commonCheck(dir, execMock);
 	});
 
-	it('should skip checkout command', async() => {
+	it('should checkout branch', async() => {
 		process.env.INPUT_ACCESS_TOKEN = 'test-token';
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
@@ -306,8 +306,30 @@ describe('prepareFiles', () => {
 		const dir = path.resolve('test-dir/.work/build');
 		expect(execMock).toBeCalledTimes(12);
 		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} clone --depth=3 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1`);
-		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} fetch "https://test-token@github.com/Hello/World.git" refs/heads/test > /dev/null 2>&1`);
-		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} checkout -qf refs/heads/test`);
+		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} fetch --depth=3 https://test-token@github.com/Hello/World.git refs/heads/test > /dev/null 2>&1`);
+		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} checkout -qf test`);
+
+		commonCheck(dir, execMock);
+	});
+
+	it('should checkout tag', async() => {
+		process.env.INPUT_ACCESS_TOKEN = 'test-token';
+		process.env.GITHUB_WORKSPACE = 'test-dir';
+		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
+
+		await prepareFiles(getContext({
+			repo: {
+				owner: 'Hello',
+				repo: 'World',
+			},
+			ref: 'refs/tags/test',
+		}));
+
+		const dir = path.resolve('test-dir/.work/build');
+		expect(execMock).toBeCalledTimes(12);
+		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} clone --depth=3 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1`);
+		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} fetch --depth=3 https://test-token@github.com/Hello/World.git refs/tags/test > /dev/null 2>&1`);
+		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} checkout -qf refs/tags/test`);
 
 		commonCheck(dir, execMock);
 	});
