@@ -143,7 +143,9 @@ const cloneForBuild = async(context: Context): Promise<void> => {
 	const depth = getFetchDepth();
 	await execAsync({command: `git -C ${buildDir} clone --depth=${depth} ${url} .`, quiet: true, altCommand: `git clone --depth=${depth}`});
 	await execAsync({command: `git -C ${buildDir} fetch "${url}" ${context.ref}`, quiet: true, altCommand: `git fetch origin ${context.ref}`});
+	if (context.sha) {
 	await execAsync({command: `git -C ${buildDir} checkout -qf ${context.sha}`});
+	}
 };
 
 const runBuild = async(buildDir: string): Promise<void> => {
