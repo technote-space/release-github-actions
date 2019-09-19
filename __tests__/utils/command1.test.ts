@@ -39,21 +39,21 @@ describe('replaceDirectory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const buildDir = path.resolve('test-dir/.work/build');
 
-		expect(replaceDirectory(`git -C ${buildDir} fetch`)).toBe('git -C [Build Directory] fetch');
+		expect(replaceDirectory(`git -C ${buildDir} fetch`)).toBe('git -C <Build Directory> fetch');
 	});
 
 	it('should replace build directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const pushDir = path.resolve('test-dir/.work/push');
 
-		expect(replaceDirectory(`git -C ${pushDir} fetch`)).toBe('git -C [Push Directory] fetch');
+		expect(replaceDirectory(`git -C ${pushDir} fetch`)).toBe('git -C <Push Directory> fetch');
 	});
 
 	it('should replace working directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const workDir = path.resolve('test-dir/.work');
 
-		expect(replaceDirectory(`git -C ${workDir} fetch`)).toBe('git -C [Working Directory] fetch');
+		expect(replaceDirectory(`git -C ${workDir} fetch`)).toBe('git -C <Working Directory> fetch');
 	});
 
 	it('should replace directories', () => {
@@ -62,7 +62,7 @@ describe('replaceDirectory', () => {
 		const buildDir = path.resolve('test-dir/.work/build');
 		const pushDir = path.resolve('test-dir/.work/push');
 
-		expect(replaceDirectory(`abc ${buildDir} && pqr ${workDir}/xyz ${pushDir}/123`)).toBe('abc [Build Directory] && pqr [Working Directory]/xyz [Push Directory]/123');
+		expect(replaceDirectory(`abc ${buildDir} && pqr ${workDir}/xyz ${pushDir}/123`)).toBe('abc <Build Directory> && pqr <Working Directory>/xyz <Push Directory>/123');
 	});
 });
 

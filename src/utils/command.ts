@@ -53,7 +53,7 @@ const getParams = (): { workDir: string; buildDir: string; pushDir: string; bran
 
 export const replaceDirectory = (message: string): string => {
 	const {workDir, buildDir, pushDir} = getParams();
-	return message.replace(buildDir, '[Build Directory]').replace(pushDir, '[Push Directory]').replace(workDir, '[Working Directory]');
+	return message.replace(buildDir, '<Build Directory>').replace(pushDir, '<Push Directory>').replace(workDir, '<Working Directory>');
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
