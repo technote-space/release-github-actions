@@ -14,6 +14,7 @@ import {
 	DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
 	DEFAULT_FETCH_DEPTH,
 	DEFAULT_TEST_TAG_PREFIX,
+	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
 export const isTargetEventName = (events: object, context: Context): boolean => context.eventName in events;
@@ -123,6 +124,8 @@ const getTestTagPrefixRegExp = (): RegExp => new RegExp('^' + escapeRegExp(getTe
 export const isTestTag = (tagName: string): boolean => !!getTestTagPrefix() && getTestTagPrefixRegExp().test(tagName);
 
 export const getTestTag = (tagName: string): string => tagName.replace(getTestTagPrefixRegExp(), '');
+
+export const getOriginalTagPrefix = (): string => getInput('ORIGINAL_TAG_PREFIX') || DEFAULT_ORIGINAL_TAG_PREFIX;
 
 const getBoolValue = (input: string): boolean => !['false', '0'].includes(input.trim().toLowerCase());
 

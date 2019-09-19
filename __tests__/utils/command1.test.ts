@@ -456,4 +456,35 @@ describe('push', () => {
 		expect(execMock.mock.calls[7][0]).toBe(`git -C ${dir} tag v1.2`);
 		expect(execMock.mock.calls[8][0]).toBe(`git -C ${dir} push --tags "https://test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1`);
 	});
+
+	it('should run git push command with pushing original tag', async() => {
+		process.env.INPUT_ACCESS_TOKEN = 'test-token';
+		process.env.GITHUB_WORKSPACE = 'test-dir';
+		process.env.INPUT_BRANCH_NAME = 'test-branch';
+		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
+		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
+
+		await push(getContext({
+			eventName: 'push',
+			ref: 'refs/tags/v1.2.3',
+			repo: {
+				owner: 'Hello',
+				repo: 'World',
+			},
+		}));
+
+		const dir = path.resolve('test-dir/.work/push');
+		expect(execMock).toBeCalledTimes(11);
+		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} tag original/v1.2.3 v1.2.3`);
+		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} push "https://test-token@github.com/Hello/World.git" "refs/tags/original/v1.2.3" > /dev/null 2>&1`);
+		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} push --delete "https://test-token@github.com/Hello/World.git" tag v1.2.3 > /dev/null 2>&1 || :`);
+		expect(execMock.mock.calls[3][0]).toBe(`git -C ${dir} push --delete "https://test-token@github.com/Hello/World.git" tag v1 > /dev/null 2>&1 || :`);
+		expect(execMock.mock.calls[4][0]).toBe(`git -C ${dir} push --delete "https://test-token@github.com/Hello/World.git" tag v1.2 > /dev/null 2>&1 || :`);
+		expect(execMock.mock.calls[5][0]).toBe(`git -C ${dir} tag -l | xargs git -C ${dir} tag -d`);
+		expect(execMock.mock.calls[6][0]).toBe(`git -C ${dir} fetch "https://test-token@github.com/Hello/World.git" --tags > /dev/null 2>&1`);
+		expect(execMock.mock.calls[7][0]).toBe(`git -C ${dir} tag v1.2.3`);
+		expect(execMock.mock.calls[8][0]).toBe(`git -C ${dir} tag v1`);
+		expect(execMock.mock.calls[9][0]).toBe(`git -C ${dir} tag v1.2`);
+		expect(execMock.mock.calls[10][0]).toBe(`git -C ${dir} push --tags "https://test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1`);
+	});
 });
