@@ -11,16 +11,16 @@ import {
 	getGitUrl,
 	getRepository,
 	getBuildCommands,
-	getWorkspace,
 	getCommitMessage,
 	getCommitName,
 	getCommitEmail,
-	getBranchName,
 	getCreateTags,
 	getOriginalTagPrefix,
 	getOutputBuildInfoFilename,
 	getFetchDepth,
 	getTagName,
+	getParams,
+	getReplaceDirectory,
 } from './misc';
 
 const signale = new Signale({
@@ -43,17 +43,9 @@ const signale = new Signale({
 	},
 });
 
-const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
-	const workDir = path.resolve(getWorkspace(), '.work');
-	const buildDir = path.resolve(workDir, 'build');
-	const pushDir = path.resolve(workDir, 'push');
-	const branchName = getBranchName();
-	return {workDir, buildDir, pushDir, branchName};
-};
-
 export const replaceDirectory = (message: string): string => {
-	const {workDir, buildDir, pushDir} = getParams();
-	return message.replace(buildDir, '<Build Directory>').replace(pushDir, '<Push Directory>').replace(workDir, '<Working Directory>');
+	const directories = getReplaceDirectory();
+	return Object.keys(directories).reduce((value, directory) => value.replace(directory, directories[directory]), message);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

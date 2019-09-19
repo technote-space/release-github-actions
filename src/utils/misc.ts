@@ -191,3 +191,20 @@ export const getCreateTags = (tagName: string): string[] => {
 export const getWorkspace = (): string => process.env.GITHUB_WORKSPACE || '';
 
 export const getTagName = (context: Context): string => isRelease(context) ? context.payload.release.tag_name : context.ref.replace(/^refs\/tags\//, '');
+
+export const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
+	const workDir = path.resolve(getWorkspace(), '.work');
+	const buildDir = path.resolve(workDir, 'build');
+	const pushDir = path.resolve(workDir, 'push');
+	const branchName = getBranchName();
+	return {workDir, buildDir, pushDir, branchName};
+};
+
+export const getReplaceDirectory = (): object => {
+	const {workDir, buildDir, pushDir} = getParams();
+	return {
+		[buildDir]: '<Build Directory>',
+		[pushDir]: '<Push Directory>',
+		[workDir]: '<Working Directory>',
+	};
+};
