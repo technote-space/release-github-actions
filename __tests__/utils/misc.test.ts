@@ -1,9 +1,8 @@
 import path from 'path';
-import { encodeContent, testEnv } from '../util';
+import { testEnv } from '../util';
 import {
 	isTargetEvent,
 	isRelease,
-	parseConfig,
 	getCommitMessage,
 	getCommitName,
 	getCommitEmail,
@@ -90,14 +89,6 @@ describe('isRelease', () => {
 		expect(isRelease(getContext({
 			eventName: 'push',
 		}))).toBeFalsy();
-	});
-});
-
-describe('parseConfig', () => {
-	it('should parse config', () => {
-		expect(parseConfig(encodeContent(''))).toEqual({});
-		expect(parseConfig(encodeContent('a: b'))).toEqual({a: 'b'});
-		expect(parseConfig(encodeContent('a:\n  - b\n  - c'))).toEqual({a: ['b', 'c']});
 	});
 });
 

@@ -39,21 +39,21 @@ describe('replaceDirectory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const buildDir = path.resolve('test-dir/.work/build');
 
-		expect(replaceDirectory(`git -C ${buildDir} fetch`)).toBe('git -C <Build Directory> fetch');
+		expect(replaceDirectory(`git -C ${buildDir} fetch`)).toBe('git fetch');
 	});
 
 	it('should replace build directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const pushDir = path.resolve('test-dir/.work/push');
 
-		expect(replaceDirectory(`git -C ${pushDir} fetch`)).toBe('git -C <Push Directory> fetch');
+		expect(replaceDirectory(`git -C ${pushDir} fetch`)).toBe('git fetch');
 	});
 
 	it('should replace working directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const workDir = path.resolve('test-dir/.work');
 
-		expect(replaceDirectory(`git -C ${workDir} fetch`)).toBe('git -C <Working Directory> fetch');
+		expect(replaceDirectory(`git -C ${workDir} fetch`)).toBe('git fetch');
 	});
 
 	it('should replace directories', () => {
@@ -246,6 +246,27 @@ describe('checkBranch', () => {
 describe('prepareFiles', () => {
 	testEnv();
 
+	const commonCheck = (start: number, dir: string, execMock): void => {
+		expect(execMock.mock.calls[start][0]).toBe('yarn install --production');
+		expect(execMock.mock.calls[start][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[start + 1][0]).toBe('rm -rdf .[!.]*');
+		expect(execMock.mock.calls[start + 1][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[start + 2][0]).toBe('rm -rdf __tests__');
+		expect(execMock.mock.calls[start + 2][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[start + 3][0]).toBe('rm -rdf src');
+		expect(execMock.mock.calls[start + 3][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[start + 4][0]).toBe('rm -rdf *.js');
+		expect(execMock.mock.calls[start + 4][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[start + 5][0]).toBe('rm -rdf *.ts');
+		expect(execMock.mock.calls[start + 5][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[start + 6][0]).toBe('rm -rdf *.json');
+		expect(execMock.mock.calls[start + 6][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[start + 7][0]).toBe('rm -rdf *.lock');
+		expect(execMock.mock.calls[start + 7][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[start + 8][0]).toBe('rm -rdf _config.yml');
+		expect(execMock.mock.calls[start + 8][1]).toEqual({cwd: dir});
+	};
+
 	it('should run commands', async() => {
 		process.env.INPUT_ACCESS_TOKEN = 'test-token';
 		process.env.GITHUB_WORKSPACE = 'test-dir';
@@ -263,27 +284,52 @@ describe('prepareFiles', () => {
 		const dir = path.resolve('test-dir/.work/build');
 		expect(execMock).toBeCalledTimes(12);
 		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} clone --depth=3 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1`);
-		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} fetch "https://test-token@github.com/Hello/World.git" refs/heads/test > /dev/null 2>&1`);
+		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} fetch https://test-token@github.com/Hello/World.git refs/heads/test > /dev/null 2>&1`);
 		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} checkout -qf test-sha`);
 
-		expect(execMock.mock.calls[3][0]).toBe('yarn install --production');
-		expect(execMock.mock.calls[3][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[4][0]).toBe('rm -rdf .[!.]*');
-		expect(execMock.mock.calls[4][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[5][0]).toBe('rm -rdf __tests__');
-		expect(execMock.mock.calls[5][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[6][0]).toBe('rm -rdf src');
-		expect(execMock.mock.calls[6][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[7][0]).toBe('rm -rdf *.js');
-		expect(execMock.mock.calls[7][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[8][0]).toBe('rm -rdf *.ts');
-		expect(execMock.mock.calls[8][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[9][0]).toBe('rm -rdf *.json');
-		expect(execMock.mock.calls[9][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[10][0]).toBe('rm -rdf *.lock');
-		expect(execMock.mock.calls[10][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[11][0]).toBe('rm -rdf _config.yml');
-		expect(execMock.mock.calls[11][1]).toEqual({cwd: dir});
+		commonCheck(3, dir, execMock);
+	});
+
+	it('should checkout branch', async() => {
+		process.env.INPUT_ACCESS_TOKEN = 'test-token';
+		process.env.GITHUB_WORKSPACE = 'test-dir';
+		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
+
+		await prepareFiles(getContext({
+			repo: {
+				owner: 'Hello',
+				repo: 'World',
+			},
+			ref: 'refs/heads/test',
+		}));
+
+		const dir = path.resolve('test-dir/.work/build');
+		expect(execMock).toBeCalledTimes(11);
+		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} clone https://test-token@github.com/Hello/World.git . > /dev/null 2>&1`);
+		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} checkout -qf test`);
+
+		commonCheck(2, dir, execMock);
+	});
+
+	it('should checkout tag', async() => {
+		process.env.INPUT_ACCESS_TOKEN = 'test-token';
+		process.env.GITHUB_WORKSPACE = 'test-dir';
+		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
+
+		await prepareFiles(getContext({
+			repo: {
+				owner: 'Hello',
+				repo: 'World',
+			},
+			ref: 'refs/tags/test',
+		}));
+
+		const dir = path.resolve('test-dir/.work/build');
+		expect(execMock).toBeCalledTimes(11);
+		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} clone https://test-token@github.com/Hello/World.git . > /dev/null 2>&1`);
+		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} checkout -qf refs/tags/test`);
+
+		commonCheck(2, dir, execMock);
 	});
 });
 
@@ -410,8 +456,8 @@ describe('commit', () => {
 		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} add --all --force`);
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} status --short -uno`);
 		expect(commandMock).toBeCalledTimes(2);
-		expect(commandMock.mock.calls[0][0]).toBe('  > git -C <Push Directory> add --all --force');
-		expect(commandMock.mock.calls[1][0]).toBe('  > git -C <Push Directory> status --short -uno');
+		expect(commandMock.mock.calls[0][0]).toBe('  > git add --all --force');
+		expect(commandMock.mock.calls[1][0]).toBe('  > git status --short -uno');
 	});
 
 	it('should return true', async() => {
@@ -429,12 +475,12 @@ describe('commit', () => {
 		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} commit -qm "feat: Build for release"`);
 		expect(execMock.mock.calls[3][0]).toBe(`git -C ${dir} show --stat-count=10 HEAD`);
 		expect(commandMock).toBeCalledTimes(7);
-		expect(commandMock.mock.calls[0][0]).toBe('  > git -C <Push Directory> add --all --force');
+		expect(commandMock.mock.calls[0][0]).toBe('  > git add --all --force');
 		expect(commandMock.mock.calls[1][0]).toBe('    >> A test.txt');
-		expect(commandMock.mock.calls[2][0]).toBe('  > git -C <Push Directory> status --short -uno');
-		expect(commandMock.mock.calls[3][0]).toBe('  > git -C <Push Directory> commit -qm "feat: Build for release"');
+		expect(commandMock.mock.calls[2][0]).toBe('  > git status --short -uno');
+		expect(commandMock.mock.calls[3][0]).toBe('  > git commit -qm "feat: Build for release"');
 		expect(commandMock.mock.calls[4][0]).toBe('    >> A test.txt');
-		expect(commandMock.mock.calls[5][0]).toBe('  > git -C <Push Directory> show --stat-count=10 HEAD');
+		expect(commandMock.mock.calls[5][0]).toBe('  > git show --stat-count=10 HEAD');
 		expect(commandMock.mock.calls[6][0]).toBe('    >> A test.txt');
 	});
 });
