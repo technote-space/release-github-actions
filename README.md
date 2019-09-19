@@ -32,6 +32,7 @@ Once you publish the release, this action will automatically
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
+  - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [Action event details](#action-event-details)
   - [Target events](#target-events)
 - [Motivation](#motivation)
@@ -73,7 +74,7 @@ Once you publish the release, this action will automatically
 ## Required parameter
 ### ACCESS_TOKEN
 1. Generate a [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with the public_repo or repo scope.
-(repo is required for private repositories).  
+(repo is required for private repositories.)  
 1. [Save as secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
 
 ## Options
@@ -151,9 +152,14 @@ Limit fetching to the specified number of commits from the tip of each remote br
 default: `3`  
 
 ### TEST_TAG_PREFIX
-Tag name prefix for test.  
+Prefix for test tag.  
 default: `''`  
 ex. `'test/'`
+
+### ORIGINAL_TAG_PREFIX
+Prefix to add when leaving the original tag.  
+default: `''`  
+ex. `'original/'`
 
 ## Action event details
 ### Target events

@@ -134,17 +134,6 @@ describe('deploy', () => {
 		global.mockChildProcess.stdout = 'stdout';
 	});
 
-	it('should do nothing', async() => {
-		process.env.INPUT_ACCESS_TOKEN = 'test-token';
-		global.mockChildProcess.stdout = '';
-
-		await common((fn1, fn2, execMock) => {
-			expect(execMock).not.toBeCalled();
-			expect(fn1).not.toBeCalled();
-			expect(fn2).not.toBeCalled();
-		}, deploy, 'abc');
-	});
-
 	it('should not commit', async() => {
 		process.env.INPUT_ACCESS_TOKEN = 'test-token';
 		global.mockChildProcess.stdout = '';

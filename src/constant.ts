@@ -8,6 +8,7 @@ export const DEFAULT_CLEAN_TARGETS = '.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lo
 export const DEFAULT_OUTPUT_BUILD_INFO_FILENAME = '';
 export const DEFAULT_FETCH_DEPTH = '3';
 export const DEFAULT_TEST_TAG_PREFIX = '';
+export const DEFAULT_ORIGINAL_TAG_PREFIX = '';
 export const TARGET_EVENTS = {
 	'release': [
 		'published',

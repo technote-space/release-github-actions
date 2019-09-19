@@ -41,6 +41,9 @@ inputs:
   TEST_TAG_PREFIX:
     description: Tag name prefix for test
     default: ''
+  ORIGINAL_TAG_PREFIX:
+    description: Tag name prefix for original tag
+    default: ''
 branding:
   icon: 'tag'
   color: 'green'

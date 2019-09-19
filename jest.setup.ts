@@ -2,12 +2,24 @@ import global from './__tests__/global';
 
 global.mockSignale = {
 	info: jest.fn(),
+	log: jest.fn(),
+	process: jest.fn(),
+	command: jest.fn(),
 	warn: jest.fn(),
 };
 jest.mock('signale', () => ({
 	...jest.requireActual('signale'),
-	info: global.mockSignale.info,
-	warn: global.mockSignale.warn,
+	Signale: class {
+		constructor() {
+			return {
+				info: global.mockSignale.info,
+				log: global.mockSignale.log,
+				process: global.mockSignale.process,
+				command: global.mockSignale.command,
+				warn: global.mockSignale.warn,
+			};
+		}
+	},
 }));
 
 global.mockChildProcess = {

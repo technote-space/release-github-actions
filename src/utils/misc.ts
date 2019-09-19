@@ -14,6 +14,7 @@ import {
 	DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
 	DEFAULT_FETCH_DEPTH,
 	DEFAULT_TEST_TAG_PREFIX,
+	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
 export const isTargetEventName = (events: object, context: Context): boolean => context.eventName in events;
@@ -124,6 +125,8 @@ export const isTestTag = (tagName: string): boolean => !!getTestTagPrefix() && g
 
 export const getTestTag = (tagName: string): string => tagName.replace(getTestTagPrefixRegExp(), '');
 
+export const getOriginalTagPrefix = (): string => getInput('ORIGINAL_TAG_PREFIX') || DEFAULT_ORIGINAL_TAG_PREFIX;
+
 const getBoolValue = (input: string): boolean => !['false', '0'].includes(input.trim().toLowerCase());
 
 export const isCreateMajorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG') || 'true');
@@ -188,3 +191,20 @@ export const getCreateTags = (tagName: string): string[] => {
 export const getWorkspace = (): string => process.env.GITHUB_WORKSPACE || '';
 
 export const getTagName = (context: Context): string => isRelease(context) ? context.payload.release.tag_name : context.ref.replace(/^refs\/tags\//, '');
+
+export const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
+	const workDir = path.resolve(getWorkspace(), '.work');
+	const buildDir = path.resolve(workDir, 'build');
+	const pushDir = path.resolve(workDir, 'push');
+	const branchName = getBranchName();
+	return {workDir, buildDir, pushDir, branchName};
+};
+
+export const getReplaceDirectory = (): object => {
+	const {workDir, buildDir, pushDir} = getParams();
+	return {
+		[buildDir]: '<Build Directory>',
+		[pushDir]: '<Push Directory>',
+		[workDir]: '<Working Directory>',
+	};
+};

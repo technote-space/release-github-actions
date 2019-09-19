@@ -1,7 +1,8 @@
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
-import signale from 'signale';
+import { Signale } from 'signale';
+import figures from 'figures';
 import { exec, ExecException } from 'child_process';
 import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
@@ -10,17 +11,68 @@ import {
 	getGitUrl,
 	getRepository,
 	getBuildCommands,
-	getWorkspace,
 	getCommitMessage,
 	getCommitName,
 	getCommitEmail,
-	getBranchName,
 	getCreateTags,
+	getOriginalTagPrefix,
 	getOutputBuildInfoFilename,
 	getFetchDepth,
 	getTagName,
-	isValidTagName,
+	getParams,
+	getReplaceDirectory,
 } from './misc';
+
+const signale = new Signale({
+	types: {
+		process: {
+			badge: figures.tick,
+			color: 'green',
+			label: 'process',
+			logLevel: 'info',
+		},
+		command: {
+			badge: '  ',
+			color: 'white',
+			label: '        ',
+			logLevel: 'info',
+		},
+		info: {
+			color: 'cyan',
+		},
+	},
+});
+
+export const replaceDirectory = (message: string): string => {
+	const directories = getReplaceDirectory();
+	return Object.keys(directories).reduce((value, directory) => value.replace(directory, directories[directory]), message);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const output = (type: 'info' | 'process' | 'command' | 'warn', message: string, ...args: any[]): void => {
+	signale[type](replaceDirectory(message), ...args.map(arg => replaceDirectory(arg)));
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const info = (message: string, ...args: any[]): void => output('info', message, ...args);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const note = (message: string, ...args: any[]): void => output('process', `[${message}]`, ...args);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const displayCommand = (message: string, ...args: any[]): void => output('command', `  > ${message}`, ...args);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const displayStdout = (message: string): void => message.replace(/\r?\n$/, '').split(/\r?\n/).forEach(line => output('command', `    >> ${line}`));
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const displayStderr = (message: string): void => message.replace(/\r?\n$/, '').split(/\r?\n/).forEach(line => output('warn', `    >> ${line}`));
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const startProcess = (message: string, ...args: any[]): void => {
+	signale.log();
+	note(message, ...args);
+};
 
 export const getCommand = (command: string, quiet: boolean, suppressError: boolean): string => command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : '');
 
@@ -49,9 +101,11 @@ export const execCallback = (
 		reject(getRejectedErrorMessage(command, altCommand, quiet, error));
 	} else {
 		if (!quiet && !suppressOutput) {
-			console.log(stdout);
+			if (stdout) {
+				displayStdout(stdout);
+			}
 			if (stderr) {
-				console.error(stderr);
+				displayStderr(stderr);
 			}
 		}
 		resolve(stdout);
@@ -69,9 +123,9 @@ export const execAsync = (args: {
 	const {command, cwd, altCommand, quiet = false, suppressError = false, suppressOutput = false} = args;
 
 	if ('string' === typeof altCommand) {
-		signale.info('Run command: %s', altCommand);
+		displayCommand(altCommand);
 	} else if (!quiet) {
-		signale.info('Run command: %s', command);
+		displayCommand(command);
 	}
 
 	if (typeof cwd === 'undefined') {
@@ -81,16 +135,8 @@ export const execAsync = (args: {
 	}
 });
 
-const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
-	const workDir = path.resolve(getWorkspace(), '.work');
-	const buildDir = path.resolve(workDir, 'build');
-	const pushDir = path.resolve(workDir, 'push');
-	const branchName = getBranchName();
-	return {workDir, buildDir, pushDir, branchName};
-};
-
 const cloneForBuild = async(context: Context): Promise<void> => {
-	signale.info('Cloning the working commit from the remote repo for build');
+	startProcess('Cloning the working commit from the remote repo for build');
 
 	const {buildDir} = getParams();
 	const url = getGitUrl(context);
@@ -101,7 +147,7 @@ const cloneForBuild = async(context: Context): Promise<void> => {
 };
 
 const runBuild = async(buildDir: string): Promise<void> => {
-	signale.info('=== Running build for release ===');
+	startProcess('Running build for release');
 
 	for (const command of getBuildCommands(buildDir)) {
 		await execAsync({command, cwd: buildDir});
@@ -109,7 +155,7 @@ const runBuild = async(buildDir: string): Promise<void> => {
 };
 
 export const prepareFiles = async(context: Context): Promise<void> => {
-	signale.info('Preparing files for release');
+	startProcess('Preparing files for release');
 
 	const {buildDir} = getParams();
 
@@ -127,7 +173,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 	const {buildDir, branchName} = getParams();
 	const tagName = getTagName(context);
 
-	signale.info('Creating build info file');
+	startProcess('Creating build info file');
 	const filepath = path.resolve(buildDir, filename);
 	const dir = path.dirname(filepath);
 	if (!fs.existsSync(dir)) {
@@ -151,21 +197,21 @@ export const getCurrentBranchName = async(): Promise<string> => {
 
 const gitInit = async(): Promise<void> => {
 	const {pushDir} = getParams();
-	signale.info('Initializing local git repo');
+	startProcess('Initializing local git repo');
 
 	await execAsync({command: `git -C ${pushDir} init .`});
 };
 
 const gitCheckout = async(): Promise<void> => {
 	const {pushDir, branchName} = getParams();
-	signale.info('Checking out orphan branch %s', branchName);
+	startProcess('Checking out orphan branch %s', branchName);
 
 	await execAsync({command: `git -C ${pushDir} checkout --orphan "${branchName}"`});
 };
 
 export const cloneForBranch = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
-	signale.info('Cloning the branch %s from the remote repo', branchName);
+	startProcess('Cloning the branch %s from the remote repo', branchName);
 
 	const url = getGitUrl(context);
 	const depth = getFetchDepth();
@@ -180,8 +226,8 @@ export const cloneForBranch = async(context: Context): Promise<void> => {
 export const checkBranch = async(clonedBranch: string): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	if (branchName !== clonedBranch) {
-		signale.info('remote branch %s not found.', branchName);
-		signale.info('now branch: %s', clonedBranch);
+		info('remote branch %s not found.', branchName);
+		info('now branch: %s', clonedBranch);
 
 		await execAsync({command: `rm -rdf ${pushDir}`});
 		fs.mkdirSync(pushDir, {recursive: true});
@@ -194,7 +240,7 @@ export const config = async(): Promise<void> => {
 	const {pushDir} = getParams();
 	const name = getCommitName();
 	const email = getCommitEmail();
-	signale.info('Configuring git committer to be %s <%s>', name, email);
+	startProcess('Configuring git committer to be %s <%s>', name, email);
 
 	await execAsync({command: `git -C ${pushDir} config user.name "${name}"`});
 	await execAsync({command: `git -C ${pushDir} config user.email "${email}"`});
@@ -214,7 +260,7 @@ export const commit = async(): Promise<boolean> => {
 	const message = getCommitMessage();
 	await execAsync({command: `git -C ${pushDir} add --all --force`});
 	if (!await checkDiff()) {
-		signale.info('There is no diff.');
+		info('There is no diff.');
 		return false;
 	}
 	await execAsync({command: `git -C ${pushDir} commit -qm "${message}"`});
@@ -225,9 +271,20 @@ export const commit = async(): Promise<boolean> => {
 export const push = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	const tagName = getTagName(context);
-	signale.info('Pushing to %s@%s (tag: %s)', getRepository(context), branchName, tagName);
+	startProcess('Pushing to %s@%s (tag: %s)', getRepository(context), branchName, tagName);
 
 	const url = getGitUrl(context);
+	const prefix = getOriginalTagPrefix();
+	if (prefix) {
+		await execAsync({command: `git -C ${pushDir} fetch "${url}" --tags`, quiet: true, altCommand: 'git fetch origin --tags'});
+		await execAsync({command: `git -C ${pushDir} tag ${prefix}${tagName} ${tagName}`});
+		await execAsync({
+			command: `git -C ${pushDir} push "${url}" "refs/tags/${prefix}${tagName}"`,
+			quiet: true,
+			altCommand: `git push "refs/tags/${prefix}${tagName}"`,
+		});
+	}
+
 	const tagNames = getCreateTags(tagName);
 	for (const tagName of tagNames) {
 		await execAsync({
@@ -263,7 +320,7 @@ export const updateRelease = async(release: ReposListReleasesResponseItem | unde
 		return;
 	}
 
-	signale.info('Re-publishing release');
+	startProcess('Re-publishing release');
 	await octokit.repos.updateRelease({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
@@ -274,7 +331,7 @@ export const updateRelease = async(release: ReposListReleasesResponseItem | unde
 
 export const copyFiles = async(): Promise<void> => {
 	const {buildDir, pushDir} = getParams();
-	signale.info('=== Copying %s contents to %s ===', buildDir, pushDir);
+	startProcess('Copying %s contents to %s', buildDir, pushDir);
 
 	await execAsync({command: `rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`});
 };
@@ -302,15 +359,7 @@ const executeCommit = async(release: ReposListReleasesResponseItem | undefined, 
 
 export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
 	const {branchName} = getParams();
-	const tagName = getTagName(context);
-	signale.info('Tag name: %s', tagName);
-
-	if (!isValidTagName(tagName)) {
-		signale.info('This tag name is invalid.');
-		return;
-	}
-
-	signale.info('Deploying branch %s to %s', branchName, getRepository(context));
+	startProcess('Deploying branch %s to %s', branchName, getRepository(context));
 
 	const release = await findRelease(octokit, context);
 	await prepareCommit(context);
