@@ -33,7 +33,7 @@ const signale = new Signale({
 		},
 		command: {
 			badge: '  ',
-			color: 'yellow',
+			color: 'white',
 			label: '        ',
 			logLevel: 'info',
 		},
@@ -276,6 +276,7 @@ export const push = async(context: Context): Promise<void> => {
 	const url = getGitUrl(context);
 	const prefix = getOriginalTagPrefix();
 	if (prefix) {
+		await execAsync({command: `git -C ${pushDir} fetch "${url}" --tags`, quiet: true, altCommand: 'git fetch origin --tags'});
 		await execAsync({command: `git -C ${pushDir} tag ${prefix}${tagName} ${tagName}`});
 		await execAsync({
 			command: `git -C ${pushDir} push "${url}" "refs/tags/${prefix}${tagName}"`,
