@@ -246,6 +246,27 @@ describe('checkBranch', () => {
 describe('prepareFiles', () => {
 	testEnv();
 
+	const commonCheck = (dir: string, execMock): void => {
+		expect(execMock.mock.calls[3][0]).toBe('yarn install --production');
+		expect(execMock.mock.calls[3][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[4][0]).toBe('rm -rdf .[!.]*');
+		expect(execMock.mock.calls[4][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[5][0]).toBe('rm -rdf __tests__');
+		expect(execMock.mock.calls[5][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[6][0]).toBe('rm -rdf src');
+		expect(execMock.mock.calls[6][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[7][0]).toBe('rm -rdf *.js');
+		expect(execMock.mock.calls[7][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[8][0]).toBe('rm -rdf *.ts');
+		expect(execMock.mock.calls[8][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[9][0]).toBe('rm -rdf *.json');
+		expect(execMock.mock.calls[9][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[10][0]).toBe('rm -rdf *.lock');
+		expect(execMock.mock.calls[10][1]).toEqual({cwd: dir});
+		expect(execMock.mock.calls[11][0]).toBe('rm -rdf _config.yml');
+		expect(execMock.mock.calls[11][1]).toEqual({cwd: dir});
+	};
+
 	it('should run commands', async() => {
 		process.env.INPUT_ACCESS_TOKEN = 'test-token';
 		process.env.GITHUB_WORKSPACE = 'test-dir';
@@ -266,24 +287,7 @@ describe('prepareFiles', () => {
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} fetch "https://test-token@github.com/Hello/World.git" refs/heads/test > /dev/null 2>&1`);
 		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} checkout -qf test-sha`);
 
-		expect(execMock.mock.calls[3][0]).toBe('yarn install --production');
-		expect(execMock.mock.calls[3][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[4][0]).toBe('rm -rdf .[!.]*');
-		expect(execMock.mock.calls[4][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[5][0]).toBe('rm -rdf __tests__');
-		expect(execMock.mock.calls[5][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[6][0]).toBe('rm -rdf src');
-		expect(execMock.mock.calls[6][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[7][0]).toBe('rm -rdf *.js');
-		expect(execMock.mock.calls[7][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[8][0]).toBe('rm -rdf *.ts');
-		expect(execMock.mock.calls[8][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[9][0]).toBe('rm -rdf *.json');
-		expect(execMock.mock.calls[9][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[10][0]).toBe('rm -rdf *.lock');
-		expect(execMock.mock.calls[10][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[11][0]).toBe('rm -rdf _config.yml');
-		expect(execMock.mock.calls[11][1]).toEqual({cwd: dir});
+		commonCheck(dir, execMock);
 	});
 
 	it('should skip checkout command', async() => {
@@ -300,28 +304,12 @@ describe('prepareFiles', () => {
 		}));
 
 		const dir = path.resolve('test-dir/.work/build');
-		expect(execMock).toBeCalledTimes(11);
+		expect(execMock).toBeCalledTimes(12);
 		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} clone --depth=3 https://test-token@github.com/Hello/World.git . > /dev/null 2>&1`);
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} fetch "https://test-token@github.com/Hello/World.git" refs/heads/test > /dev/null 2>&1`);
+		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} checkout -qf refs/heads/test`);
 
-		expect(execMock.mock.calls[2][0]).toBe('yarn install --production');
-		expect(execMock.mock.calls[2][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[3][0]).toBe('rm -rdf .[!.]*');
-		expect(execMock.mock.calls[3][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[4][0]).toBe('rm -rdf __tests__');
-		expect(execMock.mock.calls[4][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[5][0]).toBe('rm -rdf src');
-		expect(execMock.mock.calls[5][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[6][0]).toBe('rm -rdf *.js');
-		expect(execMock.mock.calls[6][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[7][0]).toBe('rm -rdf *.ts');
-		expect(execMock.mock.calls[7][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[8][0]).toBe('rm -rdf *.json');
-		expect(execMock.mock.calls[8][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[9][0]).toBe('rm -rdf *.lock');
-		expect(execMock.mock.calls[9][1]).toEqual({cwd: dir});
-		expect(execMock.mock.calls[10][0]).toBe('rm -rdf _config.yml');
-		expect(execMock.mock.calls[10][1]).toEqual({cwd: dir});
+		commonCheck(dir, execMock);
 	});
 });
 
