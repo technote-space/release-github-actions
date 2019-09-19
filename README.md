@@ -32,6 +32,7 @@ Once you publish the release, this action will automatically
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
+  - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [Action event details](#action-event-details)
   - [Target events](#target-events)
 - [Motivation](#motivation)
@@ -151,9 +152,14 @@ Limit fetching to the specified number of commits from the tip of each remote br
 default: `3`  
 
 ### TEST_TAG_PREFIX
-Tag name prefix for test.  
+Prefix for test tag.  
 default: `''`  
 ex. `'test/'`
+
+### ORIGINAL_TAG_PREFIX
+Prefix to add when leaving the original tag.  
+default: `''`  
+ex. `'original/'`
 
 ## Action event details
 ### Target events
