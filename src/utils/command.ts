@@ -141,10 +141,15 @@ const cloneForBuild = async(context: Context): Promise<void> => {
 	const {buildDir} = getParams();
 	const url = getGitUrl(context);
 	const depth = getFetchDepth();
-	const checkout = context.sha || context.ref.replace(/^refs\/heads\//, '');
-	await execAsync({command: `git -C ${buildDir} clone --depth=${depth} ${url} .`, quiet: true, altCommand: `git clone --depth=${depth}`});
-	await execAsync({command: `git -C ${buildDir} fetch --depth=${depth} ${url} ${context.ref}`, quiet: true, altCommand: `git fetch origin ${context.ref}`});
-	await execAsync({command: `git -C ${buildDir} checkout -qf ${checkout}`});
+	if (depth && context.sha) {
+		await execAsync({command: `git -C ${buildDir} clone --depth=${depth} ${url} .`, quiet: true, altCommand: `git clone --depth=${depth}`});
+		await execAsync({command: `git -C ${buildDir} fetch ${url} ${context.ref}`, quiet: true, altCommand: `git fetch origin ${context.ref}`});
+		await execAsync({command: `git -C ${buildDir} checkout -qf ${context.sha}`});
+	} else {
+		const checkout = context.sha || context.ref.replace(/^refs\/heads\//, '');
+		await execAsync({command: `git -C ${buildDir} clone ${url} .`, quiet: true, altCommand: 'git clone'});
+		await execAsync({command: `git -C ${buildDir} checkout -qf ${checkout}`});
+	}
 };
 
 const runBuild = async(buildDir: string): Promise<void> => {
