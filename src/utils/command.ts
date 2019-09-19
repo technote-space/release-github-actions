@@ -71,10 +71,10 @@ const note = (message: string, ...args: any[]): void => output('process', `[${me
 const displayCommand = (message: string, ...args: any[]): void => output('command', `  > ${message}`, ...args);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const displayStdout = (message: string): void => message.split(/\r?\n/).forEach(like => output('command', `   >> ${like}`));
+const displayStdout = (message: string): void => message.replace(/\r?\n$/, '').split(/\r?\n/).forEach(line => output('command', `   >> ${line}`));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const displayStderr = (message: string): void => message.split(/\r?\n/).forEach(like => output('warn', `   >> ${like}`));
+const displayStderr = (message: string): void => message.replace(/\r?\n$/, '').split(/\r?\n/).forEach(line => output('warn', `   >> ${line}`));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const startProcess = (message: string, ...args: any[]): void => {
