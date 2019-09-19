@@ -18,3 +18,4 @@ jobs:
           COMMIT_EMAIL: technote.space@gmail.com
           OUTPUT_BUILD_INFO_FILENAME: build.json
           TEST_TAG_PREFIX: test/
+          ORIGINAL_TAG_PREFIX: original/
