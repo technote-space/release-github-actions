@@ -151,9 +151,14 @@ Limit fetching to the specified number of commits from the tip of each remote br
 default: `3`  
 
 ### TEST_TAG_PREFIX
-Tag name prefix for test.  
+Prefix for test tag.  
 default: `''`  
 ex. `'test/'`
+
+### ORIGINAL_TAG_PREFIX
+Prefix to add when leaving the original tag.  
+default: `''`  
+ex. `'original/'`
 
 ## Action event details
 ### Target events
