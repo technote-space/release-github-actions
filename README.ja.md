@@ -7,12 +7,12 @@
 
 *Read this in other languages: [English](README.md), [日本語](README.ja.md).*
 
-This is a `GitHub Action` that automates the release of `GitHub Action`.  
-Once you create a new tag, this action will automatically
-1. Run build
-1. Create branch for release
-1. Change [tags](#tags) to release branch
-1. If there is release which has same tag name and has been published, re-publish it (Because if the tag is changed, the release will be in a draft state).
+これは GitHub Action のリリースを自動化するための GitHub Action です。  
+タグを作成するとこのアクションは自動で
+1. ビルド実行
+1. リリース用ブランチ作成
+1. リリース用ブランチに[タグ](#tags)を張り替え
+1. 同じタグ名 かつ 公開済みのリリースが存在する場合、公開させます。(タグを張り替えた場合、リリースが下書き状態になるため)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -45,19 +45,19 @@ Once you create a new tag, this action will automatically
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Screenshots
-1. Before publish release  
+## スクリーンショット
+1. リリース作成前  
    ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
-1. Publish release (Create tag)  
+1. リリースを作成 (タグを作成)  
    ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
-1. Running `GitHub Action`  
+1. GitHub Action 実行中  
    ![Running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
-1. After running `GitHub Action`  
+1. GitHub Action 実行後  
    ![After running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
-## Installation
-1. Setup workflow  
-   e.g. `.github/workflows/release.yml`
+## インストール
+1. workflow を設定  
+   例： `.github/workflows/release.yml`
    ```yaml
    on: push
    name: Release
@@ -73,22 +73,21 @@ Once you create a new tag, this action will automatically
              ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
    ```
 
-## Required parameter
+## 必要なパラメータ
 ### ACCESS_TOKEN
-1. Generate a [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with the public_repo or repo scope.
-(repo is required for private repositories.)  
-1. [Save as secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
+1. public_repo または repo のスコープで [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) を生成。  
+(プライベートリポジトリの場合 repo が必要です)  
+1. [Secretsに保存](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
 
-## Options
+## オプション
 ### BUILD_COMMAND
-Build command.  
+ビルド用コマンド  
 default: `''`  
-- If package.json includes build or production or prod in scripts, the command is used for build.  
-- If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
-- If command is not provided, some files are deleted (see [CLEAN_TARGETS](#clean_targets)).
+- build、 production または prod package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。  
+- `npm run install` や `yarn install` のようなインストール用コマンドが存在しない場合、インストール用コマンドが追加されます。  
+- ビルド用コマンドが空の場合、いくつかのファイルが削除されます。 (詳細：[CLEAN_TARGETS](#clean_targets)).  
 
-so if `BUILD_COMMAND` is not provided and package.json has `build` script,
-the following commands are executed.
+したがって、`BUILD_COMMAND` が設定されていない かつ package.json に `build` が存在する場合、以下のコマンドが実行されます。
 ```shell
 yarn install
 yarn build
@@ -99,41 +98,41 @@ rm -rdf _config.yml
 ```
 
 ### COMMIT_MESSAGE
-Commit message.  
+コミット時に設定するメッセージ  
 default: `'feat: Build for release'`
 
 ### COMMIT_NAME
-Commit name.  
+コミット時に設定する名前  
 default: `'GitHub Actions'`
 
 ### COMMIT_EMAIL
-Commit email.  
+コミット時に設定するメールアドレス  
 default: `'example@example.com'`
 
 ### BRANCH_NAME
-Branch name for `GitHub Action` release.  
+GitHub Action 用のブランチ名  
 default: `'gh-actions'`
 
 ### CLEAN_TARGETS
-Files or directories to delete before release (Comma separated).  
+リリース前に削除するファイルやディレクトリ (カンマ区切り)  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
-Absolute path and `..` are not permitted to use.
+絶対パスや `..` は使用できません。  
 
 ### CREATE_MAJOR_VERSION_TAG
-Whether to create major version tag (e.g. v1).  
+メジャーバージョンタグ(例：v1)を作成するかどうか  
 default: `true`  
-[Detail of tags](#tags)
+[タグの詳細](#tags)
 
 ### CREATE_MINOR_VERSION_TAG
-Whether to create minor version tag (e.g. v1.2).  
+マイナーバージョンタグ(例：v1.2)を作成するかどうか  
 default: `true`  
-[Detail of tags](#tags)
+[タグの詳細](#tags)
 
 ### OUTPUT_BUILD_INFO_FILENAME
-Filename of build information.  
+ビルド情報を出力するファイル名  
 default: `''`  
-Absolute path and `..` are not permitted to use.  
-If this setting is not empty, following information is output with the file name.
+絶対パスや `..` は使用できません。  
+この設定が空でない場合、以下のような情報が出力されます。  
 ```json
 {
   "tagName": "${tagName}",
@@ -148,59 +147,59 @@ If this setting is not empty, following information is output with the file name
 ```
 
 ### FETCH_DEPTH
-Limit fetching to the specified number of commits from the tip of each remote branch history.  
+取得するコミット履歴の制限数  
 default: `3`  
 
 ### TEST_TAG_PREFIX
-Prefix for test tag.  
+テスト用タグのプリフィックス  
 default: `''`  
-e.g. `'test/'`
+例：`'test/'`
 
 ### ORIGINAL_TAG_PREFIX
-Prefix to add when leaving the original tag.  
+元のタグを残す際に付与するプリフィックス  
 default: `''`  
-e.g. `'original/'`
+例：`'original/'`
 
-## Action event details
-### Target events
+## Action イベント詳細
+### 対象イベント
 - push: *
   - tags
-    - semantic versioning tag (e.g. `v1.2.3`)
-    - [test tag](#test_tag_prefix) (e.g. `test/v1.2.3`)
+    - semantic versioning tag (例：`v1.2.3`)
+    - [テストタグ](#test_tag_prefix) (例：`test/v1.2.3`)
 - push: rerequested
 
-## Motivation
-Releasing `GitHub Action` needs all build files and dependencies like `node_modules`, but are not usually committed.  
-So if you want to release `GitHub Action`, you have to do following steps.  
-1. Develop locally on the branch for develop
-1. Build for release
-1. Commit all source code including dependencies like `node_modules` to branch for release
-1. Add tags (consider major and minor versions)
-1. Push to GitHub
-1. Publish release
+## 動機
+`GitHub Action`をリリースするには、すべてのビルドファイルと `node_modules` のような依存関係が必要ですが、通常はそれらをコミットしません。  
+したがって`GitHub Action`リリースする際には以下のような手順が必要です。  
+1. ローカルの開発用ブランチで開発
+1. リリース用にビルド
+1. `node_modules` のような依存モジュールを含めて必要なソースをリリース用ブランチにコミット
+1. タグを付与 (メジャーバージョンやマイナーバージョンの考慮が必要)
+1. GitHub にプッシュ
+1. リリースを作成
 
-It is very troublesome to do this steps for every release.  
+リリースの度にこれらの手順を実行するのはとても面倒です。  
 
-If you use this `GitHub Action`, the steps to do are simpler.
-1. Develop locally on the branch for develop
-1. Publish release (Create tag)
-1. Wait for the automated steps to finish
-   1. Build for release
-   1. Commit all source code including dependencies like `node_modules` to branch for release
-   1. Add tags (consider major and minor versions)
-   1. Push to GitHub
+この `GitHub Action` を使用することで手順は単純になります。
+1. ローカルの開発用ブランチで開発
+1. リリースを作成 (タグを作成)
+1. 自動化された手順が完了するのを待つ
+   1. リリース用にビルド
+   1. `node_modules` のような依存モジュールを含めて必要なソースをリリース用ブランチにコミット
+   1. タグを付与 (メジャーバージョンやマイナーバージョンの考慮が必要)
+   1. GitHub にプッシュ
 
-## Addition
-### Tags 
-Tag name format must be [Semantic Versioning](https://semver.org/).  
-The following tags will be created.
-- tag name
-- major tag name (generated by tag name)
-  - e.g. `v1`
-- minor tag name (generated by tag name)
-  - e.g. `v1.2`
+## 補足
+### Tags
+タグ名は [Semantic Versioning](https://semver.org/) に従っている必要があります。  
+以下のタグが作成されます。
+- 指定されたタグ名
+- メジャーバージョンのタグ名 (指定されたタグ名から生成)
+  - 例：`v1`
+- マイナーバージョンのタグ名 (指定されたタグ名から生成)
+  - 例：`v1.2`
 
-## Sample GitHub Actions using this Action
+## このアクションを使用しているアクションの例
 - [Release GitHub Actions](https://github.com/technote-space/release-github-actions)
   - [released.yml](https://github.com/technote-space/release-github-actions/blob/master/.github/workflows/released.yml)
 - [Auto card labeler](https://github.com/technote-space/auto-card-labeler)
