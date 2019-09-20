@@ -1,12 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import path from 'path';
+import { Test } from '@technote-space/github-action-helper';
 import global from '../global';
 import {
 	replaceDirectory,
-	getCommand,
-	getRejectedErrorMessage,
-	execCallback,
-	execAsync,
 	cloneForBranch,
 	checkBranch,
 	prepareFiles,
@@ -17,7 +14,8 @@ import {
 	commit,
 	push,
 } from '../../src/utils/command';
-import { getContext, testEnv } from '../util';
+
+const {getContext, testEnv} = Test;
 
 let exists = false;
 beforeAll(() => {
@@ -63,131 +61,6 @@ describe('replaceDirectory', () => {
 		const pushDir = path.resolve('test-dir/.work/push');
 
 		expect(replaceDirectory(`abc ${buildDir} && pqr ${workDir}/xyz ${pushDir}/123`)).toBe('abc <Build Directory> && pqr <Working Directory>/xyz <Push Directory>/123');
-	});
-});
-
-describe('getCommand', () => {
-	it('should get command', () => {
-		expect(getCommand('test', false, false)).toBe('test');
-		expect(getCommand('test', false, true)).toBe('test || :');
-		expect(getCommand('test', true, false)).toBe('test > /dev/null 2>&1');
-		expect(getCommand('test', true, true)).toBe('test > /dev/null 2>&1 || :');
-	});
-});
-
-describe('getRejectedErrorMessage', () => {
-	it('should get message', () => {
-		expect(getRejectedErrorMessage('test', undefined, false, {
-			name: 'test error',
-			message: 'test error message',
-			code: 123,
-		})).toBe('command [test] exited with code 123. message: test error message');
-	});
-
-	it('should get alt message', () => {
-		expect(getRejectedErrorMessage('test', 'alt', false, {
-			name: 'test error',
-			message: 'test error message',
-			code: 123,
-		})).toBe('command [alt] exited with code 123. message: test error message');
-	});
-
-	it('should get quiet message', () => {
-		expect(getRejectedErrorMessage('test', undefined, true, {
-			name: 'test error',
-			message: 'test error message',
-			code: 123,
-		})).toBe('command exited with code 123.');
-	});
-
-	it('should get quiet alt message', () => {
-		expect(getRejectedErrorMessage('test', 'alt', true, {
-			name: 'test error',
-			message: 'test error message',
-			code: 123,
-		})).toBe('command [alt] exited with code 123.');
-	});
-});
-
-describe('execCallback', () => {
-	it('should return function', () => {
-		expect(typeof execCallback('', undefined, false, false, () => {
-		}, () => {
-		})).toBe('function');
-	});
-
-	it('should call resolve', () => {
-		const resolve = jest.fn();
-		const reject = jest.fn();
-		const callback = execCallback('test', 'alt', true, false, resolve, reject);
-		callback(null, 'stdout', 'stderr');
-		expect(resolve).toBeCalledWith('stdout');
-		expect(reject).not.toBeCalled();
-	});
-
-	it('should call reject', () => {
-		const resolve = jest.fn();
-		const reject = jest.fn();
-		const callback = execCallback('test', 'alt', false, false, resolve, reject);
-		callback({
-			name: 'test error',
-			message: 'test error message',
-			code: 123,
-		}, 'stdout', 'stderr');
-		expect(resolve).not.toBeCalled();
-		expect(reject).toBeCalledWith('command [alt] exited with code 123. message: test error message');
-	});
-
-	it('should output', () => {
-		const resolve = jest.fn();
-		const reject = jest.fn();
-		const commandMock = jest.spyOn(global.mockSignale, 'command');
-		const warnMock = jest.spyOn(global.mockSignale, 'warn');
-
-		const callback = execCallback('test', 'alt', false, false, resolve, reject);
-		callback(null, 'stdout', '');
-		expect(resolve).toBeCalledWith('stdout');
-		expect(reject).not.toBeCalled();
-		expect(commandMock).toBeCalledWith('    >> stdout');
-		expect(warnMock).not.toBeCalled();
-	});
-
-	it('should output error', () => {
-		const resolve = jest.fn();
-		const reject = jest.fn();
-		const commandMock = jest.spyOn(global.mockSignale, 'command');
-		const warnMock = jest.spyOn(global.mockSignale, 'warn');
-
-		const callback = execCallback('test', 'alt', false, false, resolve, reject);
-		callback(null, 'stdout', 'stderr');
-		expect(resolve).toBeCalledWith('stdout');
-		expect(reject).not.toBeCalled();
-		expect(commandMock).toBeCalledWith('    >> stdout');
-		expect(warnMock).toBeCalledWith('    >> stderr');
-	});
-});
-
-describe('execAsync', () => {
-	it('should show run command', async() => {
-		const commandMock = jest.spyOn(global.mockSignale, 'command');
-		await execAsync({command: 'test'});
-		expect(commandMock).toBeCalledTimes(2);
-		expect(commandMock.mock.calls[0][0]).toBe('  > test');
-		expect(commandMock.mock.calls[1][0]).toBe('    >> stdout');
-	});
-
-	it('should show run alt command', async() => {
-		const commandMock = jest.spyOn(global.mockSignale, 'command');
-		await execAsync({command: 'test', altCommand: 'alt'});
-		expect(commandMock).toBeCalledTimes(2);
-		expect(commandMock.mock.calls[0][0]).toBe('  > alt');
-		expect(commandMock.mock.calls[1][0]).toBe('    >> stdout');
-	});
-
-	it('should not show run command', async() => {
-		const commandMock = jest.spyOn(global.mockSignale, 'command');
-		await execAsync({command: 'test', quiet: true});
-		expect(commandMock).not.toBeCalled();
 	});
 });
 

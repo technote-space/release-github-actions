@@ -1,8 +1,7 @@
 import path from 'path';
-import { testEnv } from '../util';
+import { isTargetEvent } from '@technote-space/filter-github-action';
+import { Test } from '@technote-space/github-action-helper';
 import {
-	isTargetEvent,
-	isRelease,
 	getCommitMessage,
 	getCommitName,
 	getCommitEmail,
@@ -10,20 +9,14 @@ import {
 	getFetchDepth,
 	isTestTag,
 	getTestTag,
-	getWorkspace,
 	getBuildCommands,
-	getGitUrl,
 	detectBuildCommand,
-	getRepository,
-	getTagName,
 	isValidTagName,
 	getMajorTag,
 	getMinorTag,
-	uniqueArray,
 	isCreateMajorVersionTag,
 	isCreateMinorVersionTag,
 	getOutputBuildInfoFilename,
-	getBuildVersion,
 	getCreateTags,
 } from '../../src/utils/misc';
 import {
@@ -32,19 +25,21 @@ import {
 	DEFAULT_COMMIT_EMAIL,
 	DEFAULT_BRANCH_NAME,
 	DEFAULT_FETCH_DEPTH,
+	TARGET_EVENTS,
 } from '../../src/constant';
-import { getContext } from '../util';
+
+const {testEnv, getContext} = Test;
 
 describe('isTargetEvent', () => {
 	it('should return true 1', () => {
-		expect(isTargetEvent(getContext({
+		expect(isTargetEvent(TARGET_EVENTS, getContext({
 			eventName: 'push',
 			ref: 'refs/tags/test',
 		}))).toBeTruthy();
 	});
 
 	it('should return true 2', () => {
-		expect(isTargetEvent(getContext({
+		expect(isTargetEvent(TARGET_EVENTS, getContext({
 			payload: {
 				action: 'rerequested',
 			},
@@ -53,7 +48,7 @@ describe('isTargetEvent', () => {
 	});
 
 	it('should return true 3', () => {
-		expect(isTargetEvent(getContext({
+		expect(isTargetEvent(TARGET_EVENTS, getContext({
 			payload: {
 				action: 'published',
 			},
@@ -62,32 +57,18 @@ describe('isTargetEvent', () => {
 	});
 
 	it('should return false 1', () => {
-		expect(isTargetEvent(getContext({
+		expect(isTargetEvent(TARGET_EVENTS, getContext({
 			eventName: 'push',
 			ref: 'refs/heads/test',
 		}))).toBeFalsy();
 	});
 
 	it('should return false 2', () => {
-		expect(isTargetEvent(getContext({
+		expect(isTargetEvent(TARGET_EVENTS, getContext({
 			payload: {
 				action: 'created',
 			},
 			eventName: 'release',
-		}))).toBeFalsy();
-	});
-});
-
-describe('isRelease', () => {
-	it('should return true', () => {
-		expect(isRelease(getContext({
-			eventName: 'release',
-		}))).toBeTruthy();
-	});
-
-	it('should return false', () => {
-		expect(isRelease(getContext({
-			eventName: 'push',
 		}))).toBeFalsy();
 	});
 });
@@ -185,20 +166,6 @@ describe('getTestTag', () => {
 	});
 });
 
-describe('getWorkspace', () => {
-	testEnv();
-
-	it('should get workspace', () => {
-		process.env.GITHUB_WORKSPACE = 'test';
-		expect(getWorkspace()).toBe('test');
-	});
-
-	it('should not get workspace', () => {
-		process.env.GITHUB_WORKSPACE = undefined;
-		expect(getWorkspace()).toBe('');
-	});
-});
-
 describe('getBuildCommands', () => {
 	testEnv();
 
@@ -277,20 +244,6 @@ describe('getBuildCommands', () => {
 	});
 });
 
-describe('getGitUrl', () => {
-	testEnv();
-
-	it('should return git url', () => {
-		process.env.INPUT_ACCESS_TOKEN = 'test';
-		expect(getGitUrl(getContext({
-			repo: {
-				owner: 'Hello',
-				repo: 'World',
-			},
-		}))).toBe('https://test@github.com/Hello/World.git');
-	});
-});
-
 describe('detectBuildCommand', () => {
 	it('should return false 1', () => {
 		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toBeFalsy();
@@ -314,37 +267,6 @@ describe('detectBuildCommand', () => {
 
 	it('should detect build command 1', () => {
 		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test6'))).toBe('prod');
-	});
-});
-
-describe('getRepository', () => {
-	it('should get repository', () => {
-		expect(getRepository(getContext({
-			repo: {
-				owner: 'Hello',
-				repo: 'World',
-			},
-		}))).toBe('Hello/World');
-	});
-});
-
-describe('getTagName', () => {
-	it('should get tag name', () => {
-		expect(getTagName(getContext({
-			eventName: 'push',
-			ref: 'refs/tags/test',
-		}))).toBe('test');
-	});
-
-	it('should get release tag name', () => {
-		expect(getTagName(getContext({
-			eventName: 'release',
-			payload: {
-				release: {
-					'tag_name': 'test',
-				},
-			},
-		}))).toBe('test');
 	});
 });
 
@@ -396,16 +318,6 @@ describe('getMinorTag', () => {
 		expect(getMinorTag('1.2')).toBe('v1.2');
 		expect(getMinorTag('V1.2.3')).toBe('v1.2');
 		expect(getMinorTag('v12.23.34.45')).toBe('v12.23');
-	});
-});
-
-describe('uniqueArray', () => {
-	it('should return unique array', () => {
-		expect(uniqueArray([])).toEqual([]);
-		// eslint-disable-next-line no-magic-numbers
-		expect(uniqueArray<number>([1, 2, 2, 3, 4, 3])).toEqual([1, 2, 3, 4]);
-		expect(uniqueArray<string>(['1', '2', '2', '3', '4', '3'])).toEqual(['1', '2', '3', '4']);
-		expect(uniqueArray<string>(['v1.2', 'v1', 'v1.2'])).toEqual(['v1.2', 'v1']);
 	});
 });
 
@@ -486,20 +398,6 @@ describe('getOutputBuildInfoFilename', () => {
 	it('should get empty 4', () => {
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = '../test.json';
 		expect(getOutputBuildInfoFilename()).toBe('');
-	});
-});
-
-describe('getBuildVersion', () => {
-	it('should get build version', () => {
-		expect(getBuildVersion(path.resolve(__dirname, '..', 'fixtures', 'build1.json'))).toBe('v1.2.3');
-	});
-
-	it('should return false 1', () => {
-		expect(getBuildVersion(path.resolve(__dirname, '..', 'fixtures', 'build2.json'))).toBeFalsy();
-	});
-
-	it('should return false 2', () => {
-		expect(getBuildVersion(path.resolve(__dirname, '..', 'fixtures', 'build.test.json'))).toBeFalsy();
 	});
 });
 

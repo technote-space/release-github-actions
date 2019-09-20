@@ -1,15 +1,17 @@
 /* eslint-disable no-magic-numbers */
 import global from '../global';
+import path from 'path';
 import nock from 'nock';
 import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
 import { ReposListReleasesResponseItem } from '@octokit/rest';
+import { Test } from '@technote-space/github-action-helper';
 import {
 	updateRelease,
 	deploy,
 } from '../../src/utils/command';
 
-import { getContext, testEnv, disableNetConnect, getApiFixture } from '../util';
+const {getContext, testEnv, disableNetConnect, getApiFixture} = Test;
 
 const common = async(callback: Function, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
 	const execMock = jest.spyOn(global.mockChildProcess, 'exec');
@@ -19,7 +21,7 @@ const common = async(callback: Function, method: (GitHub, Context) => Promise<vo
 		.get('/repos/Hello/World/releases')
 		.reply(200, () => {
 			fn1();
-			return getApiFixture('repos.listReleases');
+			return getApiFixture(path.resolve(__dirname, '..', 'fixtures'), 'repos.listReleases');
 		})
 		.patch('/repos/Hello/World/releases/1', body => {
 			expect(body).toEqual({draft: false});
@@ -27,7 +29,7 @@ const common = async(callback: Function, method: (GitHub, Context) => Promise<vo
 		})
 		.reply(200, () => {
 			fn2();
-			return getApiFixture('repos.updateRelease');
+			return getApiFixture(path.resolve(__dirname, '..', 'fixtures'), 'repos.updateRelease');
 		});
 
 	await method(new GitHub(''), getContext({

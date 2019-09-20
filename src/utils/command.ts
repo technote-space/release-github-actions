@@ -1,15 +1,11 @@
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
-import { Signale } from 'signale';
-import figures from 'figures';
-import { exec, ExecException } from 'child_process';
+import { Logger, Command, Utils } from '@technote-space/github-action-helper';
 import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
 import { ReposListReleasesResponseItem } from '@octokit/rest';
 import {
-	getGitUrl,
-	getRepository,
 	getBuildCommands,
 	getCommitMessage,
 	getCommitName,
@@ -18,122 +14,25 @@ import {
 	getOriginalTagPrefix,
 	getOutputBuildInfoFilename,
 	getFetchDepth,
-	getTagName,
 	getParams,
 	getReplaceDirectory,
 } from './misc';
 
-const signale = new Signale({
-	types: {
-		process: {
-			badge: figures.tick,
-			color: 'green',
-			label: 'process',
-			logLevel: 'info',
-		},
-		command: {
-			badge: '  ',
-			color: 'white',
-			label: '        ',
-			logLevel: 'info',
-		},
-		info: {
-			color: 'cyan',
-		},
-	},
-});
+const {
+	getGitUrl,
+	getRepository,
+	getTagName,
+} = Utils;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
 	return Object.keys(directories).reduce((value, directory) => value.replace(` -C ${directory}`, '').replace(directory, directories[directory]), message);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const output = (type: 'info' | 'process' | 'command' | 'warn', message: string, ...args: any[]): void => {
-	signale[type](replaceDirectory(message), ...args.map(arg => replaceDirectory(arg)));
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const info = (message: string, ...args: any[]): void => output('info', message, ...args);
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const note = (message: string, ...args: any[]): void => output('process', `[${message}]`, ...args);
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const displayCommand = (message: string, ...args: any[]): void => output('command', `  > ${message}`, ...args);
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const displayStdout = (message: string): void => message.replace(/\r?\n$/, '').split(/\r?\n/).forEach(line => output('command', `    >> ${line}`));
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const displayStderr = (message: string): void => message.replace(/\r?\n$/, '').split(/\r?\n/).forEach(line => output('warn', `    >> ${line}`));
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const startProcess = (message: string, ...args: any[]): void => {
-	signale.log();
-	note(message, ...args);
-};
-
-export const getCommand = (command: string, quiet: boolean, suppressError: boolean): string => command + (quiet ? ' > /dev/null 2>&1' : '') + (suppressError ? ' || :' : '');
-
-export const getRejectedErrorMessage = (command: string, altCommand: string | undefined, quiet: boolean, error: ExecException): string => {
-	if ('string' === typeof altCommand) {
-		if (!quiet) {
-			return `command [${altCommand}] exited with code ${error.code}. message: ${error.message}`;
-		} else {
-			return `command [${altCommand}] exited with code ${error.code}.`;
-		}
-	} else if (!quiet) {
-		return `command [${command}] exited with code ${error.code}. message: ${error.message}`;
-	}
-	return `command exited with code ${error.code}.`;
-};
-
-export const execCallback = (
-	command: string,
-	altCommand: string | undefined,
-	quiet: boolean,
-	suppressOutput: boolean,
-	resolve: Function,
-	reject: Function,
-): (error: ExecException | null, stdout: string, stderr: string) => void => (error: ExecException | null, stdout: string, stderr: string): void => {
-	if (error) {
-		reject(getRejectedErrorMessage(command, altCommand, quiet, error));
-	} else {
-		if (!quiet && !suppressOutput) {
-			if (stdout) {
-				displayStdout(stdout);
-			}
-			if (stderr) {
-				displayStderr(stderr);
-			}
-		}
-		resolve(stdout);
-	}
-};
-
-export const execAsync = (args: {
-	command: string;
-	cwd?: string;
-	quiet?: boolean;
-	altCommand?: string;
-	suppressError?: boolean;
-	suppressOutput?: boolean;
-}): Promise<string> => new Promise<string>((resolve, reject): void => {
-	const {command, cwd, altCommand, quiet = false, suppressError = false, suppressOutput = false} = args;
-
-	if ('string' === typeof altCommand) {
-		displayCommand(altCommand);
-	} else if (!quiet) {
-		displayCommand(command);
-	}
-
-	if (typeof cwd === 'undefined') {
-		exec(getCommand(command, quiet, suppressError), execCallback(command, altCommand, quiet, suppressOutput, resolve, reject));
-	} else {
-		exec(getCommand(command, quiet, suppressError), {cwd}, execCallback(command, altCommand, quiet, suppressOutput, resolve, reject));
-	}
-});
+const logger = new Logger(replaceDirectory);
+const command = new Command(logger);
+const {startProcess, info} = logger;
+const {execAsync} = command;
 
 const cloneForBuild = async(context: Context): Promise<void> => {
 	startProcess('Cloning the working commit from the remote repo for build');

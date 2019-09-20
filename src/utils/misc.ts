@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
+import { Utils } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
-import { Context } from '@actions/github/lib/context';
 import {
-	TARGET_EVENTS,
 	DEFAULT_COMMIT_MESSAGE,
 	DEFAULT_COMMIT_NAME,
 	DEFAULT_COMMIT_EMAIL,
@@ -16,31 +15,12 @@ import {
 	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
-export const isTargetEventName = (events: object, context: Context): boolean => context.eventName in events;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isTargetEventAction = (action: string | any[] | Function, context: Context): boolean => {
-	if (Array.isArray(action)) {
-		return action.some(item => isTargetEventAction(item, context));
-	}
-	if (typeof action === 'function') {
-		return action(context);
-	}
-	return '*' === action || context.payload.action === action;
-};
-
-export const isTargetEvent = (context: Context): boolean => isTargetEventName(TARGET_EVENTS, context) && isTargetEventAction(TARGET_EVENTS[context.eventName], context);
-
-export const isRelease = (context: Context): boolean => 'release' === context.eventName;
-
-export const getRepository = (context: Context): string => `${context.repo.owner}/${context.repo.repo}`;
-
-export const getAccessToken = (): string => getInput('ACCESS_TOKEN', {required: true});
-
-export const getGitUrl = (context: Context): string => {
-	const token = getAccessToken();
-	return `https://${token}@github.com/${context.repo.owner}/${context.repo.repo}.git`;
-};
+const {
+	getWorkspace,
+	escapeRegExp,
+	getBoolValue,
+	uniqueArray,
+} = Utils;
 
 const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];
 
@@ -112,8 +92,6 @@ export const getFetchDepth = (): string => {
 	return DEFAULT_FETCH_DEPTH;
 };
 
-const escapeRegExp = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
 export const getTestTagPrefix = (): string => getInput('TEST_TAG_PREFIX') || DEFAULT_TEST_TAG_PREFIX;
 
 const getTestTagPrefixRegExp = (): RegExp => new RegExp('^' + escapeRegExp(getTestTagPrefix()));
@@ -123,8 +101,6 @@ export const isTestTag = (tagName: string): boolean => !!getTestTagPrefix() && g
 export const getTestTag = (tagName: string): string => tagName.replace(getTestTagPrefixRegExp(), '');
 
 export const getOriginalTagPrefix = (): string => getInput('ORIGINAL_TAG_PREFIX') || DEFAULT_ORIGINAL_TAG_PREFIX;
-
-const getBoolValue = (input: string): boolean => !['false', '0'].includes(input.trim().toLowerCase());
 
 export const isCreateMajorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG') || 'true');
 
@@ -137,21 +113,6 @@ export const getOutputBuildInfoFilename = (): string => {
 	}
 	return filename;
 };
-
-export const getBuildVersion = (filepath: string): string | boolean => {
-	if (!fs.existsSync(filepath)) {
-		return false;
-	}
-
-	const json = JSON.parse(fs.readFileSync(filepath, 'utf8'));
-	if (json && 'tagName' in json) {
-		return json['tagName'];
-	}
-
-	return false;
-};
-
-export const uniqueArray = <T>(array: T[]): T[] => [...new Set<T>(array)];
 
 const getVersionFragments = (tagName: string): string[] => tagName.trim().replace(/^v?/gi, '').split('.');
 
@@ -184,10 +145,6 @@ export const getCreateTags = (tagName: string): string[] => {
 	}
 	return uniqueArray(tagNames);
 };
-
-export const getWorkspace = (): string => process.env.GITHUB_WORKSPACE || '';
-
-export const getTagName = (context: Context): string => isRelease(context) ? context.payload.release.tag_name : context.ref.replace(/^refs\/tags\//, '');
 
 export const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
 	const workDir = path.resolve(getWorkspace(), '.work');
