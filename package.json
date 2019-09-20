@@ -20,8 +20,9 @@
   "dependencies": {
     "@actions/core": "^1.1.1",
     "@actions/github": "^1.1.0",
-    "moment": "^2.24.0",
-    "signale": "^1.4.0"
+    "@technote-space/filter-github-action": "^0.0.1",
+    "@technote-space/github-action-helper": "^0.0.1",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
