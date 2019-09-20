@@ -1,31 +1,30 @@
 import path from 'path';
 import { setFailed, getInput } from '@actions/core';
 import { context, GitHub } from '@actions/github';
-import signale from 'signale';
+import { isTargetEvent } from '@technote-space/filter-github-action';
+import { Logger, Utils } from '@technote-space/github-action-helper';
 import { deploy } from './utils/command';
-import { getBuildVersion, isTargetEvent, getTagName, isValidTagName, getReplaceDirectory } from './utils/misc';
+import { isValidTagName, getReplaceDirectory } from './utils/misc';
+import { TARGET_EVENTS } from './constant';
+
+const {showActionInfo, getTagName} = Utils;
 
 /**
  * run
  */
 async function run(): Promise<void> {
 	try {
-		const version = getBuildVersion(path.resolve(__dirname, '..', 'build.json'));
+		const logger = new Logger();
 		const tagName = getTagName(context);
-		if ('string' === typeof version) {
-			signale.info('Version: %s', version);
-		}
-		signale.info('Event: %s', context.eventName);
-		signale.info('Action: %s', context.payload.action);
-		signale.info('Tag name: %s', tagName);
+		showActionInfo(path.resolve(__dirname, '..'), logger, context);
 
-		if (!isTargetEvent(context) || !isValidTagName(tagName)) {
-			signale.complete('This is not target event.');
+		if (!isTargetEvent(TARGET_EVENTS, context) || !isValidTagName(tagName)) {
+			logger.complete('This is not target event.');
 			return;
 		}
 
 		const directories = getReplaceDirectory();
-		Object.keys(directories).forEach(directory => signale.info('%s: %s', directories[directory], directory));
+		Object.keys(directories).forEach(directory => logger.info('%s: %s', directories[directory], directory));
 
 		await deploy(new GitHub(getInput('GITHUB_TOKEN', {required: true})), context);
 	} catch (error) {
