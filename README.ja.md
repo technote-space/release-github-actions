@@ -8,7 +8,7 @@
 *Read this in other languages: [English](README.md), [日本語](README.ja.md).*
 
 これは GitHub Action のリリースを自動化するための GitHub Action です。  
-タグを作成するとこのアクションは自動で
+タグを作成するとこのアクションは自動で以下を行います。
 1. ビルド実行
 1. リリース用ブランチ作成
 1. リリース用ブランチに[タグ](#tags)を張り替え
