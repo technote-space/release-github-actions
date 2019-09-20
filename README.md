@@ -20,8 +20,6 @@ Once you create a new tag, this action will automatically
 
 - [Screenshots](#screenshots)
 - [Installation](#installation)
-- [Required parameter](#required-parameter)
-  - [ACCESS_TOKEN](#access_token)
 - [Options](#options)
   - [BUILD_COMMAND](#build_command)
   - [COMMIT_MESSAGE](#commit_message)
