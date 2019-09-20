@@ -39,8 +39,8 @@ Once you create a new tag, this action will automatically
   - [Target events](#target-events)
 - [Motivation](#motivation)
 - [Addition](#addition)
-  - [tags](#tags)
-- [GitHub Actions using this Action](#github-actions-using-this-action)
+  - [Tags](#tags)
+- [Sample GitHub Actions using this Action](#sample-github-actions-using-this-action)
 - [Author](#author)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
