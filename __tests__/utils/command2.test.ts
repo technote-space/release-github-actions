@@ -137,7 +137,7 @@ describe('deploy', () => {
 	});
 
 	it('should not commit', async() => {
-		process.env.INPUT_ACCESS_TOKEN = 'test-token';
+		process.env.INPUT_GITHUB_TOKEN = 'test-token';
 		global.mockChildProcess.stdout = '';
 
 		await common((fn1, fn2, execMock) => {
@@ -148,7 +148,7 @@ describe('deploy', () => {
 	});
 
 	it('should commit', async() => {
-		process.env.INPUT_ACCESS_TOKEN = 'test-token';
+		process.env.INPUT_GITHUB_TOKEN = 'test-token';
 		global.mockChildProcess.stdout = 'A test.txt';
 
 		await common((fn1, fn2, execMock) => {

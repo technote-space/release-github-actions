@@ -20,8 +20,6 @@
 
 - [スクリーンショット](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88)
 - [インストール](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
-- [必要なパラメータ](#%E5%BF%85%E8%A6%81%E3%81%AA%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF)
-  - [ACCESS_TOKEN](#access_token)
 - [オプション](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3)
   - [BUILD_COMMAND](#build_command)
   - [COMMIT_MESSAGE](#commit_message)
@@ -70,14 +68,7 @@
            uses: technote-space/release-github-actions@v1
            with:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-             ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
    ```
-
-## 必要なパラメータ
-### ACCESS_TOKEN
-1. public_repo または repo のスコープで [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) を生成。  
-(プライベートリポジトリの場合 repo が必要です)  
-1. [Secretsに保存](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
 
 ## オプション
 ### BUILD_COMMAND
