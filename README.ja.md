@@ -70,14 +70,7 @@
            uses: technote-space/release-github-actions@v1
            with:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-             ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
    ```
-
-## 必要なパラメータ
-### ACCESS_TOKEN
-1. public_repo または repo のスコープで [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) を生成。  
-(プライベートリポジトリの場合 repo が必要です)  
-1. [Secretsに保存](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
 
 ## オプション
 ### BUILD_COMMAND

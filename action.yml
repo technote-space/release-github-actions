@@ -5,9 +5,6 @@ inputs:
   GITHUB_TOKEN:
     description: Secret GitHub API token to use for making API requests.
     required: true
-  ACCESS_TOKEN:
-    description: Secret GitHub Access Token to use for making push. This is not the same as GITHUB_TOKEN.
-    required: true
   BUILD_COMMAND:
     description: Command to build.
     default: ''

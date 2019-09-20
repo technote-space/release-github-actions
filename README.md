@@ -70,14 +70,7 @@ Once you create a new tag, this action will automatically
            uses: technote-space/release-github-actions@v1
            with:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-             ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
    ```
-
-## Required parameter
-### ACCESS_TOKEN
-1. Generate a [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) with the public_repo or repo scope.
-(repo is required for private repositories.)  
-1. [Save as secrets](https://help.github.com/en/articles/virtual-environments-for-github-actions#creating-and-using-secrets-encrypted-variables)
 
 ## Options
 ### BUILD_COMMAND
