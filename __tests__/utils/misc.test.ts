@@ -1,6 +1,6 @@
 import path from 'path';
 import { isTargetEvent } from '@technote-space/filter-github-action';
-import { Test } from '@technote-space/github-action-helper';
+import { testEnv, getContext } from '@technote-space/github-action-test-helper';
 import {
 	getCommitMessage,
 	getCommitName,
@@ -27,8 +27,6 @@ import {
 	DEFAULT_FETCH_DEPTH,
 	TARGET_EVENTS,
 } from '../../src/constant';
-
-const {testEnv, getContext} = Test;
 
 describe('isTargetEvent', () => {
 	it('should return true 1', () => {
