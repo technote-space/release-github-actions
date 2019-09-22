@@ -1,6 +1,6 @@
 {
   "name": "@technote-space/github-action-helper",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Helper to filter GitHub Action.",
   "author": "Technote <technote.space@gmail.com> (https://technote.space)",
   "license": "MIT",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@actions/core": "^1.1.1",
     "@actions/github": "^1.1.0",
-    "signale": "^1.4.0"
+    "sprintf-js": "^1.1.2"
   },
   "devDependencies": {
     "@technote-space/github-action-test-helper": "^0.0.1",

@@ -47,10 +47,10 @@ logger.info('output info');
 // [command]command
 //   >> stdout1
 //   >> stdout2
-// ⚠  warning     >> stderr1
-// ⚠  warning     >> stderr2
+// ##[warning]  >> stderr1
+// ##[warning]  >> stderr2
 // 
-// ℹ  info      output info
+// > output info
 ```
 
 ### Command
