@@ -2,8 +2,6 @@ interface Global extends NodeJS.Global {
 	mockSignale: {
 		info: jest.Mock;
 		log: jest.Mock;
-		process: jest.Mock;
-		command: jest.Mock;
 		warn: jest.Mock;
 	};
 	mockChildProcess: {

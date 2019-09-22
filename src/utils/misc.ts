@@ -20,6 +20,7 @@ const {
 	escapeRegExp,
 	getBoolValue,
 	uniqueArray,
+	isSemanticVersioningTagName,
 } = Utils;
 
 const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];
@@ -121,8 +122,6 @@ export const getMajorTag = (tagName: string): string => 'v' + getVersionFragment
 
 // eslint-disable-next-line no-magic-numbers
 export const getMinorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0']).slice(0, 2).join('.');
-
-export const isSemanticVersioningTagName = (tagName: string): boolean => /^v?\d+(\.\d+)*$/i.test(tagName);
 
 export const isValidTagName = (tagName: string): boolean => isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && isSemanticVersioningTagName(getTestTag(tagName)));
 

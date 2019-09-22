@@ -5,13 +5,11 @@ import nock from 'nock';
 import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
 import { ReposListReleasesResponseItem } from '@octokit/rest';
-import { Test } from '@technote-space/github-action-helper';
+import { getContext, testEnv, disableNetConnect, getApiFixture } from '@technote-space/github-action-test-helper';
 import {
 	updateRelease,
 	deploy,
 } from '../../src/utils/command';
-
-const {getContext, testEnv, disableNetConnect, getApiFixture} = Test;
 
 const common = async(callback: Function, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
 	const execMock = jest.spyOn(global.mockChildProcess, 'exec');

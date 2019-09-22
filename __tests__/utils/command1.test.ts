@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import path from 'path';
-import { Test } from '@technote-space/github-action-helper';
+import { getContext, testEnv } from '@technote-space/github-action-test-helper';
 import global from '../global';
 import {
 	replaceDirectory,
@@ -14,8 +14,6 @@ import {
 	commit,
 	push,
 } from '../../src/utils/command';
-
-const {getContext, testEnv} = Test;
 
 let exists = false;
 beforeAll(() => {
@@ -320,7 +318,7 @@ describe('commit', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		global.mockChildProcess.stdout = '';
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
-		const commandMock = jest.spyOn(global.mockSignale, 'command');
+		const logMock = jest.spyOn(global.mockSignale, 'log');
 
 		expect(await commit()).toBeFalsy();
 
@@ -328,16 +326,16 @@ describe('commit', () => {
 		expect(execMock).toBeCalledTimes(2);
 		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} add --all --force`);
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} status --short -uno`);
-		expect(commandMock).toBeCalledTimes(2);
-		expect(commandMock.mock.calls[0][0]).toBe('  > git add --all --force');
-		expect(commandMock.mock.calls[1][0]).toBe('  > git status --short -uno');
+		expect(logMock).toBeCalledTimes(2);
+		expect(logMock.mock.calls[0][0]).toBe('[command]git add --all --force');
+		expect(logMock.mock.calls[1][0]).toBe('[command]git status --short -uno');
 	});
 
 	it('should return true', async() => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		global.mockChildProcess.stdout = 'A test.txt';
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
-		const commandMock = jest.spyOn(global.mockSignale, 'command');
+		const logMock = jest.spyOn(global.mockSignale, 'log');
 
 		expect(await commit()).toBeTruthy();
 
@@ -347,14 +345,14 @@ describe('commit', () => {
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} status --short -uno`);
 		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} commit -qm "feat: Build for release"`);
 		expect(execMock.mock.calls[3][0]).toBe(`git -C ${dir} show --stat-count=10 HEAD`);
-		expect(commandMock).toBeCalledTimes(7);
-		expect(commandMock.mock.calls[0][0]).toBe('  > git add --all --force');
-		expect(commandMock.mock.calls[1][0]).toBe('    >> A test.txt');
-		expect(commandMock.mock.calls[2][0]).toBe('  > git status --short -uno');
-		expect(commandMock.mock.calls[3][0]).toBe('  > git commit -qm "feat: Build for release"');
-		expect(commandMock.mock.calls[4][0]).toBe('    >> A test.txt');
-		expect(commandMock.mock.calls[5][0]).toBe('  > git show --stat-count=10 HEAD');
-		expect(commandMock.mock.calls[6][0]).toBe('    >> A test.txt');
+		expect(logMock).toBeCalledTimes(7);
+		expect(logMock.mock.calls[0][0]).toBe('[command]git add --all --force');
+		expect(logMock.mock.calls[1][0]).toBe('  >> A test.txt');
+		expect(logMock.mock.calls[2][0]).toBe('[command]git status --short -uno');
+		expect(logMock.mock.calls[3][0]).toBe('[command]git commit -qm "feat: Build for release"');
+		expect(logMock.mock.calls[4][0]).toBe('  >> A test.txt');
+		expect(logMock.mock.calls[5][0]).toBe('[command]git show --stat-count=10 HEAD');
+		expect(logMock.mock.calls[6][0]).toBe('  >> A test.txt');
 	});
 });
 
