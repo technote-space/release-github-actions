@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import path from 'path';
+import { EOL } from 'os';
 import { getContext, testEnv } from '@technote-space/github-action-test-helper';
 import global from '../global';
 import {
@@ -318,7 +319,7 @@ describe('commit', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		global.mockChildProcess.stdout = '';
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
-		const logMock = jest.spyOn(global.mockSignale, 'log');
+		const stdoutMock = jest.spyOn(global.mockStdout, 'write');
 
 		expect(await commit()).toBeFalsy();
 
@@ -326,16 +327,17 @@ describe('commit', () => {
 		expect(execMock).toBeCalledTimes(2);
 		expect(execMock.mock.calls[0][0]).toBe(`git -C ${dir} add --all --force`);
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} status --short -uno`);
-		expect(logMock).toBeCalledTimes(2);
-		expect(logMock.mock.calls[0][0]).toBe('[command]git add --all --force');
-		expect(logMock.mock.calls[1][0]).toBe('[command]git status --short -uno');
+		expect(stdoutMock).toBeCalledTimes(3);
+		expect(stdoutMock.mock.calls[0][0]).toBe('[command]git add --all --force' + EOL);
+		expect(stdoutMock.mock.calls[1][0]).toBe('[command]git status --short -uno' + EOL);
+		expect(stdoutMock.mock.calls[2][0]).toBe('> There is no diff.' + EOL);
 	});
 
 	it('should return true', async() => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		global.mockChildProcess.stdout = 'A test.txt';
 		const execMock = jest.spyOn(global.mockChildProcess, 'exec');
-		const logMock = jest.spyOn(global.mockSignale, 'log');
+		const stdoutMock = jest.spyOn(global.mockStdout, 'write');
 
 		expect(await commit()).toBeTruthy();
 
@@ -345,14 +347,14 @@ describe('commit', () => {
 		expect(execMock.mock.calls[1][0]).toBe(`git -C ${dir} status --short -uno`);
 		expect(execMock.mock.calls[2][0]).toBe(`git -C ${dir} commit -qm "feat: Build for release"`);
 		expect(execMock.mock.calls[3][0]).toBe(`git -C ${dir} show --stat-count=10 HEAD`);
-		expect(logMock).toBeCalledTimes(7);
-		expect(logMock.mock.calls[0][0]).toBe('[command]git add --all --force');
-		expect(logMock.mock.calls[1][0]).toBe('  >> A test.txt');
-		expect(logMock.mock.calls[2][0]).toBe('[command]git status --short -uno');
-		expect(logMock.mock.calls[3][0]).toBe('[command]git commit -qm "feat: Build for release"');
-		expect(logMock.mock.calls[4][0]).toBe('  >> A test.txt');
-		expect(logMock.mock.calls[5][0]).toBe('[command]git show --stat-count=10 HEAD');
-		expect(logMock.mock.calls[6][0]).toBe('  >> A test.txt');
+		expect(stdoutMock).toBeCalledTimes(7);
+		expect(stdoutMock.mock.calls[0][0]).toBe('[command]git add --all --force' + EOL);
+		expect(stdoutMock.mock.calls[1][0]).toBe('  >> A test.txt' + EOL);
+		expect(stdoutMock.mock.calls[2][0]).toBe('[command]git status --short -uno' + EOL);
+		expect(stdoutMock.mock.calls[3][0]).toBe('[command]git commit -qm "feat: Build for release"' + EOL);
+		expect(stdoutMock.mock.calls[4][0]).toBe('  >> A test.txt' + EOL);
+		expect(stdoutMock.mock.calls[5][0]).toBe('[command]git show --stat-count=10 HEAD' + EOL);
+		expect(stdoutMock.mock.calls[6][0]).toBe('  >> A test.txt' + EOL);
 	});
 });
 
