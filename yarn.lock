@@ -358,21 +358,28 @@
     universal-user-agent "^3.0.0"
     url-template "^2.0.8"
 
-"@technote-space/filter-github-action@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.0.1.tgz#1c3968144d3a3f25f5077e50b5099f0a352a108a"
-  integrity sha512-NMfiU68LMLE/0EiML4+YqWnWV9CaNgEX5Wfqd++hjAAUNyATzFE73EI0BoCk3X13L34V9hHoL63iUKFa7hXhkA==
+"@technote-space/filter-github-action@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.0.2.tgz#2e97eed200a5e06fc29ffd915e77ebe8d5c8375f"
+  integrity sha512-kxnipCsk7HWRp6exuwTNw/ft0aEYe1PAPjvYK9kg33fpjuXg2W32GoaQt+IAaQB9y0xaFY+biE/SEYMq8Wbyow==
   dependencies:
     "@actions/github" "^1.1.0"
 
-"@technote-space/github-action-helper@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@technote-space/github-action-helper/-/github-action-helper-0.0.2.tgz#5f2b76ef01f4d3c583079ad6bbc7df536f27d1f8"
-  integrity sha512-uSLs4dCfponBHCwO5RS/AJ/2GATZnP5kKjfwV75cyLE96T4TvwF6n+41sX/pTbz5I24iUsuYJ88sZWwWdaesGA==
+"@technote-space/github-action-helper@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@technote-space/github-action-helper/-/github-action-helper-0.0.7.tgz#830569ad29defb1979d0d222fe29db8a73ceccab"
+  integrity sha512-7RtlkzLr0AepzRW8ZSYoSXxDRS72bBrWC+zX3kp+/rT/S992oVd2SWSnoNd2BBMHO8wdOcfrF705brOVmXl9AQ==
   dependencies:
     "@actions/core" "^1.1.1"
     "@actions/github" "^1.1.0"
     signale "^1.4.0"
+
+"@technote-space/github-action-test-helper@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@technote-space/github-action-test-helper/-/github-action-test-helper-0.0.1.tgz#3245dffb9b8fc6969b005fe4b1c1413d712fe2fe"
+  integrity sha512-ocEYACl1lqRsF6S5QZEyh5i4ONT0o/lp9jowOAmFgC9Gl9T6lHc4ZlWLzglir0s7weR/TCR7JOFb1zDFglY3Hg==
+  dependencies:
+    "@actions/github" "^1.1.0"
 
 "@types/babel__core@^7.1.0":
   version "7.1.2"
