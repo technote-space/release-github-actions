@@ -48,7 +48,7 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 	return false;
 };
 
-export const getBuildCommands = (dir: string): readonly string[] => {
+export const getBuildCommands = (dir: string): string[] => {
 	const command = getInput('BUILD_COMMAND');
 	let commands = '' === command ? [] : command.split('&&').map(normalizeCommand);
 
