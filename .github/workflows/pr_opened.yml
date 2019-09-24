@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Assign PullRequest to Project
         if: github.event.action == 'opened'
-        uses: alex-page/github-project-automation-plus@master
+        uses: alex-page/github-project-automation-plus@v0.0.3
         with:
           project: Backlog
           column: To do
