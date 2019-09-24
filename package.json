@@ -22,13 +22,13 @@
     "@actions/core": "^1.1.1",
     "@actions/github": "^1.1.0",
     "@technote-space/filter-github-action": "^0.0.2",
-    "@technote-space/github-action-helper": "^0.1.0",
+    "@technote-space/github-action-helper": "^0.1.1",
     "moment": "^2.24.0"
   },
   "devDependencies": {
     "@technote-space/github-action-test-helper": "^0.0.5",
     "@types/jest": "^24.0.18",
-    "@types/node": "^12.7.5",
+    "@types/node": "^12.7.7",
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
     "eslint": "^6.4.0",
