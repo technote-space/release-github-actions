@@ -18,6 +18,7 @@ Helper for GitHub Action.
   - [Logger](#logger)
   - [Command](#command)
   - [ApiHelper](#apihelper)
+  - [GitHelper](#githelper)
   - [Utils](#utils)
 - [Author](#author)
 
@@ -89,6 +90,34 @@ import path from 'path';
 const helper = new ApiHelper(new Logger());
 async function run() {
     await helper.commit(path.resolve(__dirname, '..'), 'feat: commit message', ['README.md', 'package.json'], new GitHub(getInput('GITHUB_TOKEN', {required: true})), context);
+}
+
+run();
+```
+
+### GitHelper
+```js
+import { Logger, GitHelper } from '@technote-space/github-action-helper';
+import { context } from '@actions/github';
+import path from 'path';
+const workDir = path.resolve(__dirname, '..');
+
+const helper = new GitHelper(new Logger());
+async function run() {
+    await helper.getCurrentBranchName(workDir);
+    await helper.clone(workDir, 'test-branch', context);
+    await helper.checkout(workDir, context);
+    await helper.gitInit(workDir, 'test-branch');
+    await helper.config(workDir, 'name', 'email');
+    await helper.runCommand(workDir, ['command1', 'command2']);
+    await helper.getDiff(workDir);
+    await helper.checkDiff(workDir);
+    await helper.commit(workDir, 'commit message');
+    await helper.fetchTags(workDir, context);
+    await helper.deleteTag(workDir, 'delete-tag', context);
+    await helper.copyTag(workDir, 'new-tag', 'from-tag', context);
+    await helper.addLocalTag(workDir, 'add-tag');
+    await helper.push(workDir, 'test-tag', context);
 }
 
 run();
