@@ -374,10 +374,10 @@
     "@actions/github" "^1.1.0"
     signale "^1.4.0"
 
-"@technote-space/github-action-test-helper@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@technote-space/github-action-test-helper/-/github-action-test-helper-0.0.1.tgz#3245dffb9b8fc6969b005fe4b1c1413d712fe2fe"
-  integrity sha512-ocEYACl1lqRsF6S5QZEyh5i4ONT0o/lp9jowOAmFgC9Gl9T6lHc4ZlWLzglir0s7weR/TCR7JOFb1zDFglY3Hg==
+"@technote-space/github-action-test-helper@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@technote-space/github-action-test-helper/-/github-action-test-helper-0.0.3.tgz#ca82989ccae27cc8a0b57ec75e0de9cf678aa7aa"
+  integrity sha512-mpREuu0uYDDIod6jox7ST2jkLp2aghHPmKBYMn9tQp01sPvG17eR3hr0a5nsYIu59yPvEYdMQh8oernDz9exZw==
   dependencies:
     "@actions/github" "^1.1.0"
 
