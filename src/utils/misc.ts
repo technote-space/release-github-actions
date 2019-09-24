@@ -85,10 +85,10 @@ export const getCommitEmail = (): string => getInput('COMMIT_EMAIL') || DEFAULT_
 
 export const getBranchName = (): string => getInput('BRANCH_NAME') || DEFAULT_BRANCH_NAME;
 
-export const getFetchDepth = (): string => {
+export const getFetchDepth = (): number => {
 	const depth = getInput('FETCH_DEPTH');
 	if (depth && /^\d+$/.test(depth)) {
-		return depth;
+		return parseInt(depth, 10);
 	}
 	return DEFAULT_FETCH_DEPTH;
 };

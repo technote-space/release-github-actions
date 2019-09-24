@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import path from 'path';
 import { isTargetEvent } from '@technote-space/filter-github-action';
 import { testEnv, getContext } from '@technote-space/github-action-test-helper';
@@ -128,7 +129,7 @@ describe('getFetchDepth', () => {
 
 	it('should get fetch depth', () => {
 		process.env.INPUT_FETCH_DEPTH = '10';
-		expect(getFetchDepth()).toBe('10');
+		expect(getFetchDepth()).toBe(10);
 	});
 
 	it('should get default fetch depth 1', () => {
