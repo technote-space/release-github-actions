@@ -19,7 +19,7 @@ async function run(): Promise<void> {
 		showActionInfo(path.resolve(__dirname, '..'), logger, context);
 
 		if (!isTargetEvent(TARGET_EVENTS, context) || !isValidTagName(tagName)) {
-			logger.complete('This is not target event.');
+			logger.info('This is not target event.');
 			return;
 		}
 

@@ -1,18 +1,17 @@
 /* eslint-disable no-magic-numbers */
-import global from '../global';
 import path from 'path';
 import nock from 'nock';
 import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
 import { ReposListReleasesResponseItem } from '@octokit/rest';
-import { getContext, testEnv, disableNetConnect, getApiFixture } from '@technote-space/github-action-test-helper';
+import { getContext, testEnv, disableNetConnect, getApiFixture, spyOnExec, testChildProcess, testFs, setChildProcessParams } from '@technote-space/github-action-test-helper';
 import {
 	updateRelease,
 	deploy,
 } from '../../src/utils/command';
 
 const common = async(callback: Function, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
-	const execMock = jest.spyOn(global.mockChildProcess, 'exec');
+	const mockExec = spyOnExec();
 	const fn1 = jest.fn();
 	const fn2 = jest.fn();
 	nock('https://api.github.com')
@@ -40,7 +39,7 @@ const common = async(callback: Function, method: (GitHub, Context) => Promise<vo
 		sha: 'test-sha',
 	}));
 
-	callback(fn1, fn2, execMock);
+	callback(fn1, fn2, mockExec);
 };
 
 describe('updateRelease', () => {
@@ -117,29 +116,15 @@ describe('updateRelease', () => {
 describe('deploy', () => {
 	disableNetConnect(nock);
 	testEnv();
-
-	beforeAll(() => {
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const fs = require('fs');
-		jest.spyOn(fs, 'writeFileSync').mockImplementation(jest.fn());
-		jest.spyOn(fs, 'mkdirSync').mockImplementation(jest.fn());
-		jest.spyOn(fs, 'existsSync').mockImplementation(() => false);
-	});
-
-	afterAll(() => {
-		jest.restoreAllMocks();
-	});
-
-	afterEach(() => {
-		global.mockChildProcess.stdout = 'stdout';
-	});
+	testChildProcess();
+	testFs();
 
 	it('should not commit', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		global.mockChildProcess.stdout = '';
+		setChildProcessParams({stdout: ''});
 
-		await common((fn1, fn2, execMock) => {
-			expect(execMock).toBeCalled();
+		await common((fn1, fn2, mockExec) => {
+			expect(mockExec).toBeCalled();
 			expect(fn1).toBeCalledTimes(1);
 			expect(fn2).not.toBeCalled();
 		}, deploy);
@@ -147,10 +132,10 @@ describe('deploy', () => {
 
 	it('should commit', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		global.mockChildProcess.stdout = 'A test.txt';
+		setChildProcessParams({stdout: 'A test.txt'});
 
-		await common((fn1, fn2, execMock) => {
-			expect(execMock).toBeCalled();
+		await common((fn1, fn2, mockExec) => {
+			expect(mockExec).toBeCalled();
 			expect(fn1).toBeCalledTimes(1);
 			expect(fn2).toBeCalledTimes(1);
 		}, deploy);
