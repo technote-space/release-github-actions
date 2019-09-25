@@ -96,6 +96,8 @@ export const config = async(): Promise<void> => {
 	await helper.config(pushDir, name, email);
 };
 
+export const commit = async(): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
+
 export const push = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	const tagName = getTagName(context);
@@ -162,7 +164,7 @@ export const prepareCommit = async(context: Context): Promise<void> => {
 
 const executeCommit = async(release: ReposListReleasesResponseItem | undefined, octokit: GitHub, context: Context): Promise<boolean> => {
 	await config();
-	if (!await helper.commit(getParams().pushDir, getCommitMessage())) {
+	if (!await commit()) {
 		return false;
 	}
 	await push(context);
