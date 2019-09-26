@@ -374,10 +374,10 @@
     "@actions/github" "^1.1.0"
     sprintf-js "^1.1.2"
 
-"@technote-space/github-action-test-helper@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@technote-space/github-action-test-helper/-/github-action-test-helper-0.0.5.tgz#414ee9b6ddf57f88db68f01c01e8ccdee6130548"
-  integrity sha512-E2uSnljj6y1RR+Kovzv0gisiO76EXAAxDGD/o6DgJ6m7X7Ta0z7ON/sQ+o4F5fwBr45gbzm1NnQAchr4zgmzcw==
+"@technote-space/github-action-test-helper@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@technote-space/github-action-test-helper/-/github-action-test-helper-0.0.10.tgz#710284ac82af42cac1d7f2ec7d8890e55c2b5d35"
+  integrity sha512-WyrSyDQaA1z919/RBAyAgR4NTAR+NEX+CkKvossUaf3FiCMug1tt9Jxt6xMxs8ERZnKOETQQSdLWupalZ3h16g==
   dependencies:
     "@actions/github" "^1.1.0"
 
