@@ -358,10 +358,10 @@
     universal-user-agent "^3.0.0"
     url-template "^2.0.8"
 
-"@technote-space/filter-github-action@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.0.2.tgz#2e97eed200a5e06fc29ffd915e77ebe8d5c8375f"
-  integrity sha512-kxnipCsk7HWRp6exuwTNw/ft0aEYe1PAPjvYK9kg33fpjuXg2W32GoaQt+IAaQB9y0xaFY+biE/SEYMq8Wbyow==
+"@technote-space/filter-github-action@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.1.1.tgz#e8a5f02a7d889849cb689a63845782cff40cd0a4"
+  integrity sha512-JK6VnOJKGS7w4TC0ykklFR3aWml9le5utbnGG15Da2aVuT/zlbIiqMGQUMklGRWJdeMQr2zTpIqVN3WxEs/czA==
   dependencies:
     "@actions/github" "^1.1.0"
 
