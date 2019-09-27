@@ -45,6 +45,7 @@
     "build": "tsc",
     "test": "yarn lint && yarn cover",
     "lint": "eslint src/**/**/*.ts && eslint __tests__/**/**/*.ts",
-    "cover": "jest --coverage"
+    "cover": "jest --coverage",
+    "update": "ncu -u && yarn install && yarn upgrade && yarn audit"
   }
 }

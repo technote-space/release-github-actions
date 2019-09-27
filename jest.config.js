@@ -8,6 +8,6 @@ module.exports = {
 	transform: {
 		'^.+\\.ts$': 'ts-jest',
 	},
-	verbose: false,
+	verbose: true,
 	coverageDirectory: '<rootDir>/coverage',
 };
