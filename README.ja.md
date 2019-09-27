@@ -199,6 +199,8 @@ default: `''`
   - [released.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/released.yml)
 - [TOC Generator](https://github.com/technote-space/toc-generator)
   - [released.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/released.yml)
+- [Package Version Check Action](https://github.com/technote-space/package-version-check-action)
+  - [released.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/released.yml)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  
