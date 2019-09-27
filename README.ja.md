@@ -35,6 +35,7 @@
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [Action イベント詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
   - [対象イベント](#%E5%AF%BE%E8%B1%A1%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88)
+  - [condition](#condition)
 - [動機](#%E5%8B%95%E6%A9%9F)
 - [補足](#%E8%A3%9C%E8%B6%B3)
   - [Tags](#tags)
@@ -74,7 +75,7 @@
 ### BUILD_COMMAND
 ビルド用コマンド  
 default: `''`  
-- build、 production または prod package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。  
+- `build`、 `production` または `prod` package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。  
 - `npm run install` や `yarn install` のようなインストール用コマンドが存在しない場合、インストール用コマンドが追加されます。  
 - ビルド用コマンドが空の場合、いくつかのファイルが削除されます。 (詳細：[CLEAN_TARGETS](#clean_targets)).  
 
@@ -153,11 +154,16 @@ default: `''`
 
 ## Action イベント詳細
 ### 対象イベント
-- push: *
-  - tags
-    - semantic versioning tag (例：`v1.2.3`)
-    - [テストタグ](#test_tag_prefix) (例：`test/v1.2.3`)
-- push: rerequested
+| eventName: action | condition |
+|:---:|:---:|
+|push: *|[condition](#condition)|
+|release: published|[condition](#condition)|
+|release: rerequested|[condition](#condition)|
+|created: *|[condition](#condition)|
+### condition
+- tags
+  - semantic versioning tag (例：`v1.2.3`)
+  - [テストタグ](#test_tag_prefix) (例：`test/v1.2.3`)
 
 ## 動機
 `GitHub Action`をリリースするには、すべてのビルドファイルと `node_modules` のような依存関係が必要ですが、通常はそれらをコミットしません。  
@@ -199,6 +205,8 @@ default: `''`
   - [released.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/released.yml)
 - [TOC Generator](https://github.com/technote-space/toc-generator)
   - [released.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/released.yml)
+- [Package Version Check Action](https://github.com/technote-space/package-version-check-action)
+  - [released.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/released.yml)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  

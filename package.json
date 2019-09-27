@@ -1,6 +1,6 @@
 {
   "name": "@technote-space/release-github-actions",
-  "version": "1.4.1",
+  "version": "1.6.0",
   "description": "GitHub actions to auto release.",
   "author": "Technote <technote.space@gmail.com> (https://technote.space)",
   "license": "MIT",
@@ -21,14 +21,14 @@
   "dependencies": {
     "@actions/core": "^1.1.1",
     "@actions/github": "^1.1.0",
-    "@technote-space/filter-github-action": "^0.0.2",
-    "@technote-space/github-action-helper": "^0.1.1",
+    "@technote-space/filter-github-action": "^0.1.1",
+    "@technote-space/github-action-helper": "^0.1.6",
     "moment": "^2.24.0"
   },
   "devDependencies": {
-    "@technote-space/github-action-test-helper": "^0.0.5",
+    "@technote-space/github-action-test-helper": "^0.0.10",
     "@types/jest": "^24.0.18",
-    "@types/node": "^12.7.7",
+    "@types/node": "^12.7.8",
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
     "eslint": "^6.4.0",
@@ -45,6 +45,7 @@
     "build": "tsc",
     "test": "yarn lint && yarn cover",
     "lint": "eslint src/**/**/*.ts && eslint __tests__/**/**/*.ts",
-    "cover": "jest --coverage"
+    "cover": "jest --coverage",
+    "update": "ncu -u && yarn install && yarn upgrade && yarn audit"
   }
 }

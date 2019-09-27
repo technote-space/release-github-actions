@@ -1,12 +1,14 @@
+import { getArrayInput } from '@technote-space/github-action-helper/dist/utils';
 import fs from 'fs';
 import path from 'path';
+import { Context } from '@actions/github/lib/context';
 import { Utils } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
 import {
 	DEFAULT_COMMIT_MESSAGE,
 	DEFAULT_COMMIT_NAME,
 	DEFAULT_COMMIT_EMAIL,
-	SEARCH_BUILD_COMMAND_TARGETS,
+	DEFAULT_SEARCH_BUILD_COMMAND_TARGETS,
 	DEFAULT_BRANCH_NAME,
 	DEFAULT_CLEAN_TARGETS,
 	DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
@@ -27,6 +29,14 @@ const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TAR
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
+export const getSearchBuildCommandTargets = (): string[] => {
+	const command = getInput('BUILD_COMMAND_TARGET');
+	if (command) {
+		return [command];
+	}
+	return DEFAULT_SEARCH_BUILD_COMMAND_TARGETS;
+};
+
 export const detectBuildCommand = (dir: string): boolean | string => {
 	const packageFile = path.resolve(dir, 'package.json');
 	if (!fs.existsSync(packageFile)) {
@@ -39,7 +49,7 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 	}
 
 	const scripts = parsed['scripts'];
-	for (const target of SEARCH_BUILD_COMMAND_TARGETS) {
+	for (const target of getSearchBuildCommandTargets()) {
 		if (target in scripts) {
 			return normalizeCommand(target);
 		}
@@ -49,8 +59,8 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 };
 
 export const getBuildCommands = (dir: string): string[] => {
-	const command = getInput('BUILD_COMMAND');
-	let commands = '' === command ? [] : command.split('&&').map(normalizeCommand);
+	let commands = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
+	const addRemove = !commands.length;
 
 	const buildCommand = detectBuildCommand(dir);
 	// eslint-disable-next-line no-magic-numbers
@@ -70,7 +80,7 @@ export const getBuildCommands = (dir: string): string[] => {
 		commands.push('yarn install --production');
 	}
 
-	if ('' === command) {
+	if (addRemove) {
 		commands.push(...getCleanTargets().map(target => `rm -rdf ${target}`));
 	}
 
@@ -161,3 +171,5 @@ export const getReplaceDirectory = (): object => {
 		[workDir]: '<Working Directory>',
 	};
 };
+
+export const isValidContext = (context: Context): boolean => isValidTagName(Utils.getTagName(context));

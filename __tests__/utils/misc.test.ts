@@ -1,8 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import path from 'path';
 import { isTargetEvent } from '@technote-space/filter-github-action';
-import { testEnv, getContext } from '@technote-space/github-action-test-helper';
+import { testEnv, generateContext } from '@technote-space/github-action-test-helper';
 import {
+	getSearchBuildCommandTargets,
 	getCommitMessage,
 	getCommitName,
 	getCommitEmail,
@@ -21,6 +22,7 @@ import {
 	getCreateTags,
 } from '../../src/utils/misc';
 import {
+	DEFAULT_SEARCH_BUILD_COMMAND_TARGETS,
 	DEFAULT_COMMIT_MESSAGE,
 	DEFAULT_COMMIT_NAME,
 	DEFAULT_COMMIT_EMAIL,
@@ -31,44 +33,120 @@ import {
 
 describe('isTargetEvent', () => {
 	it('should return true 1', () => {
-		expect(isTargetEvent(TARGET_EVENTS, getContext({
-			eventName: 'push',
-			ref: 'refs/tags/test',
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'push',
+			ref: 'tags/v1.2.3',
 		}))).toBeTruthy();
 	});
 
 	it('should return true 2', () => {
-		expect(isTargetEvent(TARGET_EVENTS, getContext({
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'release',
+			action: 'published',
+		}, {
 			payload: {
-				action: 'rerequested',
+				release: {
+					'tag_name': 'v1.2.3',
+				},
 			},
-			eventName: 'push',
 		}))).toBeTruthy();
 	});
 
 	it('should return true 3', () => {
-		expect(isTargetEvent(TARGET_EVENTS, getContext({
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'release',
+			action: 'rerequested',
+		}, {
 			payload: {
-				action: 'published',
+				release: {
+					'tag_name': 'v1.2.3',
+				},
 			},
-			eventName: 'release',
+		}))).toBeTruthy();
+	});
+
+	it('should return true 4', () => {
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'create',
+			ref: 'tags/v1.2.3',
 		}))).toBeTruthy();
 	});
 
 	it('should return false 1', () => {
-		expect(isTargetEvent(TARGET_EVENTS, getContext({
-			eventName: 'push',
-			ref: 'refs/heads/test',
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'pull_request',
+			ref: 'tags/test',
 		}))).toBeFalsy();
 	});
 
 	it('should return false 2', () => {
-		expect(isTargetEvent(TARGET_EVENTS, getContext({
-			payload: {
-				action: 'created',
-			},
-			eventName: 'release',
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'push',
+			ref: 'tags/test',
 		}))).toBeFalsy();
+	});
+
+	it('should return false 3', () => {
+		process.env.INPUT_BRANCH_PREFIX = 'release';
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'push',
+			ref: 'heads/release/v1.2.3',
+		}))).toBeFalsy();
+	});
+
+	it('should return false 4', () => {
+		process.env.INPUT_BRANCH_PREFIX = 'release';
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'push',
+			ref: 'heads/release/v1.2.3',
+		}))).toBeFalsy();
+	});
+
+	it('should return false 5', () => {
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'release',
+			action: 'published',
+		}, {
+			payload: {
+				release: {
+					'tag_name': 'abc',
+				},
+			},
+		}))).toBeFalsy();
+	});
+
+	it('should return false 6', () => {
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'release',
+			action: 'created',
+			ref: 'tags/v1.2.3',
+		}, {
+			payload: {
+				release: {
+					'tag_name': 'v1.2.3',
+				},
+			},
+		}))).toBeFalsy();
+	});
+
+	it('should return false 7', () => {
+		expect(isTargetEvent(TARGET_EVENTS, generateContext({
+			event: 'create',
+			ref: 'heads/v1.2.3',
+		}))).toBeFalsy();
+	});
+});
+
+describe('getSearchBuildCommandTargets', () => {
+	testEnv();
+
+	it('should get targets', () => {
+		process.env.INPUT_BUILD_COMMAND_TARGET = 'test';
+		expect(getSearchBuildCommandTargets()).toEqual(['test']);
+	});
+
+	it('should get default targets', () => {
+		expect(getSearchBuildCommandTargets()).toEqual(DEFAULT_SEARCH_BUILD_COMMAND_TARGETS);
 	});
 });
 
