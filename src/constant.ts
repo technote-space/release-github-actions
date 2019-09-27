@@ -10,6 +10,11 @@ export const DEFAULT_OUTPUT_BUILD_INFO_FILENAME = '';
 export const DEFAULT_FETCH_DEPTH = 3;
 export const DEFAULT_TEST_TAG_PREFIX = '';
 export const DEFAULT_ORIGINAL_TAG_PREFIX = '';
+export const DEFAULT_SEARCH_BUILD_COMMAND_TARGETS = [
+	'build',
+	'production',
+	'prod',
+];
 export const TARGET_EVENTS = {
 	'create': [
 		(context: Context): boolean => isValidContext(context),
@@ -28,8 +33,3 @@ export const TARGET_EVENTS = {
 		(context: Context): boolean => isValidContext(context),
 	],
 };
-export const SEARCH_BUILD_COMMAND_TARGETS = [
-	'build',
-	'production',
-	'prod',
-];

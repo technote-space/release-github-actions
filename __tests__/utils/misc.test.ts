@@ -3,6 +3,7 @@ import path from 'path';
 import { isTargetEvent } from '@technote-space/filter-github-action';
 import { testEnv, generateContext } from '@technote-space/github-action-test-helper';
 import {
+	getSearchBuildCommandTargets,
 	getCommitMessage,
 	getCommitName,
 	getCommitEmail,
@@ -21,6 +22,7 @@ import {
 	getCreateTags,
 } from '../../src/utils/misc';
 import {
+	DEFAULT_SEARCH_BUILD_COMMAND_TARGETS,
 	DEFAULT_COMMIT_MESSAGE,
 	DEFAULT_COMMIT_NAME,
 	DEFAULT_COMMIT_EMAIL,
@@ -132,6 +134,19 @@ describe('isTargetEvent', () => {
 			event: 'create',
 			ref: 'heads/v1.2.3',
 		}))).toBeFalsy();
+	});
+});
+
+describe('getSearchBuildCommandTargets', () => {
+	testEnv();
+
+	it('should get targets', () => {
+		process.env.INPUT_BUILD_COMMAND_TARGET = 'test';
+		expect(getSearchBuildCommandTargets()).toEqual(['test']);
+	});
+
+	it('should get default targets', () => {
+		expect(getSearchBuildCommandTargets()).toEqual(DEFAULT_SEARCH_BUILD_COMMAND_TARGETS);
 	});
 });
 
