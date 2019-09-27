@@ -8,7 +8,7 @@ import {
 	DEFAULT_COMMIT_MESSAGE,
 	DEFAULT_COMMIT_NAME,
 	DEFAULT_COMMIT_EMAIL,
-	SEARCH_BUILD_COMMAND_TARGETS,
+	DEFAULT_SEARCH_BUILD_COMMAND_TARGETS,
 	DEFAULT_BRANCH_NAME,
 	DEFAULT_CLEAN_TARGETS,
 	DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
@@ -29,6 +29,14 @@ const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TAR
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
+export const getSearchBuildCommandTargets = (): string[] => {
+	const command = getInput('BUILD_COMMAND_TARGET');
+	if (command) {
+		return [command];
+	}
+	return DEFAULT_SEARCH_BUILD_COMMAND_TARGETS;
+};
+
 export const detectBuildCommand = (dir: string): boolean | string => {
 	const packageFile = path.resolve(dir, 'package.json');
 	if (!fs.existsSync(packageFile)) {
@@ -41,7 +49,7 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 	}
 
 	const scripts = parsed['scripts'];
-	for (const target of SEARCH_BUILD_COMMAND_TARGETS) {
+	for (const target of getSearchBuildCommandTargets()) {
 		if (target in scripts) {
 			return normalizeCommand(target);
 		}
