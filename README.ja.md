@@ -152,12 +152,16 @@ default: `''`
 例：`'original/'`
 
 ## Action イベント詳細
-### 対象イベント
-- push: *
-  - tags
-    - semantic versioning tag (例：`v1.2.3`)
-    - [テストタグ](#test_tag_prefix) (例：`test/v1.2.3`)
-- push: rerequested
+| eventName: action | condition |
+|:---:|:---:|
+|push: *|[condition](#condition)|
+|release: published|[condition](#condition)|
+|release: rerequested|[condition](#condition)|
+|created: *|[condition](#condition)|
+### condition
+- tags
+  - semantic versioning tag (例：`v1.2.3`)
+  - [テストタグ](#test_tag_prefix) (例：`test/v1.2.3`)
 
 ## 動機
 `GitHub Action`をリリースするには、すべてのビルドファイルと `node_modules` のような依存関係が必要ですが、通常はそれらをコミットしません。  

@@ -154,11 +154,16 @@ e.g. `'original/'`
 
 ## Action event details
 ### Target events
-- push: *
-  - tags
-    - semantic versioning tag (e.g. `v1.2.3`)
-    - [test tag](#test_tag_prefix) (e.g. `test/v1.2.3`)
-- push: rerequested
+| eventName: action | condition |
+|:---:|:---:|
+|push: *|[condition](#condition)|
+|release: published|[condition](#condition)|
+|release: rerequested|[condition](#condition)|
+|created: *|[condition](#condition)|
+### condition
+- tags
+  - semantic versioning tag (e.g. `v1.2.3`)
+  - [test tag](#test_tag_prefix) (e.g. `test/v1.2.3`)
 
 ## Motivation
 Releasing `GitHub Action` needs all build files and dependencies like `node_modules`, but are not usually committed.  
