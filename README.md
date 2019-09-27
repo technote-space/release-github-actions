@@ -1,7 +1,7 @@
 # Release GitHub Actions
 
 [![Build Status](https://github.com/technote-space/release-github-actions/workflows/Build/badge.svg)](https://github.com/technote-space/release-github-actions/actions)
-[![Coverage Status](https://coveralls.io/repos/github/technote-space/release-github-actions/badge.svg?branch=master)](https://coveralls.io/github/technote-space/release-github-actions?branch=master)
+[![codecov](https://codecov.io/gh/technote-space/release-github-actions/branch/master/graph/badge.svg)](https://codecov.io/gh/technote-space/release-github-actions)
 [![CodeFactor](https://www.codefactor.io/repository/github/technote-space/release-github-actions/badge)](https://www.codefactor.io/repository/github/technote-space/release-github-actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/technote-space/release-github-actions/blob/master/LICENSE)
 
@@ -35,6 +35,7 @@ Once you create a new tag, this action will automatically
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [Action event details](#action-event-details)
   - [Target events](#target-events)
+  - [condition](#condition)
 - [Motivation](#motivation)
 - [Addition](#addition)
   - [Tags](#tags)
@@ -74,7 +75,7 @@ Once you create a new tag, this action will automatically
 ### BUILD_COMMAND
 Build command.  
 default: `''`  
-- If package.json includes build or production or prod in scripts, the command is used for build.  
+- If package.json includes `build` or `production` or `prod` in scripts, the command is used for build.  
 - If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
 - If command is not provided, some files are deleted (see [CLEAN_TARGETS](#clean_targets)).
 
@@ -154,11 +155,16 @@ e.g. `'original/'`
 
 ## Action event details
 ### Target events
-- push: *
-  - tags
-    - semantic versioning tag (e.g. `v1.2.3`)
-    - [test tag](#test_tag_prefix) (e.g. `test/v1.2.3`)
-- push: rerequested
+| eventName: action | condition |
+|:---:|:---:|
+|push: *|[condition](#condition)|
+|release: published|[condition](#condition)|
+|release: rerequested|[condition](#condition)|
+|created: *|[condition](#condition)|
+### condition
+- tags
+  - semantic versioning tag (e.g. `v1.2.3`)
+  - [test tag](#test_tag_prefix) (e.g. `test/v1.2.3`)
 
 ## Motivation
 Releasing `GitHub Action` needs all build files and dependencies like `node_modules`, but are not usually committed.  
@@ -200,6 +206,8 @@ The following tags will be created.
   - [released.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/released.yml)
 - [TOC Generator](https://github.com/technote-space/toc-generator)
   - [released.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/released.yml)
+- [Package Version Check Action](https://github.com/technote-space/package-version-check-action)
+  - [released.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/released.yml)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  
