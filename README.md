@@ -59,7 +59,9 @@ Once you create a new tag, this action will automatically
 1. Setup workflow  
    e.g. `.github/workflows/release.yml`
    ```yaml
-   on: push
+   # on: push
+   on: create
+
    name: Release
    jobs:
      release:
@@ -71,6 +73,7 @@ Once you create a new tag, this action will automatically
            with:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
    ```
+[More details of target event](#action-event-details)
 
 ## Options
 ### BUILD_COMMAND

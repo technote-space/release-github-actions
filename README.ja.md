@@ -59,7 +59,9 @@
 1. workflow を設定  
    例： `.github/workflows/release.yml`
    ```yaml
-   on: push
+   # on: push
+   on: create
+
    name: Release
    jobs:
      release:
@@ -71,6 +73,7 @@
            with:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
    ```
+[対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
 
 ## オプション
 ### BUILD_COMMAND
