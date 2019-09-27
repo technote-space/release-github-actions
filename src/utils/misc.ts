@@ -1,3 +1,4 @@
+import { getArrayInput } from '@technote-space/github-action-helper/dist/utils';
 import fs from 'fs';
 import path from 'path';
 import { Context } from '@actions/github/lib/context';
@@ -50,8 +51,8 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 };
 
 export const getBuildCommands = (dir: string): string[] => {
-	const command = getInput('BUILD_COMMAND');
-	let commands = '' === command ? [] : command.split('&&').map(normalizeCommand);
+	let commands = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
+	const addRemove = !commands.length;
 
 	const buildCommand = detectBuildCommand(dir);
 	// eslint-disable-next-line no-magic-numbers
@@ -71,7 +72,7 @@ export const getBuildCommands = (dir: string): string[] => {
 		commands.push('yarn install --production');
 	}
 
-	if ('' === command) {
+	if (addRemove) {
 		commands.push(...getCleanTargets().map(target => `rm -rdf ${target}`));
 	}
 
