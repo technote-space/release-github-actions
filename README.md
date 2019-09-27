@@ -74,7 +74,7 @@ Once you create a new tag, this action will automatically
 ### BUILD_COMMAND
 Build command.  
 default: `''`  
-- If package.json includes build or production or prod in scripts, the command is used for build.  
+- If package.json includes `build` or `production` or `prod` in scripts, the command is used for build.  
 - If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
 - If command is not provided, some files are deleted (see [CLEAN_TARGETS](#clean_targets)).
 
