@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { Context } from '@actions/github/lib/context';
 import { Utils } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
 import {
@@ -161,3 +162,5 @@ export const getReplaceDirectory = (): object => {
 		[workDir]: '<Working Directory>',
 	};
 };
+
+export const isValidContext = (context: Context): boolean => isValidTagName(Utils.getTagName(context));

@@ -4,10 +4,10 @@ import { context, GitHub } from '@actions/github';
 import { isTargetEvent } from '@technote-space/filter-github-action';
 import { Logger, Utils } from '@technote-space/github-action-helper';
 import { deploy } from './utils/command';
-import { isValidTagName, getReplaceDirectory } from './utils/misc';
+import { getReplaceDirectory } from './utils/misc';
 import { TARGET_EVENTS } from './constant';
 
-const {showActionInfo, getTagName} = Utils;
+const {showActionInfo} = Utils;
 
 /**
  * run
@@ -15,10 +15,9 @@ const {showActionInfo, getTagName} = Utils;
 async function run(): Promise<void> {
 	try {
 		const logger = new Logger();
-		const tagName = getTagName(context);
 		showActionInfo(path.resolve(__dirname, '..'), logger, context);
 
-		if (!isTargetEvent(TARGET_EVENTS, context) || !isValidTagName(tagName)) {
+		if (!isTargetEvent(TARGET_EVENTS, context)) {
 			logger.info('This is not target event.');
 			return;
 		}
