@@ -27,6 +27,7 @@ Once you create a new tag, this action will automatically
   - [COMMIT_EMAIL](#commit_email)
   - [BRANCH_NAME](#branch_name)
   - [CLEAN_TARGETS](#clean_targets)
+  - [BUILD_COMMAND_TARGET](#build_command_target)
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
@@ -58,7 +59,9 @@ Once you create a new tag, this action will automatically
 1. Setup workflow  
    e.g. `.github/workflows/release.yml`
    ```yaml
-   on: push
+   # on: push
+   on: create
+
    name: Release
    jobs:
      release:
@@ -70,12 +73,13 @@ Once you create a new tag, this action will automatically
            with:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
    ```
+[More details of target event](#action-event-details)
 
 ## Options
 ### BUILD_COMMAND
 Build command.  
 default: `''`  
-- If package.json includes `build` or `production` or `prod` in scripts, the command is used for build.  
+- If package.json includes `build` or `production` or `prod` in scripts, the command is used for build. (You can change this with [BUILD_COMMAND_TARGET](#build_command_target))  
 - If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
 - If command is not provided, some files are deleted (see [CLEAN_TARGETS](#clean_targets)).
 
@@ -110,6 +114,11 @@ default: `'gh-actions'`
 Files or directories to delete before release (Comma separated).  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 Absolute path and `..` are not permitted to use.
+
+### BUILD_COMMAND_TARGET
+Command for search build command.  
+default: `''`  
+e.g. `compile`
 
 ### CREATE_MAJOR_VERSION_TAG
 Whether to create major version tag (e.g. v1).  

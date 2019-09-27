@@ -27,6 +27,7 @@
   - [COMMIT_EMAIL](#commit_email)
   - [BRANCH_NAME](#branch_name)
   - [CLEAN_TARGETS](#clean_targets)
+  - [BUILD_COMMAND_TARGET](#build_command_target)
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
@@ -58,7 +59,9 @@
 1. workflow を設定  
    例： `.github/workflows/release.yml`
    ```yaml
-   on: push
+   # on: push
+   on: create
+
    name: Release
    jobs:
      release:
@@ -70,12 +73,13 @@
            with:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
    ```
+[対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
 
 ## オプション
 ### BUILD_COMMAND
 ビルド用コマンド  
 default: `''`  
-- `build`、 `production` または `prod` package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。  
+- `build`、 `production` または `prod` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。([BUILD_COMMAND_TARGET](#build_command_target) で変更可能です)  
 - `npm run install` や `yarn install` のようなインストール用コマンドが存在しない場合、インストール用コマンドが追加されます。  
 - ビルド用コマンドが空の場合、いくつかのファイルが削除されます。 (詳細：[CLEAN_TARGETS](#clean_targets)).  
 
@@ -109,6 +113,11 @@ default: `'gh-actions'`
 リリース前に削除するファイルやディレクトリ (カンマ区切り)  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 絶対パスや `..` は使用できません。  
+
+### BUILD_COMMAND_TARGET
+ビルド用コマンド検索ターゲット  
+default: `''`  
+例：`compile`
 
 ### CREATE_MAJOR_VERSION_TAG
 メジャーバージョンタグ(例：v1)を作成するかどうか  
