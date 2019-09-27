@@ -27,6 +27,7 @@
   - [COMMIT_EMAIL](#commit_email)
   - [BRANCH_NAME](#branch_name)
   - [CLEAN_TARGETS](#clean_targets)
+  - [BUILD_COMMAND_TARGET](#build_command_target)
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
