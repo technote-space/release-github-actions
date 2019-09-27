@@ -34,6 +34,7 @@
   - [TEST_TAG_PREFIX](#test_tag_prefix)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [Action イベント詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
+  - [対象イベント](#%E5%AF%BE%E8%B1%A1%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88)
   - [condition](#condition)
 - [動機](#%E5%8B%95%E6%A9%9F)
 - [補足](#%E8%A3%9C%E8%B6%B3)
@@ -152,6 +153,7 @@ default: `''`
 例：`'original/'`
 
 ## Action イベント詳細
+### 対象イベント
 | eventName: action | condition |
 |:---:|:---:|
 |push: *|[condition](#condition)|
