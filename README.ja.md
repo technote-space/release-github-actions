@@ -75,7 +75,7 @@
 ### BUILD_COMMAND
 ビルド用コマンド  
 default: `''`  
-- `build`、 `production` または `prod` package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。  
+- `build`、 `production` または `prod` package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。([BUILD_COMMAND_TARGET](#build_command_target) で変更可能です)  
 - `npm run install` や `yarn install` のようなインストール用コマンドが存在しない場合、インストール用コマンドが追加されます。  
 - ビルド用コマンドが空の場合、いくつかのファイルが削除されます。 (詳細：[CLEAN_TARGETS](#clean_targets)).  
 
@@ -109,6 +109,11 @@ default: `'gh-actions'`
 リリース前に削除するファイルやディレクトリ (カンマ区切り)  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 絶対パスや `..` は使用できません。  
+
+### BUILD_COMMAND_TARGET
+ビルド用コマンド検索ターゲット  
+default: `''`  
+例：`compile`
 
 ### CREATE_MAJOR_VERSION_TAG
 メジャーバージョンタグ(例：v1)を作成するかどうか  
