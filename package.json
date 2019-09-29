@@ -1,6 +1,6 @@
 {
   "name": "@technote-space/release-github-actions",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "GitHub actions to auto release.",
   "author": "Technote <technote.space@gmail.com> (https://technote.space)",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "@types/node": "^12.7.8",
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
-    "eslint": "^6.4.0",
+    "eslint": "^6.5.0",
     "jest": "^24.9.0",
     "jest-circus": "^24.9.0",
     "nock": "^11.3.5",
