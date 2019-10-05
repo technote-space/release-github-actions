@@ -73,7 +73,7 @@ export const cloneForBranch = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	startProcess('Cloning the branch %s from the remote repo', branchName);
 
-	await helper.clone(pushDir, branchName, context);
+	await helper.cloneBranch(pushDir, branchName, context);
 };
 
 export const checkBranch = async(clonedBranch: string): Promise<void> => {

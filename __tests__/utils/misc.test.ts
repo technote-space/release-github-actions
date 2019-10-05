@@ -16,8 +16,10 @@ import {
 	isValidTagName,
 	getMajorTag,
 	getMinorTag,
+	getPatchTag,
 	isCreateMajorVersionTag,
 	isCreateMinorVersionTag,
+	isCreatePatchVersionTag,
 	getOutputBuildInfoFilename,
 	getCreateTags,
 } from '../../src/utils/misc';
@@ -398,6 +400,16 @@ describe('getMinorTag', () => {
 	});
 });
 
+describe('getPatchTag', () => {
+	it('should get patch tag', () => {
+		expect(getPatchTag('0')).toBe('v0.0.0');
+		expect(getPatchTag('v12')).toBe('v12.0.0');
+		expect(getPatchTag('1.2')).toBe('v1.2.0');
+		expect(getPatchTag('V1.2.3')).toBe('v1.2.3');
+		expect(getPatchTag('v12.23.34.45')).toBe('v12.23.34');
+	});
+});
+
 describe('isCreateMajorVersionTag', () => {
 	testEnv();
 
@@ -450,6 +462,32 @@ describe('isCreateMinorVersionTag', () => {
 	});
 });
 
+describe('isCreatePatchVersionTag', () => {
+	testEnv();
+
+	it('should return true 1', () => {
+		expect(isCreatePatchVersionTag()).toBeTruthy();
+	});
+	it('should return true 2', () => {
+		process.env.INPUT_CREATE_PATCH_VERSION_TAG = '1';
+		expect(isCreatePatchVersionTag()).toBeTruthy();
+	});
+	it('should return true 3', () => {
+		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'abc';
+		expect(isCreatePatchVersionTag()).toBeTruthy();
+	});
+
+	it('should return false 1', () => {
+		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'false';
+		expect(isCreatePatchVersionTag()).toBeFalsy();
+	});
+
+	it('should return false 2', () => {
+		process.env.INPUT_CREATE_PATCH_VERSION_TAG = '0';
+		expect(isCreatePatchVersionTag()).toBeFalsy();
+	});
+});
+
 describe('getOutputBuildInfoFilename', () => {
 	testEnv();
 
@@ -482,41 +520,57 @@ describe('getCreateTags', () => {
 	testEnv();
 
 	it('should get create tags 1', () => {
-		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1', 'v1.2']);
+		expect(getCreateTags('v1.2.3')).toEqual(['v1', 'v1.2', 'v1.2.3']);
 	});
 
 	it('should get create tags 2', () => {
-		expect(getCreateTags('v1')).toEqual(['v1', 'v1.0']);
+		expect(getCreateTags('v1')).toEqual(['v1', 'v1.0', 'v1.0.0']);
 	});
 
 	it('should get create tags 3', () => {
-		expect(getCreateTags('v1.2')).toEqual(['v1.2', 'v1']);
+		expect(getCreateTags('v1.2')).toEqual(['v1', 'v1.2', 'v1.2.0']);
 	});
 
 	it('should get create tags 4', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
-		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1.2']);
+		expect(getCreateTags('v1.2.3')).toEqual(['v1.2', 'v1.2.3']);
 	});
 
 	it('should get create tags 5', () => {
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
-		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1']);
+		expect(getCreateTags('v1.2.3')).toEqual(['v1', 'v1.2.3']);
 	});
 
 	it('should get create tags 6', () => {
-		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
-		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
-		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3']);
+		expect(getCreateTags('v1.2.3.4')).toEqual(['v1', 'v1.2', 'v1.2.3', 'v1.2.3.4']);
 	});
 
 	it('should get create tags 7', () => {
-		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
-		expect(getCreateTags('test/v1.2.3')).toEqual(['test/v1.2.3', 'test/v1', 'test/v1.2']);
+		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'false';
+		expect(getCreateTags('v1.2.3')).toEqual(['v1', 'v1.2', 'v1.2.3']);
 	});
 
 	it('should get create tags 8', () => {
+		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'false';
+		expect(getCreateTags('v1.2.3.4')).toEqual(['v1', 'v1.2', 'v1.2.3.4']);
+	});
+
+	it('should get create tags 9', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
+		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'false';
+		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3']);
+	});
+
+	it('should get create tags 10', () => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		expect(getCreateTags('test/v1.2.3')).toEqual(['test/v1', 'test/v1.2', 'test/v1.2.3']);
+	});
+
+	it('should get create tags 11', () => {
+		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
+		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
+		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'false';
 		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
 		expect(getCreateTags('test/v1.2.3')).toEqual(['test/v1.2.3']);
 	});

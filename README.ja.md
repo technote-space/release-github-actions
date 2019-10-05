@@ -30,6 +30,7 @@
   - [BUILD_COMMAND_TARGET](#build_command_target)
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
+  - [CREATE_PATCH_VERSION_TAG](#create_patch_version_tag)
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
@@ -129,6 +130,11 @@ default: `true`
 default: `true`  
 [タグの詳細](#tags)
 
+### CREATE_PATCH_VERSION_TAG
+パッチバージョンタグ(例：v1.2.3)を作成するかどうか  
+default: `true`  
+[タグの詳細](#tags)
+
 ### OUTPUT_BUILD_INFO_FILENAME
 ビルド情報を出力するファイル名  
 default: `''`  
@@ -180,7 +186,7 @@ default: `''`
 1. ローカルの開発用ブランチで開発
 1. リリース用にビルド
 1. `node_modules` のような依存モジュールを含めて必要なソースをリリース用ブランチにコミット
-1. タグを付与 (メジャーバージョンやマイナーバージョンの考慮が必要)
+1. タグを付与 (メジャー、マイナー、パッチバージョンの考慮が必要)
 1. GitHub にプッシュ
 1. リリースを作成
 
@@ -192,7 +198,7 @@ default: `''`
 1. 自動化された手順が完了するのを待つ
    1. リリース用にビルド
    1. `node_modules` のような依存モジュールを含めて必要なソースをリリース用ブランチにコミット
-   1. タグを付与 (メジャーバージョンやマイナーバージョンの考慮が必要)
+   1. タグを付与 (メジャー、マイナー、パッチバージョンの考慮が必要)
    1. GitHub にプッシュ
 
 ## 補足
@@ -204,6 +210,8 @@ default: `''`
   - 例：`v1`
 - マイナーバージョンのタグ名 (指定されたタグ名から生成)
   - 例：`v1.2`
+- パッチバージョンのタグ名 (指定されたタグ名から生成)
+  - 例：`v1.2.3`
 
 ## このアクションを使用しているアクションの例
 - [Release GitHub Actions](https://github.com/technote-space/release-github-actions)
