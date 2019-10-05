@@ -32,6 +32,9 @@ inputs:
   CREATE_MINOR_VERSION_TAG:
     description: Whether to create minor version tag.
     default: true
+  CREATE_PATCH_VERSION_TAG:
+    description: Whether to create patch version tag.
+    default: true
   OUTPUT_BUILD_INFO_FILENAME:
     description: Filename of build information.
     default: ''

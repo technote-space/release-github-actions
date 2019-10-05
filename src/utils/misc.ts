@@ -117,6 +117,8 @@ export const isCreateMajorVersionTag = (): boolean => getBoolValue(getInput('CRE
 
 export const isCreateMinorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MINOR_VERSION_TAG') || 'true');
 
+export const isCreatePatchVersionTag = (): boolean => getBoolValue(getInput('CREATE_PATCH_VERSION_TAG') || 'true');
+
 export const getOutputBuildInfoFilename = (): string => {
 	const filename = (getInput('OUTPUT_BUILD_INFO_FILENAME') || DEFAULT_OUTPUT_BUILD_INFO_FILENAME).trim();
 	if (filename.startsWith('/') || filename.includes('..')) {
@@ -127,32 +129,28 @@ export const getOutputBuildInfoFilename = (): string => {
 
 const getVersionFragments = (tagName: string): string[] => tagName.trim().replace(/^v?/gi, '').split('.');
 
+type createTagType = (tagName: string) => string;
+
 // eslint-disable-next-line no-magic-numbers
 export const getMajorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).slice(0, 1).join('.');
 
 // eslint-disable-next-line no-magic-numbers
 export const getMinorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0']).slice(0, 2).join('.');
 
+// eslint-disable-next-line no-magic-numbers
+export const getPatchTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0', '0']).slice(0, 3).join('.');
+
 export const isValidTagName = (tagName: string): boolean => isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && isSemanticVersioningTagName(getTestTag(tagName)));
 
 export const getCreateTags = (tagName: string): string[] => {
-	const tagNames = [tagName];
-	if (isTestTag(tagName)) {
-		if (isCreateMajorVersionTag()) {
-			tagNames.push(getTestTagPrefix() + getMajorTag(getTestTag(tagName)));
-		}
-		if (isCreateMinorVersionTag()) {
-			tagNames.push(getTestTagPrefix() + getMinorTag(getTestTag(tagName)));
-		}
-	} else {
-		if (isCreateMajorVersionTag()) {
-			tagNames.push(getMajorTag(tagName));
-		}
-		if (isCreateMinorVersionTag()) {
-			tagNames.push(getMinorTag(tagName));
-		}
-	}
-	return uniqueArray(tagNames);
+	const settings = [
+		{condition: isCreateMajorVersionTag, createTag: getMajorTag},
+		{condition: isCreateMinorVersionTag, createTag: getMinorTag},
+		{condition: isCreatePatchVersionTag, createTag: getPatchTag},
+	];
+	const createTag = isTestTag(tagName) ? (create: createTagType): string => getTestTagPrefix() + create(getTestTag(tagName)) : (create: createTagType): string => create(tagName);
+
+	return uniqueArray(settings.filter(setting => setting.condition()).map(setting => createTag(setting.createTag)).concat(tagName));
 };
 
 export const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
