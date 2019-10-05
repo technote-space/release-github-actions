@@ -293,14 +293,14 @@ describe('push', () => {
 
 		const dir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2.3 > /dev/null 2>&1 || :`,
 			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1 > /dev/null 2>&1 || :`,
 			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2 > /dev/null 2>&1 || :`,
+			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2.3 > /dev/null 2>&1 || :`,
 			`git -C ${dir} tag -l | xargs git -C ${dir} tag -d`,
 			`git -C ${dir} fetch "https://octocat:test-token@github.com/Hello/World.git" --tags > /dev/null 2>&1`,
-			`git -C ${dir} tag v1.2.3`,
 			`git -C ${dir} tag v1`,
 			`git -C ${dir} tag v1.2`,
+			`git -C ${dir} tag v1.2.3`,
 			`git -C ${dir} push --tags "https://octocat:test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1`,
 		]);
 	});
@@ -328,14 +328,14 @@ describe('push', () => {
 			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag original/v1.2.3 > /dev/null 2>&1 || :`,
 			`git -C ${dir} tag original/v1.2.3 v1.2.3`,
 			`git -C ${dir} push "https://octocat:test-token@github.com/Hello/World.git" "refs/tags/original/v1.2.3" > /dev/null 2>&1`,
-			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2.3 > /dev/null 2>&1 || :`,
 			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1 > /dev/null 2>&1 || :`,
 			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2 > /dev/null 2>&1 || :`,
+			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2.3 > /dev/null 2>&1 || :`,
 			`git -C ${dir} tag -l | xargs git -C ${dir} tag -d`,
 			`git -C ${dir} fetch "https://octocat:test-token@github.com/Hello/World.git" --tags > /dev/null 2>&1`,
-			`git -C ${dir} tag v1.2.3`,
 			`git -C ${dir} tag v1`,
 			`git -C ${dir} tag v1.2`,
+			`git -C ${dir} tag v1.2.3`,
 			`git -C ${dir} push --tags "https://octocat:test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1`,
 		]);
 	});
