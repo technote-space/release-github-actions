@@ -30,6 +30,7 @@
   - [BUILD_COMMAND_TARGET](#build_command_target)
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
+  - [CREATE_PATCH_VERSION_TAG](#create_patch_version_tag)
   - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
