@@ -26,7 +26,7 @@
     "moment": "^2.24.0"
   },
   "devDependencies": {
-    "@technote-space/github-action-test-helper": "^0.0.12",
+    "@technote-space/github-action-test-helper": "^0.0.13",
     "@types/jest": "^24.0.19",
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "^2.5.0",
