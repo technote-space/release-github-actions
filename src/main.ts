@@ -23,7 +23,7 @@ async function run(): Promise<void> {
 		}
 
 		const directories = getReplaceDirectory();
-		logger.startProcess('Replacement');
+		logger.startProcess('Replace variables');
 		Object.keys(directories).forEach(directory => logger.info('%s: %s', directories[directory], directory));
 
 		await deploy(new GitHub(getInput('GITHUB_TOKEN', {required: true})), context);
