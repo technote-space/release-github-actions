@@ -7,7 +7,7 @@
 
 *Read this in other languages: [English](README.md), [日本語](README.ja.md).*
 
-This is a `GitHub Action` that automates the release of `GitHub Action`.  
+This is a `GitHub Actions` that automates the release of `GitHub Actions`.  
 Once you create a new tag, this action will automatically
 1. Run build
 1. Create branch for release
@@ -51,10 +51,10 @@ Once you create a new tag, this action will automatically
    ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
 1. Publish release (Create tag)  
    ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
-1. Running `GitHub Action`  
-   ![Running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
-1. After running `GitHub Action`  
-   ![After running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
+1. Running `GitHub Actions`  
+   ![Running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
+1. After running `GitHub Actions`  
+   ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
 ## Installation
 1. Setup workflow  
@@ -108,7 +108,7 @@ Commit email.
 default: `'example@example.com'`
 
 ### BRANCH_NAME
-Branch name for `GitHub Action` release.  
+Branch name for `GitHub Actions` release.  
 default: `'gh-actions'`
 
 ### CLEAN_TARGETS
@@ -182,8 +182,8 @@ e.g. `'original/'`
   - [test tag](#test_tag_prefix) (e.g. `test/v1.2.3`)
 
 ## Motivation
-Releasing `GitHub Action` needs all build files and dependencies like `node_modules`, but are not usually committed.  
-So if you want to release `GitHub Action`, you have to do following steps.  
+Releasing `GitHub Actions` needs all build files and dependencies like `node_modules`, but are not usually committed.  
+So if you want to release `GitHub Actions`, you have to do following steps.  
 1. Develop locally on the branch for develop
 1. Build for release
 1. Commit all source code including dependencies like `node_modules` to branch for release
@@ -193,7 +193,7 @@ So if you want to release `GitHub Action`, you have to do following steps.
 
 It is very troublesome to do this steps for every release.  
 
-If you use this `GitHub Action`, the steps to do are simpler.
+If you use this `GitHub Actions`, the steps to do are simpler.
 1. Develop locally on the branch for develop
 1. Publish release (Create tag)
 1. Wait for the automated steps to finish
