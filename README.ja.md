@@ -7,7 +7,7 @@
 
 *Read this in other languages: [English](README.md), [日本語](README.ja.md).*
 
-これは GitHub Action のリリースを自動化するための GitHub Action です。  
+これは `GitHub Actions` のリリースを自動化するための `GitHub Actions` です。  
 タグを作成するとこのアクションは自動で以下を行います。
 1. ビルド実行
 1. リリース用ブランチ作成
@@ -51,10 +51,10 @@
    ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
 1. リリースを作成 (タグを作成)  
    ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
-1. GitHub Action 実行中  
-   ![Running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
-1. GitHub Action 実行後  
-   ![After running GitHub Action](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
+1. GitHub Actions 実行中  
+   ![Running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
+1. GitHub Actions 実行後  
+   ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
 ## インストール
 1. workflow を設定  
@@ -107,7 +107,7 @@ default: `'GitHub Actions'`
 default: `'example@example.com'`
 
 ### BRANCH_NAME
-GitHub Action 用のブランチ名  
+GitHub Actions 用のブランチ名  
 default: `'gh-actions'`
 
 ### CLEAN_TARGETS
@@ -181,8 +181,8 @@ default: `''`
   - [テストタグ](#test_tag_prefix) (例：`test/v1.2.3`)
 
 ## 動機
-`GitHub Action`をリリースするには、すべてのビルドファイルと `node_modules` のような依存関係が必要ですが、通常はそれらをコミットしません。  
-したがって`GitHub Action`リリースする際には以下のような手順が必要です。  
+`GitHub Actions`をリリースするには、すべてのビルドファイルと `node_modules` のような依存関係が必要ですが、通常はそれらをコミットしません。  
+したがって`GitHub Actions`リリースする際には以下のような手順が必要です。  
 1. ローカルの開発用ブランチで開発
 1. リリース用にビルド
 1. `node_modules` のような依存モジュールを含めて必要なソースをリリース用ブランチにコミット
@@ -192,7 +192,7 @@ default: `''`
 
 リリースの度にこれらの手順を実行するのはとても面倒です。  
 
-この `GitHub Action` を使用することで手順は単純になります。
+この `GitHub Actions` を使用することで手順は単純になります。
 1. ローカルの開発用ブランチで開発
 1. リリースを作成 (タグを作成)
 1. 自動化された手順が完了するのを待つ
