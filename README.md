@@ -21,6 +21,7 @@ Once you create a new tag, this action will automatically
 - [Screenshots](#screenshots)
 - [Installation](#installation)
 - [Options](#options)
+  - [PACKAGE_MANAGER](#package_manager)
   - [BUILD_COMMAND](#build_command)
   - [COMMIT_MESSAGE](#commit_message)
   - [COMMIT_NAME](#commit_name)
@@ -77,6 +78,10 @@ Once you create a new tag, this action will automatically
 [More details of target event](#action-event-details)
 
 ## Options
+### PACKAGE_MANAGER
+Package manager to use to install dependencies. Default value is 'yarn', but can also be 'npm', if you rely on that later instead to install the dependencies.
+default: `'yarn'`  
+
 ### BUILD_COMMAND
 Build command.  
 default: `''`  

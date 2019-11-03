@@ -21,6 +21,7 @@
 - [スクリーンショット](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88)
 - [インストール](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
 - [オプション](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3)
+  - [PACKAGE_MANAGER](#package_manager)
   - [BUILD_COMMAND](#build_command)
   - [COMMIT_MESSAGE](#commit_message)
   - [COMMIT_NAME](#commit_name)
@@ -77,6 +78,10 @@
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
 
 ## オプション
+### PACKAGE_MANAGER
+依存関係のインストールに使用するパッケージマネージャー。 デフォルト値は「yarn」ですが、依存関係をインストールする代わりに「npm」にすることもできます。
+default: `'yarn'`  
+
 ### BUILD_COMMAND
 ビルド用コマンド  
 default: `''`  

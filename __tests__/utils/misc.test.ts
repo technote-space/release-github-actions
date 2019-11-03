@@ -323,6 +323,112 @@ describe('getBuildCommands', () => {
 	});
 });
 
+describe('getBuildCommands2', () => {
+	testEnv();
+
+	it('should default to "yarn" when no package manager is provided', () => {
+		process.env.INPUT_BUILD_COMMAND = 'test';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'yarn install',
+			'test',
+			'yarn build', // build command of package.json
+			'yarn install --production',
+		]);
+	});
+
+	it('should default to "yarn" when invalid package manager is provided', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'invalid-pkg-mgr';
+		process.env.INPUT_BUILD_COMMAND = 'test';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'yarn install',
+			'test',
+			'yarn build', // build command of package.json
+			'yarn install --production',
+		]);
+	});
+
+	it('should get build commands 1', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'npm';
+		process.env.INPUT_BUILD_COMMAND = 'test';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'npm install',
+			'test',
+			'npm run build', // build command of package.json
+			'npm install --production',
+		]);
+	});
+
+	it('should get build commands 2', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'npm';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'npm install',
+			'npm run build', // build command of package.json
+			'npm install --production',
+			'rm -rdf .[!.]*',
+			'rm -rdf __tests__',
+			'rm -rdf src',
+			'rm -rdf *.js',
+			'rm -rdf *.ts',
+			'rm -rdf *.json',
+			'rm -rdf *.lock',
+			'rm -rdf _config.yml',
+		]);
+	});
+
+	it('should get build commands 3', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'npm';
+		process.env.INPUT_BUILD_COMMAND = 'npm run build';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'npm install',
+			'npm run build',
+			'npm install --production',
+		]);
+	});
+
+	it('should get build commands 4', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'npm';
+		process.env.INPUT_BUILD_COMMAND = 'npm install && npm run build';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'npm install',
+			'npm run build',
+		]);
+	});
+
+	it('should get build commands 5', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'npm';
+		process.env.INPUT_BUILD_COMMAND = 'test';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
+			'npm install',
+			'test',
+			'npm install --production',
+		]);
+	});
+
+	it('should get build commands 6', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'npm';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
+			'npm install --production',
+			'rm -rdf .[!.]*',
+			'rm -rdf __tests__',
+			'rm -rdf src',
+			'rm -rdf *.js',
+			'rm -rdf *.ts',
+			'rm -rdf *.json',
+			'rm -rdf *.lock',
+			'rm -rdf _config.yml',
+		]);
+	});
+
+	it('should get build commands 7', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'npm';
+		process.env.INPUT_CLEAN_TARGETS = 'test';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
+			'npm install --production',
+			'rm -rdf test',
+		]);
+	});
+});
+
 describe('detectBuildCommand', () => {
 	it('should return false 1', () => {
 		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toBeFalsy();

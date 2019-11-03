@@ -5,6 +5,9 @@ inputs:
   GITHUB_TOKEN:
     description: Secret GitHub API token to use for making API requests.
     required: true
+  PACKAGE_MANAGER:
+    description: Package manager to use to install dependencies.
+    default: 'yarn'
   BUILD_COMMAND:
     description: Commands to build.
     default: ''
