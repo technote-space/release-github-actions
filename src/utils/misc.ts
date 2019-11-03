@@ -17,13 +17,7 @@ import {
 	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
-const {
-	getWorkspace,
-	escapeRegExp,
-	getBoolValue,
-	uniqueArray,
-	isSemanticVersioningTagName,
-} = Utils;
+const {getWorkspace, escapeRegExp, getBoolValue, uniqueArray, isSemanticVersioningTagName} = Utils;
 
 const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];
 
@@ -59,10 +53,10 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 };
 
 export const getBuildCommands = (dir: string): string[] => {
-	let commands = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
+	let commands    = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
 	const addRemove = !commands.length;
 
-	const buildCommand = detectBuildCommand(dir);
+	const buildCommand      = detectBuildCommand(dir);
 	// eslint-disable-next-line no-magic-numbers
 	const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length > 0;
 
@@ -143,7 +137,7 @@ export const getPatchTag = (tagName: string): string => 'v' + getVersionFragment
 export const isValidTagName = (tagName: string): boolean => isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && isSemanticVersioningTagName(getTestTag(tagName)));
 
 export const getCreateTags = (tagName: string): string[] => {
-	const settings = [
+	const settings  = [
 		{condition: isCreateMajorVersionTag, createTag: getMajorTag},
 		{condition: isCreateMinorVersionTag, createTag: getMinorTag},
 		{condition: isCreatePatchVersionTag, createTag: getPatchTag},
@@ -154,9 +148,9 @@ export const getCreateTags = (tagName: string): string[] => {
 };
 
 export const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
-	const workDir = path.resolve(getWorkspace(), '.work');
-	const buildDir = path.resolve(workDir, 'build');
-	const pushDir = path.resolve(workDir, 'push');
+	const workDir    = path.resolve(getWorkspace(), '.work');
+	const buildDir   = path.resolve(workDir, 'build');
+	const pushDir    = path.resolve(workDir, 'push');
 	const branchName = getBranchName();
 	return {workDir, buildDir, pushDir, branchName};
 };

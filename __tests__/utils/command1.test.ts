@@ -23,9 +23,9 @@ const setExists = testFs();
 describe('replaceDirectory', () => {
 	testEnv();
 
-	const workDir = path.resolve('test-dir/.work');
+	const workDir  = path.resolve('test-dir/.work');
 	const buildDir = path.resolve('test-dir/.work/build');
-	const pushDir = path.resolve('test-dir/.work/push');
+	const pushDir  = path.resolve('test-dir/.work/push');
 
 	it('should replace build directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
@@ -57,9 +57,9 @@ describe('cloneForBranch', () => {
 
 	it('should run clone command', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.INPUT_BRANCH_NAME = 'test-branch';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec = spyOnExec();
+		process.env.INPUT_BRANCH_NAME  = 'test-branch';
+		process.env.GITHUB_WORKSPACE   = 'test-dir';
+		const mockExec                 = spyOnExec();
 
 		await cloneForBranch(getContext({
 			repo: {
@@ -80,9 +80,9 @@ describe('checkBranch', () => {
 
 	it('should do nothing', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.INPUT_BRANCH_NAME = 'test-branch';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec = spyOnExec();
+		process.env.INPUT_BRANCH_NAME  = 'test-branch';
+		process.env.GITHUB_WORKSPACE   = 'test-dir';
+		const mockExec                 = spyOnExec();
 
 		await checkBranch('test-branch');
 
@@ -91,9 +91,9 @@ describe('checkBranch', () => {
 
 	it('should run git init command', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.INPUT_BRANCH_NAME = 'test-branch';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec = spyOnExec();
+		process.env.INPUT_BRANCH_NAME  = 'test-branch';
+		process.env.GITHUB_WORKSPACE   = 'test-dir';
+		const mockExec                 = spyOnExec();
 
 		await checkBranch('test-branch2');
 
@@ -126,8 +126,8 @@ describe('prepareFiles', () => {
 
 	it('should run commands', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec = spyOnExec();
+		process.env.GITHUB_WORKSPACE   = 'test-dir';
+		const mockExec                 = spyOnExec();
 
 		await prepareFiles(getContext({
 			repo: {
@@ -148,8 +148,8 @@ describe('prepareFiles', () => {
 
 	it('should checkout branch', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec = spyOnExec();
+		process.env.GITHUB_WORKSPACE   = 'test-dir';
+		const mockExec                 = spyOnExec();
 
 		await prepareFiles(getContext({
 			repo: {
@@ -168,8 +168,8 @@ describe('prepareFiles', () => {
 
 	it('should checkout tag', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec = spyOnExec();
+		process.env.GITHUB_WORKSPACE   = 'test-dir';
+		const mockExec                 = spyOnExec();
 
 		await prepareFiles(getContext({
 			repo: {
@@ -192,10 +192,10 @@ describe('createBuildInfoFile', () => {
 
 	it('should do nothing', async() => {
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = '/';
-		process.env.INPUT_BRANCH_NAME = 'test-branch';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
+		process.env.INPUT_BRANCH_NAME                = 'test-branch';
+		process.env.GITHUB_WORKSPACE                 = 'test-dir';
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const writeMock = jest.spyOn(require('fs'), 'writeFileSync');
+		const writeMock                              = jest.spyOn(require('fs'), 'writeFileSync');
 
 		await createBuildInfoFile(getContext({
 			eventName: 'push',
@@ -207,12 +207,12 @@ describe('createBuildInfoFile', () => {
 
 	it('should write file', async() => {
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = 'info.json';
-		process.env.INPUT_BRANCH_NAME = 'test-branch';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
+		process.env.INPUT_BRANCH_NAME                = 'test-branch';
+		process.env.GITHUB_WORKSPACE                 = 'test-dir';
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const mkdirMock = jest.spyOn(require('fs'), 'mkdirSync');
+		const mkdirMock                              = jest.spyOn(require('fs'), 'mkdirSync');
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const writeMock = jest.spyOn(require('fs'), 'writeFileSync');
+		const writeMock                              = jest.spyOn(require('fs'), 'writeFileSync');
 
 		await createBuildInfoFile(getContext({
 			eventName: 'push',
@@ -225,12 +225,12 @@ describe('createBuildInfoFile', () => {
 
 	it('should not create dir', async() => {
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = 'info.json';
-		process.env.INPUT_BRANCH_NAME = 'test-branch';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
+		process.env.INPUT_BRANCH_NAME                = 'test-branch';
+		process.env.GITHUB_WORKSPACE                 = 'test-dir';
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const mkdirMock = jest.spyOn(require('fs'), 'mkdirSync');
+		const mkdirMock                              = jest.spyOn(require('fs'), 'mkdirSync');
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const writeMock = jest.spyOn(require('fs'), 'writeFileSync');
+		const writeMock                              = jest.spyOn(require('fs'), 'writeFileSync');
 		setExists(true);
 
 		await createBuildInfoFile(getContext({
@@ -246,12 +246,12 @@ describe('createBuildInfoFile', () => {
 describe('copyFiles', () => {
 	it('should run rsync command', async() => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec = spyOnExec();
+		const mockExec               = spyOnExec();
 
 		await copyFiles();
 
 		const buildDir = path.resolve('test-dir/.work/build');
-		const pushDir = path.resolve('test-dir/.work/push');
+		const pushDir  = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
 			`rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`,
 		]);
@@ -261,7 +261,7 @@ describe('copyFiles', () => {
 describe('config', () => {
 	it('should run git config command', async() => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec = spyOnExec();
+		const mockExec               = spyOnExec();
 
 		await config();
 
@@ -278,9 +278,9 @@ describe('push', () => {
 
 	it('should run git push command', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
-		process.env.INPUT_BRANCH_NAME = 'test-branch';
-		const mockExec = spyOnExec();
+		process.env.GITHUB_WORKSPACE   = 'test-dir';
+		process.env.INPUT_BRANCH_NAME  = 'test-branch';
+		const mockExec                 = spyOnExec();
 
 		await push(getContext({
 			eventName: 'push',
@@ -306,11 +306,11 @@ describe('push', () => {
 	});
 
 	it('should run git push command with pushing original tag', async() => {
-		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE = 'test-dir';
-		process.env.INPUT_BRANCH_NAME = 'test-branch';
+		process.env.INPUT_GITHUB_TOKEN        = 'test-token';
+		process.env.GITHUB_WORKSPACE          = 'test-dir';
+		process.env.INPUT_BRANCH_NAME         = 'test-branch';
 		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
-		const mockExec = spyOnExec();
+		const mockExec                        = spyOnExec();
 
 		await push(getContext({
 			eventName: 'push',

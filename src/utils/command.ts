@@ -18,19 +18,16 @@ import {
 	getReplaceDirectory,
 } from './misc';
 
-const {
-	getRepository,
-	getTagName,
-} = Utils;
+const {getRepository, getTagName} = Utils;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
 	return Object.keys(directories).reduce((value, directory) => value.replace(` -C ${directory}`, '').replace(directory, directories[directory]), message);
 };
 
-const logger = new Logger(replaceDirectory);
-const command = new Command(logger);
-const helper = new GitHelper(logger, {depth: getFetchDepth()});
+const logger               = new Logger(replaceDirectory);
+const command              = new Command(logger);
+const helper               = new GitHelper(logger, {depth: getFetchDepth()});
 const {startProcess, info} = logger;
 
 export const prepareFiles = async(context: Context): Promise<void> => {
@@ -53,11 +50,11 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 	}
 
 	const {buildDir, branchName} = getParams();
-	const tagName = getTagName(context);
+	const tagName                = getTagName(context);
 
 	startProcess('Creating build info file');
 	const filepath = path.resolve(buildDir, filename);
-	const dir = path.dirname(filepath);
+	const dir      = path.dirname(filepath);
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir, {recursive: true});
 	}
@@ -89,8 +86,8 @@ export const checkBranch = async(clonedBranch: string): Promise<void> => {
 
 export const config = async(): Promise<void> => {
 	const {pushDir} = getParams();
-	const name = getCommitName();
-	const email = getCommitEmail();
+	const name      = getCommitName();
+	const email     = getCommitEmail();
 	startProcess('Configuring git committer to be %s <%s>', name, email);
 
 	await helper.config(pushDir, name, email);
@@ -100,7 +97,7 @@ export const commit = async(): Promise<boolean> => helper.commit(getParams().pus
 
 export const push = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
-	const tagName = getTagName(context);
+	const tagName               = getTagName(context);
 	startProcess('Pushing to %s@%s (tag: %s)', getRepository(context), branchName, tagName);
 
 	const prefix = getOriginalTagPrefix();
@@ -118,7 +115,7 @@ export const push = async(context: Context): Promise<void> => {
 };
 
 const findRelease = async(octokit: GitHub, context: Context): Promise<ReposListReleasesResponseItem | undefined> => {
-	const tagName = getTagName(context);
+	const tagName  = getTagName(context);
 	const releases = await octokit.repos.listReleases({
 		owner: context.repo.owner,
 		repo: context.repo.repo,

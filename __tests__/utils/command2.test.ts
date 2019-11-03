@@ -12,8 +12,8 @@ import {
 
 const common = async(callback: Function, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
 	const mockExec = spyOnExec();
-	const fn1 = jest.fn();
-	const fn2 = jest.fn();
+	const fn1      = jest.fn();
+	const fn2      = jest.fn();
 	nock('https://api.github.com')
 		.get('/repos/Hello/World/releases')
 		.reply(200, () => {
