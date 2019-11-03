@@ -571,7 +571,7 @@ describe('getCreateTags', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
 		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'false';
-		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		process.env.INPUT_TEST_TAG_PREFIX          = 'test/';
 		expect(getCreateTags('test/v1.2.3')).toEqual(['test/v1.2.3']);
 	});
 });
