@@ -59,9 +59,13 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 		fs.mkdirSync(dir, {recursive: true});
 	}
 	fs.writeFileSync(filepath, JSON.stringify({
-		'tagName': tagName,
-		'branch': branchName,
-		'tags': getCreateTags(tagName),
+		owner: context.repo.owner,
+		repo: context.repo.repo,
+		sha: context.sha,
+		ref: context.ref,
+		tagName: tagName,
+		branch: branchName,
+		tags: getCreateTags(tagName),
 		'updated_at': moment().toISOString(),
 	}));
 };
