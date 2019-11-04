@@ -1,4 +1,3 @@
-import { getArrayInput } from '@technote-space/github-action-helper/dist/utils';
 import fs from 'fs';
 import path from 'path';
 import { Context } from '@actions/github/lib/context';
@@ -17,9 +16,9 @@ import {
 	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
-const {getWorkspace, escapeRegExp, getBoolValue, uniqueArray, isSemanticVersioningTagName} = Utils;
+const {getWorkspace, escapeRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName} = Utils;
 
-const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];
+const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')));
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
@@ -57,16 +56,14 @@ export const getBuildCommands = (dir: string): string[] => {
 	const addRemove = !commands.length;
 
 	const buildCommand      = detectBuildCommand(dir);
-	// eslint-disable-next-line no-magic-numbers
-	const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length > 0;
+	const hasInstallCommand = !!commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length;
 
 	if (typeof buildCommand === 'string') {
 		commands = commands.filter(command => !command.startsWith(`npm run ${buildCommand}`) && !command.startsWith(`yarn ${buildCommand}`));
 		commands.push(`yarn ${buildCommand}`);
 	}
 
-	// eslint-disable-next-line no-magic-numbers
-	if (!hasInstallCommand && commands.length > 0) {
+	if (!hasInstallCommand && commands.length) {
 		commands.unshift('yarn install');
 	}
 
