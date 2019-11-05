@@ -4,6 +4,7 @@ import { Context } from '@actions/github/lib/context';
 import { Utils } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
 import {
+	DEFAULT_PACKAGE_MANAGER,
 	DEFAULT_COMMIT_MESSAGE,
 	DEFAULT_COMMIT_NAME,
 	DEFAULT_COMMIT_EMAIL,
@@ -55,20 +56,27 @@ export const getBuildCommands = (dir: string): string[] => {
 	let commands    = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
 	const addRemove = !commands.length;
 
+	let pkgManager = getInput('PACKAGE_MANAGER');
+	// eslint-disable-next-line no-magic-numbers
+	if (['yarn', 'npm'].indexOf(pkgManager) < 0) {
+		pkgManager = DEFAULT_PACKAGE_MANAGER;
+	}
+
 	const buildCommand      = detectBuildCommand(dir);
-	const hasInstallCommand = !!commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length;
+	const runSubCommand     = pkgManager === 'npm' ? ' run ' : ' ';
+	const hasInstallCommand = !!commands.filter(command => command.includes('npm run install') || command.includes(`${pkgManager} install`)).length;
 
 	if (typeof buildCommand === 'string') {
 		commands = commands.filter(command => !command.startsWith(`npm run ${buildCommand}`) && !command.startsWith(`yarn ${buildCommand}`));
-		commands.push(`yarn ${buildCommand}`);
+		commands.push([pkgManager, runSubCommand, buildCommand].join(''));
 	}
 
 	if (!hasInstallCommand && commands.length) {
-		commands.unshift('yarn install');
+		commands.unshift(`${pkgManager} install`);
 	}
 
 	if (!hasInstallCommand) {
-		commands.push('yarn install --production');
+		commands.push(`${pkgManager} install --production`);
 	}
 
 	if (addRemove) {

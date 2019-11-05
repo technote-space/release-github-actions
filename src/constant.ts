@@ -1,6 +1,7 @@
 import { Context } from '@actions/github/lib/context';
 import { isValidContext } from './utils/misc';
 
+export const DEFAULT_PACKAGE_MANAGER              = 'yarn';
 export const DEFAULT_COMMIT_MESSAGE               = 'feat: Build for release';
 export const DEFAULT_COMMIT_NAME                  = 'GitHub Actions';
 export const DEFAULT_COMMIT_EMAIL                 = 'example@example.com';
