@@ -70,6 +70,9 @@ export const getBuildCommands = (dir: string): string[] => {
 	}
 
 	if (!hasInstallCommand) {
+		if ('npm' === pkgManager) {
+			commands.push('rm -rdf node_modules');
+		}
 		commands.push(`${pkgManager} install --production`);
 	}
 

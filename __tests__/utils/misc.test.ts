@@ -336,6 +336,7 @@ describe('getBuildCommands', () => {
 			'npm install',
 			'test',
 			'npm run build', // build command of package.json
+			'rm -rdf node_modules',
 			'npm install --production',
 		]);
 	});
@@ -346,6 +347,7 @@ describe('getBuildCommands', () => {
 			'npm install',
 			'test',
 			'npm run build', // build command of package.json
+			'rm -rdf node_modules',
 			'npm install --production',
 		]);
 	});
@@ -355,6 +357,7 @@ describe('getBuildCommands', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'npm install',
 			'npm run build', // build command of package.json
+			'rm -rdf node_modules',
 			'npm install --production',
 			'rm -rdf .[!.]*',
 			'rm -rdf __tests__',
