@@ -22,7 +22,7 @@ const {getRepository, getTagName} = Utils;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
-	return Object.keys(directories).reduce((value, directory) => value.replace(` -C ${directory}`, '').replace(directory, directories[directory]), message);
+	return Object.keys(directories).reduce((value, directory) => value.split(` -C ${directory}`).join('').split(directory).join(directories[directory]), message);
 };
 
 const logger               = new Logger(replaceDirectory);

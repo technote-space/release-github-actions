@@ -38,7 +38,7 @@ describe('isTargetEvent', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'push',
 			ref: 'tags/v1.2.3',
-		}))).toBeTruthy();
+		}))).toBe(true);
 	});
 
 	it('should return true 2', () => {
@@ -51,7 +51,7 @@ describe('isTargetEvent', () => {
 					'tag_name': 'v1.2.3',
 				},
 			},
-		}))).toBeTruthy();
+		}))).toBe(true);
 	});
 
 	it('should return true 3', () => {
@@ -64,28 +64,28 @@ describe('isTargetEvent', () => {
 					'tag_name': 'v1.2.3',
 				},
 			},
-		}))).toBeTruthy();
+		}))).toBe(true);
 	});
 
 	it('should return true 4', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'create',
 			ref: 'tags/v1.2.3',
-		}))).toBeTruthy();
+		}))).toBe(true);
 	});
 
 	it('should return false 1', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'pull_request',
 			ref: 'tags/test',
-		}))).toBeFalsy();
+		}))).toBe(false);
 	});
 
 	it('should return false 2', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'push',
 			ref: 'tags/test',
-		}))).toBeFalsy();
+		}))).toBe(false);
 	});
 
 	it('should return false 3', () => {
@@ -93,7 +93,7 @@ describe('isTargetEvent', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'push',
 			ref: 'heads/release/v1.2.3',
-		}))).toBeFalsy();
+		}))).toBe(false);
 	});
 
 	it('should return false 4', () => {
@@ -101,7 +101,7 @@ describe('isTargetEvent', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'push',
 			ref: 'heads/release/v1.2.3',
-		}))).toBeFalsy();
+		}))).toBe(false);
 	});
 
 	it('should return false 5', () => {
@@ -114,7 +114,7 @@ describe('isTargetEvent', () => {
 					'tag_name': 'abc',
 				},
 			},
-		}))).toBeFalsy();
+		}))).toBe(false);
 	});
 
 	it('should return false 6', () => {
@@ -128,14 +128,14 @@ describe('isTargetEvent', () => {
 					'tag_name': 'v1.2.3',
 				},
 			},
-		}))).toBeFalsy();
+		}))).toBe(false);
 	});
 
 	it('should return false 7', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'create',
 			ref: 'heads/v1.2.3',
-		}))).toBeFalsy();
+		}))).toBe(false);
 	});
 });
 
@@ -249,7 +249,8 @@ describe('getBuildCommands', () => {
 	testEnv();
 
 	it('should get build commands 1', () => {
-		process.env.INPUT_BUILD_COMMAND = 'test';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_BUILD_COMMAND   = 'test';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'test',
@@ -259,6 +260,7 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 2', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'yarn build', // build command of package.json
@@ -275,7 +277,8 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 3', () => {
-		process.env.INPUT_BUILD_COMMAND = 'yarn build';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_BUILD_COMMAND   = 'yarn build';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'yarn build',
@@ -284,7 +287,8 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 4', () => {
-		process.env.INPUT_BUILD_COMMAND = 'yarn install && yarn build';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_BUILD_COMMAND   = 'yarn install && yarn build';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'yarn build',
@@ -292,7 +296,8 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 5', () => {
-		process.env.INPUT_BUILD_COMMAND = 'test';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_BUILD_COMMAND   = 'test';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install',
 			'test',
@@ -301,6 +306,7 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 6', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
 			'rm -rdf .[!.]*',
@@ -315,36 +321,78 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 7', () => {
-		process.env.INPUT_CLEAN_TARGETS = 'test';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_CLEAN_TARGETS   = 'test';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
 			'rm -rdf test',
+		]);
+	});
+
+	it('should get build commands 8', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'invalid-pkg-mgr';
+		process.env.INPUT_BUILD_COMMAND   = 'test';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'npm install',
+			'test',
+			'npm run build', // build command of package.json
+			'rm -rdf node_modules',
+			'npm install --production',
+		]);
+	});
+
+	it('should get build commands 9', () => {
+		process.env.INPUT_BUILD_COMMAND = 'test';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'npm install',
+			'test',
+			'npm run build', // build command of package.json
+			'rm -rdf node_modules',
+			'npm install --production',
+		]);
+	});
+
+	it('should get build commands 10', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'npm';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'npm install',
+			'npm run build', // build command of package.json
+			'rm -rdf node_modules',
+			'npm install --production',
+			'rm -rdf .[!.]*',
+			'rm -rdf __tests__',
+			'rm -rdf src',
+			'rm -rdf *.js',
+			'rm -rdf *.ts',
+			'rm -rdf *.json',
+			'rm -rdf *.lock',
+			'rm -rdf _config.yml',
 		]);
 	});
 });
 
 describe('detectBuildCommand', () => {
 	it('should return false 1', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toBeFalsy();
+		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toBe(false);
 	});
 
 	it('should return false 2', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test2'))).toBeFalsy();
+		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test2'))).toBe(false);
 	});
 
-	it('should return false 2', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test3'))).toBeFalsy();
+	it('should return false 3', () => {
+		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test3'))).toBe(false);
 	});
 
 	it('should detect build command 1', () => {
 		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toBe('build');
 	});
 
-	it('should detect build command 1', () => {
+	it('should detect build command 2', () => {
 		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test5'))).toBe('production');
 	});
 
-	it('should detect build command 1', () => {
+	it('should detect build command 3', () => {
 		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test6'))).toBe('prod');
 	});
 });
@@ -353,30 +401,30 @@ describe('isValidTagName', () => {
 	testEnv();
 
 	it('should return true 1', () => {
-		expect(isValidTagName('0')).toBeTruthy();
-		expect(isValidTagName('v12')).toBeTruthy();
-		expect(isValidTagName('1.2')).toBeTruthy();
-		expect(isValidTagName('V1.2.3')).toBeTruthy();
-		expect(isValidTagName('v12.23.34.45')).toBeTruthy();
+		expect(isValidTagName('0')).toBe(true);
+		expect(isValidTagName('v12')).toBe(true);
+		expect(isValidTagName('1.2')).toBe(true);
+		expect(isValidTagName('V1.2.3')).toBe(true);
+		expect(isValidTagName('v12.23.34.45')).toBe(true);
 	});
 
 	it('should return true 2', () => {
 		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
-		expect(isValidTagName('test/v12')).toBeTruthy();
-		expect(isValidTagName('test/1.2')).toBeTruthy();
+		expect(isValidTagName('test/v12')).toBe(true);
+		expect(isValidTagName('test/1.2')).toBe(true);
 	});
 
 	it('should return false 1', () => {
-		expect(isValidTagName('')).toBeFalsy();
-		expect(isValidTagName('abc')).toBeFalsy();
-		expect(isValidTagName('v1.')).toBeFalsy();
-		expect(isValidTagName('v.9')).toBeFalsy();
+		expect(isValidTagName('')).toBe(false);
+		expect(isValidTagName('abc')).toBe(false);
+		expect(isValidTagName('v1.')).toBe(false);
+		expect(isValidTagName('v.9')).toBe(false);
 	});
 
 	it('should return false 2', () => {
 		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
-		expect(isValidTagName('test/')).toBeFalsy();
-		expect(isValidTagName('test/abc')).toBeFalsy();
+		expect(isValidTagName('test/')).toBe(false);
+		expect(isValidTagName('test/abc')).toBe(false);
 	});
 });
 
@@ -414,25 +462,25 @@ describe('isCreateMajorVersionTag', () => {
 	testEnv();
 
 	it('should return true 1', () => {
-		expect(isCreateMajorVersionTag()).toBeTruthy();
+		expect(isCreateMajorVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = '1';
-		expect(isCreateMajorVersionTag()).toBeTruthy();
+		expect(isCreateMajorVersionTag()).toBe(true);
 	});
 	it('should return true 3', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'abc';
-		expect(isCreateMajorVersionTag()).toBeTruthy();
+		expect(isCreateMajorVersionTag()).toBe(true);
 	});
 
 	it('should return false 1', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
-		expect(isCreateMajorVersionTag()).toBeFalsy();
+		expect(isCreateMajorVersionTag()).toBe(false);
 	});
 
 	it('should return false 2', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = '0';
-		expect(isCreateMajorVersionTag()).toBeFalsy();
+		expect(isCreateMajorVersionTag()).toBe(false);
 	});
 });
 
@@ -440,25 +488,25 @@ describe('isCreateMinorVersionTag', () => {
 	testEnv();
 
 	it('should return true 1', () => {
-		expect(isCreateMinorVersionTag()).toBeTruthy();
+		expect(isCreateMinorVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = '1';
-		expect(isCreateMinorVersionTag()).toBeTruthy();
+		expect(isCreateMinorVersionTag()).toBe(true);
 	});
 	it('should return true 3', () => {
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'abc';
-		expect(isCreateMinorVersionTag()).toBeTruthy();
+		expect(isCreateMinorVersionTag()).toBe(true);
 	});
 
 	it('should return false 1', () => {
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
-		expect(isCreateMinorVersionTag()).toBeFalsy();
+		expect(isCreateMinorVersionTag()).toBe(false);
 	});
 
 	it('should return false 2', () => {
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = '0';
-		expect(isCreateMinorVersionTag()).toBeFalsy();
+		expect(isCreateMinorVersionTag()).toBe(false);
 	});
 });
 
@@ -466,25 +514,25 @@ describe('isCreatePatchVersionTag', () => {
 	testEnv();
 
 	it('should return true 1', () => {
-		expect(isCreatePatchVersionTag()).toBeTruthy();
+		expect(isCreatePatchVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
 		process.env.INPUT_CREATE_PATCH_VERSION_TAG = '1';
-		expect(isCreatePatchVersionTag()).toBeTruthy();
+		expect(isCreatePatchVersionTag()).toBe(true);
 	});
 	it('should return true 3', () => {
 		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'abc';
-		expect(isCreatePatchVersionTag()).toBeTruthy();
+		expect(isCreatePatchVersionTag()).toBe(true);
 	});
 
 	it('should return false 1', () => {
 		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'false';
-		expect(isCreatePatchVersionTag()).toBeFalsy();
+		expect(isCreatePatchVersionTag()).toBe(false);
 	});
 
 	it('should return false 2', () => {
 		process.env.INPUT_CREATE_PATCH_VERSION_TAG = '0';
-		expect(isCreatePatchVersionTag()).toBeFalsy();
+		expect(isCreatePatchVersionTag()).toBe(false);
 	});
 });
 

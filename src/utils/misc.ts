@@ -1,4 +1,3 @@
-import { getArrayInput } from '@technote-space/github-action-helper/dist/utils';
 import fs from 'fs';
 import path from 'path';
 import { Context } from '@actions/github/lib/context';
@@ -17,9 +16,9 @@ import {
 	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
-const {getWorkspace, escapeRegExp, getBoolValue, uniqueArray, isSemanticVersioningTagName} = Utils;
+const {getWorkspace, escapeRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm} = Utils;
 
-const getCleanTargets = (): string[] => [...new Set<string>((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')))];
+const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')));
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
@@ -56,22 +55,25 @@ export const getBuildCommands = (dir: string): string[] => {
 	let commands    = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
 	const addRemove = !commands.length;
 
+	const pkgManager        = useNpm(dir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
 	const buildCommand      = detectBuildCommand(dir);
-	// eslint-disable-next-line no-magic-numbers
-	const hasInstallCommand = commands.filter(command => command.includes('npm run install') || command.includes('yarn install')).length > 0;
+	const runSubCommand     = pkgManager === 'npm' ? ' run ' : ' ';
+	const hasInstallCommand = !!commands.filter(command => command.includes('npm run install') || command.includes(`${pkgManager} install`)).length;
 
 	if (typeof buildCommand === 'string') {
 		commands = commands.filter(command => !command.startsWith(`npm run ${buildCommand}`) && !command.startsWith(`yarn ${buildCommand}`));
-		commands.push(`yarn ${buildCommand}`);
+		commands.push([pkgManager, runSubCommand, buildCommand].join(''));
 	}
 
-	// eslint-disable-next-line no-magic-numbers
-	if (!hasInstallCommand && commands.length > 0) {
-		commands.unshift('yarn install');
+	if (!hasInstallCommand && commands.length) {
+		commands.unshift(`${pkgManager} install`);
 	}
 
 	if (!hasInstallCommand) {
-		commands.push('yarn install --production');
+		if ('npm' === pkgManager) {
+			commands.push('rm -rdf node_modules');
+		}
+		commands.push(`${pkgManager} install --production`);
 	}
 
 	if (addRemove) {
