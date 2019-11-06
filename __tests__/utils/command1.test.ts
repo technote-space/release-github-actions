@@ -125,9 +125,10 @@ describe('prepareFiles', () => {
 	};
 
 	it('should run commands', async() => {
-		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE   = 'test-dir';
-		const mockExec                 = spyOnExec();
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
+		process.env.GITHUB_WORKSPACE      = 'test-dir';
+		const mockExec                    = spyOnExec();
 
 		await prepareFiles(getContext({
 			repo: {
@@ -147,9 +148,10 @@ describe('prepareFiles', () => {
 	});
 
 	it('should checkout branch', async() => {
-		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE   = 'test-dir';
-		const mockExec                 = spyOnExec();
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
+		process.env.GITHUB_WORKSPACE      = 'test-dir';
+		const mockExec                    = spyOnExec();
 
 		await prepareFiles(getContext({
 			repo: {
@@ -167,9 +169,10 @@ describe('prepareFiles', () => {
 	});
 
 	it('should checkout tag', async() => {
-		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE   = 'test-dir';
-		const mockExec                 = spyOnExec();
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
+		process.env.GITHUB_WORKSPACE      = 'test-dir';
+		const mockExec                    = spyOnExec();
 
 		await prepareFiles(getContext({
 			repo: {

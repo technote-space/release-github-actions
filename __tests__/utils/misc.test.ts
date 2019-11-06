@@ -249,7 +249,8 @@ describe('getBuildCommands', () => {
 	testEnv();
 
 	it('should get build commands 1', () => {
-		process.env.INPUT_BUILD_COMMAND = 'test';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_BUILD_COMMAND   = 'test';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'test',
@@ -259,6 +260,7 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 2', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'yarn build', // build command of package.json
@@ -275,7 +277,8 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 3', () => {
-		process.env.INPUT_BUILD_COMMAND = 'yarn build';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_BUILD_COMMAND   = 'yarn build';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'yarn build',
@@ -284,7 +287,8 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 4', () => {
-		process.env.INPUT_BUILD_COMMAND = 'yarn install && yarn build';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_BUILD_COMMAND   = 'yarn install && yarn build';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'yarn build',
@@ -292,7 +296,8 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 5', () => {
-		process.env.INPUT_BUILD_COMMAND = 'test';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_BUILD_COMMAND   = 'test';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install',
 			'test',
@@ -301,6 +306,7 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 6', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
 			'rm -rdf .[!.]*',
@@ -315,40 +321,26 @@ describe('getBuildCommands', () => {
 	});
 
 	it('should get build commands 7', () => {
-		process.env.INPUT_CLEAN_TARGETS = 'test';
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_CLEAN_TARGETS   = 'test';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
 			'rm -rdf test',
 		]);
 	});
-});
 
-describe('getBuildCommands2', () => {
-	testEnv();
-
-	it('should default to "yarn" when no package manager is provided', () => {
-		process.env.INPUT_BUILD_COMMAND = 'test';
-		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
-			'yarn install',
-			'test',
-			'yarn build', // build command of package.json
-			'yarn install --production',
-		]);
-	});
-
-	it('should default to "yarn" when invalid package manager is provided', () => {
+	it('should get build commands 8', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'invalid-pkg-mgr';
-		process.env.INPUT_BUILD_COMMAND = 'test';
+		process.env.INPUT_BUILD_COMMAND   = 'test';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
-			'yarn install',
+			'npm install',
 			'test',
-			'yarn build', // build command of package.json
-			'yarn install --production',
+			'npm run build', // build command of package.json
+			'npm install --production',
 		]);
 	});
 
-	it('should get build commands 1', () => {
-		process.env.INPUT_PACKAGE_MANAGER = 'npm';
+	it('should get build commands 9', () => {
 		process.env.INPUT_BUILD_COMMAND = 'test';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'npm install',
@@ -358,7 +350,7 @@ describe('getBuildCommands2', () => {
 		]);
 	});
 
-	it('should get build commands 2', () => {
+	it('should get build commands 10', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'npm';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'npm install',
@@ -372,59 +364,6 @@ describe('getBuildCommands2', () => {
 			'rm -rdf *.json',
 			'rm -rdf *.lock',
 			'rm -rdf _config.yml',
-		]);
-	});
-
-	it('should get build commands 3', () => {
-		process.env.INPUT_PACKAGE_MANAGER = 'npm';
-		process.env.INPUT_BUILD_COMMAND = 'npm run build';
-		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
-			'npm install',
-			'npm run build',
-			'npm install --production',
-		]);
-	});
-
-	it('should get build commands 4', () => {
-		process.env.INPUT_PACKAGE_MANAGER = 'npm';
-		process.env.INPUT_BUILD_COMMAND = 'npm install && npm run build';
-		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
-			'npm install',
-			'npm run build',
-		]);
-	});
-
-	it('should get build commands 5', () => {
-		process.env.INPUT_PACKAGE_MANAGER = 'npm';
-		process.env.INPUT_BUILD_COMMAND = 'test';
-		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
-			'npm install',
-			'test',
-			'npm install --production',
-		]);
-	});
-
-	it('should get build commands 6', () => {
-		process.env.INPUT_PACKAGE_MANAGER = 'npm';
-		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
-			'npm install --production',
-			'rm -rdf .[!.]*',
-			'rm -rdf __tests__',
-			'rm -rdf src',
-			'rm -rdf *.js',
-			'rm -rdf *.ts',
-			'rm -rdf *.json',
-			'rm -rdf *.lock',
-			'rm -rdf _config.yml',
-		]);
-	});
-
-	it('should get build commands 7', () => {
-		process.env.INPUT_PACKAGE_MANAGER = 'npm';
-		process.env.INPUT_CLEAN_TARGETS = 'test';
-		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
-			'npm install --production',
-			'rm -rdf test',
 		]);
 	});
 });

@@ -4,7 +4,6 @@ import { Context } from '@actions/github/lib/context';
 import { Utils } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
 import {
-	DEFAULT_PACKAGE_MANAGER,
 	DEFAULT_COMMIT_MESSAGE,
 	DEFAULT_COMMIT_NAME,
 	DEFAULT_COMMIT_EMAIL,
@@ -17,7 +16,7 @@ import {
 	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
-const {getWorkspace, escapeRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName} = Utils;
+const {getWorkspace, escapeRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm} = Utils;
 
 const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')));
 
@@ -56,12 +55,7 @@ export const getBuildCommands = (dir: string): string[] => {
 	let commands    = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
 	const addRemove = !commands.length;
 
-	let pkgManager = getInput('PACKAGE_MANAGER');
-	// eslint-disable-next-line no-magic-numbers
-	if (['yarn', 'npm'].indexOf(pkgManager) < 0) {
-		pkgManager = DEFAULT_PACKAGE_MANAGER;
-	}
-
+	const pkgManager        = useNpm(dir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
 	const buildCommand      = detectBuildCommand(dir);
 	const runSubCommand     = pkgManager === 'npm' ? ' run ' : ' ';
 	const hasInstallCommand = !!commands.filter(command => command.includes('npm run install') || command.includes(`${pkgManager} install`)).length;
