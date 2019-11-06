@@ -136,6 +136,10 @@ import path from 'path';
 
 const {
 	isRelease,
+	isPush,
+	isPr,
+	isIssue,
+	isCron,
 	getWorkspace,
 	getGitUrl,
 	escapeRegExp,
@@ -149,9 +153,14 @@ const {
 	getBuildInfo,
 	showActionInfo,
 	getArrayInput,
+	useNpm,
 } = Utils;
 
 console.log(isRelease(context));  // e.g. true
+console.log(isPush(context));  // e.g. true
+console.log(isPr(context));  // e.g. true
+console.log(isIssue(context));  // e.g. true
+console.log(isCron(context));  // e.g. true
 console.log(getWorkspace());  // e.g. /home/runner/work/RepoOwner/RepoName
 console.log(getGitUrl());  // e.g. https://octocat:token@github.com/RepoOwner/RepoName.git
 console.log(escapeRegExp('.*+?^${}()|[]\\')); // '\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\\\'
@@ -166,6 +175,7 @@ console.log(uniqueArray([1, 2, 2, 3, 4, 3]));  // [1, 2, 3, 4]
 console.log(getBuildInfo(path.resolve(__dirname, 'build.json')));  // e.g. 'v1.2.3'
 showActionInfo(path.resolve(__dirname, '..'), new Logger(), context);
 console.log(getArrayInput('TEST'));  // e.g. ['test1', 'test2']
+console.log(useNpm('dir')); // e.g. true
 ```
 
 ## Author

@@ -21,6 +21,7 @@ Once you create a new tag, this action will automatically
 - [Screenshots](#screenshots)
 - [Installation](#installation)
 - [Options](#options)
+  - [PACKAGE_MANAGER](#package_manager)
   - [BUILD_COMMAND](#build_command)
   - [COMMIT_MESSAGE](#commit_message)
   - [COMMIT_NAME](#commit_name)
@@ -77,6 +78,12 @@ Once you create a new tag, this action will automatically
 [More details of target event](#action-event-details)
 
 ## Options
+### PACKAGE_MANAGER
+Package manager to use to install dependencies.  
+If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used to specify it explicitly.  
+（`npm` or `yarn`）  
+default: `''`
+
 ### BUILD_COMMAND
 Build command.  
 default: `''`  
