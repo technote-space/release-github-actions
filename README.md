@@ -79,8 +79,10 @@ Once you create a new tag, this action will automatically
 
 ## Options
 ### PACKAGE_MANAGER
-Package manager to use to install dependencies. Default value is 'yarn', but can also be 'npm', if you rely on that later instead to install the dependencies.  
-default: `'yarn'`
+Package manager to use to install dependencies.  
+If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used but this option can be used to specify it explicitly.  
+（`npm` or `yarn`）  
+default: `''`
 
 ### BUILD_COMMAND
 Build command.  

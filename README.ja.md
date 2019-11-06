@@ -80,8 +80,10 @@
 ## オプション
 ### PACKAGE_MANAGER
 依存関係のインストールに使用するパッケージマネージャー  
-デフォルト値は `yarn` ですが、代わりに `npm` にすることもできます。  
-default: `'yarn'`
+`yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます。  
+（`npm` または `yarn`）  
+default: `''`  
+例：`npm`  
 
 ### BUILD_COMMAND
 ビルド用コマンド  
