@@ -7,7 +7,7 @@ inputs:
     required: true
   PACKAGE_MANAGER:
     description: Package manager to use to install dependencies.
-    default: 'yarn'
+    default: ''
   BUILD_COMMAND:
     description: Commands to build.
     default: ''
