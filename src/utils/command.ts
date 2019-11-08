@@ -115,7 +115,7 @@ export const push = async(context: Context): Promise<void> => {
 	await helper.deleteTag(pushDir, tagNames, context);
 	await helper.fetchTags(pushDir, context);
 	await helper.addLocalTag(pushDir, tagNames);
-	await helper.push(pushDir, branchName, context);
+	await helper.push(pushDir, branchName, true, context);
 };
 
 const findRelease = async(octokit: GitHub, context: Context): Promise<ReposListReleasesResponseItem | undefined> => {
