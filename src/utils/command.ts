@@ -1,7 +1,7 @@
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
-import { Logger, Command, ContextHelper, GitHelper } from '@technote-space/github-action-helper';
+import { Logger, Command, ContextHelper, GitHelper, Utils } from '@technote-space/github-action-helper';
 import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
 import { ReposListReleasesResponseItem } from '@octokit/rest';
@@ -19,10 +19,11 @@ import {
 } from './misc';
 
 const {getRepository, getTagName} = ContextHelper;
+const {replaceAll}                = Utils;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
-	return Object.keys(directories).reduce((value, directory) => value.split(` -C ${directory}`).join('').split(directory).join(directories[directory]), message);
+	return Object.keys(directories).reduce((value, directory) => replaceAll(replaceAll(value, ` -C ${directory}`, ''), directory, directories[directory]), message);
 };
 
 const logger               = new Logger(replaceDirectory);

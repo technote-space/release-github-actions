@@ -16,7 +16,7 @@ import {
 	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
-const {getWorkspace, escapeRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm} = Utils;
+const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm} = Utils;
 
 const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')));
 
@@ -101,7 +101,7 @@ export const getFetchDepth = (): number => {
 
 export const getTestTagPrefix = (): string => getInput('TEST_TAG_PREFIX') || DEFAULT_TEST_TAG_PREFIX;
 
-const getTestTagPrefixRegExp = (): RegExp => new RegExp('^' + escapeRegExp(getTestTagPrefix()));
+const getTestTagPrefixRegExp = (): RegExp => getPrefixRegExp(getTestTagPrefix());
 
 export const isTestTag = (tagName: string): boolean => !!getTestTagPrefix() && getTestTagPrefixRegExp().test(tagName);
 
