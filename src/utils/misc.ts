@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { Context } from '@actions/github/lib/context';
-import { Utils } from '@technote-space/github-action-helper';
+import { Utils, ContextHelper } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
 import {
 	DEFAULT_COMMIT_MESSAGE,
@@ -166,4 +166,4 @@ export const getReplaceDirectory = (): object => {
 	};
 };
 
-export const isValidContext = (context: Context): boolean => isValidTagName(Utils.getTagName(context));
+export const isValidContext = (context: Context): boolean => isValidTagName(ContextHelper.getTagName(context));

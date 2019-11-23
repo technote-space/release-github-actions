@@ -1,7 +1,7 @@
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
-import { Logger, Command, Utils, GitHelper } from '@technote-space/github-action-helper';
+import { Logger, Command, ContextHelper, GitHelper } from '@technote-space/github-action-helper';
 import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
 import { ReposListReleasesResponseItem } from '@octokit/rest';
@@ -18,7 +18,7 @@ import {
 	getReplaceDirectory,
 } from './misc';
 
-const {getRepository, getTagName} = Utils;
+const {getRepository, getTagName} = ContextHelper;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
@@ -115,7 +115,7 @@ export const push = async(context: Context): Promise<void> => {
 	await helper.deleteTag(pushDir, tagNames, context);
 	await helper.fetchTags(pushDir, context);
 	await helper.addLocalTag(pushDir, tagNames);
-	await helper.push(pushDir, branchName, context);
+	await helper.push(pushDir, branchName, true, context);
 };
 
 const findRelease = async(octokit: GitHub, context: Context): Promise<ReposListReleasesResponseItem | undefined> => {

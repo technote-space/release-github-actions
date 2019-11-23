@@ -68,9 +68,8 @@ describe('cloneForBranch', () => {
 			},
 		}));
 
-		const dir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`git -C ${dir} clone --branch=test-branch --depth=3 https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1 || :`,
+			'git clone --branch=test-branch --depth=3 https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1 || :',
 		]);
 	});
 });
@@ -100,8 +99,8 @@ describe('checkBranch', () => {
 		const dir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
 			`rm -rdf ${dir}`,
-			`git -C ${dir} init .`,
-			`git -C ${dir} checkout --orphan "test-branch"`,
+			'git init .',
+			'git checkout --orphan "test-branch"',
 		]);
 	});
 });
@@ -141,9 +140,9 @@ describe('prepareFiles', () => {
 
 		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			`git -C ${dir} clone --depth=3 https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1`,
-			`git -C ${dir} fetch https://octocat:test-token@github.com/Hello/World.git refs/heads/test > /dev/null 2>&1`,
-			`git -C ${dir} checkout -qf test-sha`,
+			'git clone --depth=3 https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1',
+			'git fetch https://octocat:test-token@github.com/Hello/World.git refs/heads/test > /dev/null 2>&1',
+			'git checkout -qf test-sha',
 		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
 	});
 
@@ -163,8 +162,8 @@ describe('prepareFiles', () => {
 
 		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			`git -C ${dir} clone https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1`,
-			`git -C ${dir} checkout -qf test`,
+			'git clone https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1',
+			'git checkout -qf test',
 		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
 	});
 
@@ -184,8 +183,8 @@ describe('prepareFiles', () => {
 
 		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			`git -C ${dir} clone https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1`,
-			`git -C ${dir} checkout -qf refs/tags/test`,
+			'git clone https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1',
+			'git checkout -qf refs/tags/test',
 		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
 	});
 });
@@ -268,10 +267,9 @@ describe('config', () => {
 
 		await config();
 
-		const dir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`git -C ${dir} config user.name "GitHub Actions"`,
-			`git -C ${dir} config user.email "example@example.com"`,
+			'git config user.name "GitHub Actions"',
+			'git config user.email "example@example.com"',
 		]);
 	});
 });
@@ -294,17 +292,16 @@ describe('push', () => {
 			},
 		}));
 
-		const dir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1 > /dev/null 2>&1 || :`,
-			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2 > /dev/null 2>&1 || :`,
-			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2.3 > /dev/null 2>&1 || :`,
-			`git -C ${dir} tag -l | xargs git -C ${dir} tag -d`,
-			`git -C ${dir} fetch "https://octocat:test-token@github.com/Hello/World.git" --tags > /dev/null 2>&1`,
-			`git -C ${dir} tag v1`,
-			`git -C ${dir} tag v1.2`,
-			`git -C ${dir} tag v1.2.3`,
-			`git -C ${dir} push --tags "https://octocat:test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1`,
+			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1 > /dev/null 2>&1 || :',
+			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1.2 > /dev/null 2>&1 || :',
+			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1.2.3 > /dev/null 2>&1 || :',
+			'git tag -l | xargs git tag -d',
+			'git fetch https://octocat:test-token@github.com/Hello/World.git --tags > /dev/null 2>&1',
+			'git tag v1',
+			'git tag v1.2',
+			'git tag v1.2.3',
+			'git push --tags https://octocat:test-token@github.com/Hello/World.git "test-branch":"refs/heads/test-branch" > /dev/null 2>&1',
 		]);
 	});
 
@@ -324,22 +321,21 @@ describe('push', () => {
 			},
 		}));
 
-		const dir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`git -C ${dir} tag -l | xargs git -C ${dir} tag -d`,
-			`git -C ${dir} fetch "https://octocat:test-token@github.com/Hello/World.git" --tags > /dev/null 2>&1`,
-			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag original/v1.2.3 > /dev/null 2>&1 || :`,
-			`git -C ${dir} tag original/v1.2.3 v1.2.3`,
-			`git -C ${dir} push "https://octocat:test-token@github.com/Hello/World.git" "refs/tags/original/v1.2.3" > /dev/null 2>&1`,
-			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1 > /dev/null 2>&1 || :`,
-			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2 > /dev/null 2>&1 || :`,
-			`git -C ${dir} push --delete "https://octocat:test-token@github.com/Hello/World.git" tag v1.2.3 > /dev/null 2>&1 || :`,
-			`git -C ${dir} tag -l | xargs git -C ${dir} tag -d`,
-			`git -C ${dir} fetch "https://octocat:test-token@github.com/Hello/World.git" --tags > /dev/null 2>&1`,
-			`git -C ${dir} tag v1`,
-			`git -C ${dir} tag v1.2`,
-			`git -C ${dir} tag v1.2.3`,
-			`git -C ${dir} push --tags "https://octocat:test-token@github.com/Hello/World.git" "test-branch":"refs/heads/test-branch" > /dev/null 2>&1`,
+			'git tag -l | xargs git tag -d',
+			'git fetch https://octocat:test-token@github.com/Hello/World.git --tags > /dev/null 2>&1',
+			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag original/v1.2.3 > /dev/null 2>&1 || :',
+			'git tag original/v1.2.3 v1.2.3',
+			'git push https://octocat:test-token@github.com/Hello/World.git "refs/tags/original/v1.2.3" > /dev/null 2>&1',
+			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1 > /dev/null 2>&1 || :',
+			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1.2 > /dev/null 2>&1 || :',
+			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1.2.3 > /dev/null 2>&1 || :',
+			'git tag -l | xargs git tag -d',
+			'git fetch https://octocat:test-token@github.com/Hello/World.git --tags > /dev/null 2>&1',
+			'git tag v1',
+			'git tag v1.2',
+			'git tag v1.2.3',
+			'git push --tags https://octocat:test-token@github.com/Hello/World.git "test-branch":"refs/heads/test-branch" > /dev/null 2>&1',
 		]);
 	});
 });
