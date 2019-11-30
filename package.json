@@ -22,7 +22,7 @@
     "@actions/core": "^1.2.0",
     "@actions/github": "^1.1.0",
     "@technote-space/filter-github-action": "^0.1.11",
-    "@technote-space/github-action-helper": "^0.6.4",
+    "@technote-space/github-action-helper": "^0.6.8",
     "moment": "^2.24.0"
   },
   "devDependencies": {
@@ -31,7 +31,7 @@
     "@types/node": "^12.12.14",
     "@typescript-eslint/eslint-plugin": "^2.9.0",
     "@typescript-eslint/parser": "^2.9.0",
-    "eslint": "^6.7.1",
+    "eslint": "^6.7.2",
     "jest": "^24.9.0",
     "jest-circus": "^24.9.0",
     "nock": "^11.7.0",
