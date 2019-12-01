@@ -122,6 +122,7 @@ default: `'gh-actions'`
 リリース前に削除するファイルやディレクトリ (カンマ区切り)  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 絶対パスや `..` は使用できません。  
+`BUILD_COMMAND`が指定されている場合、このパラメーターは無視されます。  
 
 ### BUILD_COMMAND_TARGET
 ビルド用コマンド検索ターゲット  

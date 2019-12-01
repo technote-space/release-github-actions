@@ -121,7 +121,8 @@ default: `'gh-actions'`
 ### CLEAN_TARGETS
 Files or directories to delete before release (Comma separated).  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
-Absolute path and `..` are not permitted to use.
+Absolute path and `..` are not permitted to use.  
+This parameter is ignored if `BUILD_COMMAND` is provided.  
 
 ### BUILD_COMMAND_TARGET
 Command for search build command.  
