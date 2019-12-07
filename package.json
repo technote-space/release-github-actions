@@ -22,7 +22,7 @@
     "@actions/core": "^1.2.0",
     "@actions/github": "^1.1.0",
     "@technote-space/filter-github-action": "^0.1.11",
-    "@technote-space/github-action-helper": "^0.6.10",
+    "@technote-space/github-action-helper": "^0.6.11",
     "moment": "^2.24.0"
   },
   "devDependencies": {
