@@ -144,24 +144,6 @@ Whether to create patch version tag (e.g. v1.2.3).
 default: `true`  
 [Detail of tags](#tags)
 
-### OUTPUT_BUILD_INFO_FILENAME
-Filename of build information.  
-default: `''`  
-Absolute path and `..` are not permitted to use.  
-If this setting is not empty, following information is output with the file name.
-```json
-{
-  "tagName": "${tagName}",
-  "branch": "${branch}",
-  "tags": [
-    "${created_tag_1}",
-    "...",
-    "${created_tag_n}"
-  ],
-  "updated_at": "${updated_at}"
-}
-```
-
 ### FETCH_DEPTH
 Limit fetching to the specified number of commits from the tip of each remote branch history.  
 default: `3`  

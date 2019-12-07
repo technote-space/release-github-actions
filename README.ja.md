@@ -144,24 +144,6 @@ default: `true`
 default: `true`  
 [タグの詳細](#tags)
 
-### OUTPUT_BUILD_INFO_FILENAME
-ビルド情報を出力するファイル名  
-default: `''`  
-絶対パスや `..` は使用できません。  
-この設定が空でない場合、以下のような情報が出力されます。  
-```json
-{
-  "tagName": "${tagName}",
-  "branch": "${branch}",
-  "tags": [
-    "${created_tag_1}",
-    "...",
-    "${created_tag_n}"
-  ],
-  "updated_at": "${updated_at}"
-}
-```
-
 ### FETCH_DEPTH
 取得するコミット履歴の制限数  
 default: `3`  
