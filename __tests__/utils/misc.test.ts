@@ -247,6 +247,19 @@ describe('getTestTag', () => {
 
 describe('getBuildCommands', () => {
 	testEnv();
+	const rm = {
+		command: 'rm', args: [
+			'-rdf',
+			'.[!.]*',
+			'__tests__',
+			'src',
+			'*.js',
+			'*.ts',
+			'*.json',
+			'*.lock',
+			'_config.yml',
+		],
+	};
 
 	it('should get build commands 1', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
@@ -265,14 +278,7 @@ describe('getBuildCommands', () => {
 			'yarn install',
 			'yarn build', // build command of package.json
 			'yarn install --production',
-			'rm -rdf .[!.]*',
-			'rm -rdf __tests__',
-			'rm -rdf src',
-			'rm -rdf *.js',
-			'rm -rdf *.ts',
-			'rm -rdf *.json',
-			'rm -rdf *.lock',
-			'rm -rdf _config.yml',
+			rm,
 		]);
 	});
 
@@ -309,14 +315,7 @@ describe('getBuildCommands', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
-			'rm -rdf .[!.]*',
-			'rm -rdf __tests__',
-			'rm -rdf src',
-			'rm -rdf *.js',
-			'rm -rdf *.ts',
-			'rm -rdf *.json',
-			'rm -rdf *.lock',
-			'rm -rdf _config.yml',
+			rm,
 		]);
 	});
 
@@ -325,7 +324,12 @@ describe('getBuildCommands', () => {
 		process.env.INPUT_CLEAN_TARGETS   = 'test';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
-			'rm -rdf test',
+			{
+				command: 'rm', args: [
+					'-rdf',
+					'test',
+				],
+			},
 		]);
 	});
 
@@ -359,14 +363,7 @@ describe('getBuildCommands', () => {
 			'npm run build', // build command of package.json
 			'rm -rdf node_modules',
 			'npm install --production',
-			'rm -rdf .[!.]*',
-			'rm -rdf __tests__',
-			'rm -rdf src',
-			'rm -rdf *.js',
-			'rm -rdf *.ts',
-			'rm -rdf *.json',
-			'rm -rdf *.lock',
-			'rm -rdf _config.yml',
+			rm,
 		]);
 	});
 });

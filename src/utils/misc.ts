@@ -16,6 +16,16 @@ import {
 	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
+type CommandType = string | {
+	command: string;
+	args?: string[] | undefined;
+	quiet?: boolean | undefined;
+	altCommand?: string | undefined;
+	suppressError?: boolean | undefined;
+	suppressOutput?: boolean | undefined;
+	stderrToStdout?: boolean | undefined;
+};
+
 const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm} = Utils;
 
 const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')));
@@ -51,17 +61,17 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 	return false;
 };
 
-export const getBuildCommands = (dir: string): string[] => {
-	let commands    = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
-	const addRemove = !commands.length;
+export const getBuildCommands = (dir: string): CommandType[] => {
+	let commands: CommandType[] = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
+	const addRemove             = !commands.length;
 
 	const pkgManager        = useNpm(dir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
 	const buildCommand      = detectBuildCommand(dir);
 	const runSubCommand     = pkgManager === 'npm' ? ' run ' : ' ';
-	const hasInstallCommand = !!commands.filter(command => command.includes('npm run install') || command.includes(`${pkgManager} install`)).length;
+	const hasInstallCommand = !!commands.filter(command => typeof command === 'string' && (command.includes('npm run install') || command.includes(`${pkgManager} install`))).length;
 
 	if (typeof buildCommand === 'string') {
-		commands = commands.filter(command => !command.startsWith(`npm run ${buildCommand}`) && !command.startsWith(`yarn ${buildCommand}`));
+		commands = commands.filter(command => typeof command !== 'string' || !command.startsWith(`npm run ${buildCommand}`) && !command.startsWith(`yarn ${buildCommand}`));
 		commands.push([pkgManager, runSubCommand, buildCommand].join(''));
 	}
 
@@ -77,7 +87,7 @@ export const getBuildCommands = (dir: string): string[] => {
 	}
 
 	if (addRemove) {
-		commands.push(...getCleanTargets().map(target => `rm -rdf ${target}`));
+		commands.push({command: 'rm', args: ['-rdf', ...getCleanTargets()]});
 	}
 
 	return commands;

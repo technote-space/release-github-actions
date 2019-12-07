@@ -112,14 +112,7 @@ describe('prepareFiles', () => {
 	const commonCheck = (dir: string): (string | any[])[] => {
 		return [
 			['yarn install --production', {cwd: dir}],
-			['rm -rdf .[!.]*', {cwd: dir}],
-			['rm -rdf __tests__', {cwd: dir}],
-			['rm -rdf src', {cwd: dir}],
-			['rm -rdf *.js', {cwd: dir}],
-			['rm -rdf *.ts', {cwd: dir}],
-			['rm -rdf *.json', {cwd: dir}],
-			['rm -rdf *.lock', {cwd: dir}],
-			['rm -rdf _config.yml', {cwd: dir}],
+			['rm -rdf \'.[!.]*\' __tests__ src \'*.js\' \'*.ts\' \'*.json\' \'*.lock\' \'_config.yml\'', {cwd: dir}],
 		];
 	};
 
@@ -186,6 +179,30 @@ describe('prepareFiles', () => {
 			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
 			'git checkout -qf refs/tags/test',
 		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
+	});
+
+	it('should escape', async() => {
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
+		process.env.GITHUB_WORKSPACE      = 'test-dir';
+		process.env.INPUT_CLEAN_TARGETS   = 'test1, test2; rm -rdf .';
+		const mockExec                    = spyOnExec();
+
+		await prepareFiles(getContext({
+			repo: {
+				owner: 'Hello',
+				repo: 'World',
+			},
+			ref: 'refs/tags/test',
+		}));
+
+		const dir = path.resolve('test-dir/.work/build');
+		execCalledWith(mockExec, ([
+			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
+			'git checkout -qf refs/tags/test',
+			['yarn install --production', {cwd: dir}],
+			['rm -rdf test1 \'test2; rm -rdf .\'', {cwd: dir}],
+		]));
 	});
 });
 
