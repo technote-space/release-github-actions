@@ -146,12 +146,18 @@ export const copyFiles = async(): Promise<void> => {
 	const {buildDir, pushDir} = getParams();
 	startProcess('Copying %s contents to %s', buildDir, pushDir);
 
-	await command.execAsync({command: `rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`});
+	await command.execAsync({
+		command: 'rsync',
+		args: ['-rl', '--exclude', '.git', '--delete', `${buildDir}/`, pushDir],
+	});
 };
 
 const initDirectory = async(): Promise<void> => {
 	const {workDir, pushDir} = getParams();
-	await command.execAsync({command: `rm -rdf ${workDir}`});
+	await command.execAsync({
+		command: 'rm',
+		args: ['-rdf', workDir],
+	});
 	fs.mkdirSync(pushDir, {recursive: true});
 };
 
