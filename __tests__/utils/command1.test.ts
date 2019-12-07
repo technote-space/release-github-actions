@@ -98,7 +98,7 @@ describe('checkBranch', () => {
 
 		const dir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`rm -rdf \'${dir}'`,
+			`rm -rdf '${dir}'`,
 			'git init \'.\'',
 			'git checkout --orphan test-branch',
 		]);
@@ -255,7 +255,7 @@ describe('copyFiles', () => {
 		const buildDir = path.resolve('test-dir/.work/build');
 		const pushDir  = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`rsync -rl --exclude \'.git\' --delete \'${buildDir}/\' \'${pushDir}'`,
+			`rsync -rl --exclude '.git' --delete '${buildDir}/' '${pushDir}'`,
 		]);
 	});
 });
