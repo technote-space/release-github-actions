@@ -19,9 +19,10 @@ import {
 } from '../../src/utils/command';
 
 const setExists = testFs();
+const rootDir   = path.resolve(__dirname, '..', '..');
 
 describe('replaceDirectory', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	const workDir  = path.resolve('test-dir/.work');
 	const buildDir = path.resolve('test-dir/.work/build');
@@ -53,7 +54,7 @@ describe('replaceDirectory', () => {
 });
 
 describe('cloneForBranch', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should run clone command', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
@@ -75,7 +76,7 @@ describe('cloneForBranch', () => {
 });
 
 describe('checkBranch', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should do nothing', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
@@ -106,7 +107,7 @@ describe('checkBranch', () => {
 });
 
 describe('prepareFiles', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const commonCheck = (dir: string): (string | any[])[] => {
@@ -190,7 +191,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
-		process.env.INPUT_CLEAN_TARGETS   = 'test1,-test2,test3 test4,-test5 , test6;test7, test8/*.txt, *.test9';
+		process.env.INPUT_DELETE_TARGETS  = 'test1,-test2,test3 test4,-test5 , test6;test7, test8/*.txt, *.test9';
 		const mockExec                    = spyOnExec();
 
 		await prepareFiles(getContext({
@@ -218,7 +219,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
-		process.env.INPUT_CLEAN_TARGETS   = '-test1, -test2/?<>:|"\'@#$%^& ;.*.test3 , ?<>:|"\'@#$%^& ;/test4 test5/*.txt,;?<>:|"\'@#$%^& ;.txt,rm -rf /';
+		process.env.INPUT_DELETE_TARGETS  = '-test1, -test2/?<>:|"\'@#$%^& ;.*.test3 , ?<>:|"\'@#$%^& ;/test4 test5/*.txt,;?<>:|"\'@#$%^& ;.txt,rm -rf /';
 		const mockExec                    = spyOnExec();
 
 		await prepareFiles(getContext({
@@ -243,7 +244,7 @@ describe('prepareFiles', () => {
 });
 
 describe('createBuildInfoFile', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should do nothing', async() => {
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = '/';
@@ -328,7 +329,7 @@ describe('config', () => {
 });
 
 describe('push', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should run git push command', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
