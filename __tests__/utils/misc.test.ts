@@ -296,8 +296,9 @@ describe('getBuildCommands', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'test',
-			'yarn build', // build command of package.json
+			'yarn build',
 			'yarn install --production',
+			...rm,
 		]);
 	});
 
@@ -305,7 +306,7 @@ describe('getBuildCommands', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
-			'yarn build', // build command of package.json
+			'yarn build',
 			'yarn install --production',
 			...rm,
 		]);
@@ -318,6 +319,7 @@ describe('getBuildCommands', () => {
 			'yarn install',
 			'yarn build',
 			'yarn install --production',
+			...rm,
 		]);
 	});
 
@@ -327,6 +329,7 @@ describe('getBuildCommands', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'yarn build',
+			...rm,
 		]);
 	});
 
@@ -337,6 +340,7 @@ describe('getBuildCommands', () => {
 			'yarn install',
 			'test',
 			'yarn install --production',
+			...rm,
 		]);
 	});
 
@@ -365,9 +369,10 @@ describe('getBuildCommands', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'npm install',
 			'test',
-			'npm run build', // build command of package.json
+			'npm run build',
 			'rm -rdf node_modules',
 			'npm install --production',
+			...rm,
 		]);
 	});
 
@@ -376,9 +381,10 @@ describe('getBuildCommands', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'npm install',
 			'test',
-			'npm run build', // build command of package.json
+			'npm run build',
 			'rm -rdf node_modules',
 			'npm install --production',
+			...rm,
 		]);
 	});
 
@@ -386,10 +392,20 @@ describe('getBuildCommands', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'npm';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'npm install',
-			'npm run build', // build command of package.json
+			'npm run build',
 			'rm -rdf node_modules',
 			'npm install --production',
 			...rm,
+		]);
+	});
+
+	it('should get build commands 11', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_DELETE_TARGETS  = '';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'yarn install',
+			'yarn build',
+			'yarn install --production',
 		]);
 	});
 });
