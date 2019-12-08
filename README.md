@@ -34,6 +34,7 @@ Once you create a new tag, this action will automatically
   - [CREATE_PATCH_VERSION_TAG](#create_patch_version_tag)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
+  - [CLEAN_TEST_TAG](#clean_test_tag)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [Execute commands](#execute-commands)
   - [Build](#build)

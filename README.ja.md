@@ -34,6 +34,7 @@
   - [CREATE_PATCH_VERSION_TAG](#create_patch_version_tag)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
+  - [CLEAN_TEST_TAG](#clean_test_tag)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [Execute commands](#execute-commands)
   - [ビルド](#%E3%83%93%E3%83%AB%E3%83%89)
