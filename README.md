@@ -32,7 +32,6 @@ Once you create a new tag, this action will automatically
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
   - [CREATE_PATCH_VERSION_TAG](#create_patch_version_tag)
-  - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
@@ -143,24 +142,6 @@ default: `true`
 Whether to create patch version tag (e.g. v1.2.3).  
 default: `true`  
 [Detail of tags](#tags)
-
-### OUTPUT_BUILD_INFO_FILENAME
-Filename of build information.  
-default: `''`  
-Absolute path and `..` are not permitted to use.  
-If this setting is not empty, following information is output with the file name.
-```json
-{
-  "tagName": "${tagName}",
-  "branch": "${branch}",
-  "tags": [
-    "${created_tag_1}",
-    "...",
-    "${created_tag_n}"
-  ],
-  "updated_at": "${updated_at}"
-}
-```
 
 ### FETCH_DEPTH
 Limit fetching to the specified number of commits from the tip of each remote branch history.  
