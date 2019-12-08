@@ -27,7 +27,7 @@ Once you create a new tag, this action will automatically
   - [COMMIT_NAME](#commit_name)
   - [COMMIT_EMAIL](#commit_email)
   - [BRANCH_NAME](#branch_name)
-  - [CLEAN_TARGETS](#clean_targets)
+  - [DELETE_TARGETS](#clean_targets)
   - [BUILD_COMMAND_TARGET](#build_command_target)
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
@@ -77,29 +77,22 @@ Once you create a new tag, this action will automatically
 [More details of target event](#action-event-details)
 
 ## Options
+### BUILD_COMMAND
+Build command.  
+default: `''`  
+[More details of execute command](#execute-commands)
+
+### DELETE_TARGETS
+Files or directories to delete before release (Comma separated).  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+Absolute path and `..` are not permitted to use.  
+[More details of execute command](#execute-commands)
+
 ### PACKAGE_MANAGER
 Package manager to use to install dependencies.  
 If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used to specify it explicitly.  
 （`npm` or `yarn`）  
 default: `''`
-
-### BUILD_COMMAND
-Build command.  
-default: `''`  
-- If package.json includes `build` or `production` or `prod` in scripts, the command is used for build. (You can change this with [BUILD_COMMAND_TARGET](#build_command_target))  
-- If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
-- If command is not provided, some files are deleted (see [CLEAN_TARGETS](#clean_targets)).
-
-so if `BUILD_COMMAND` is not provided and package.json has `build` script,
-the following commands are executed.
-```shell
-yarn install
-yarn build
-yarn install --production
-rm -rdf .[!.]*
-...
-rm -rdf _config.yml
-```
 
 ### COMMIT_MESSAGE
 Commit message.  
@@ -117,16 +110,11 @@ default: `'41898282+github-actions[bot]@users.noreply.github.com'`
 Branch name for `GitHub Actions` release.  
 default: `'gh-actions'`
 
-### CLEAN_TARGETS
-Files or directories to delete before release (Comma separated).  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
-Absolute path and `..` are not permitted to use.  
-This parameter is ignored if `BUILD_COMMAND` is provided.  
-
 ### BUILD_COMMAND_TARGET
 Command for search build command.  
 default: `''`  
-e.g. `compile`
+e.g. `compile`  
+If this option is not provided, `build`, `production`, `prod` and `package` are used.
 
 ### CREATE_MAJOR_VERSION_TAG
 Whether to create major version tag (e.g. v1).  
@@ -156,6 +144,43 @@ e.g. `'test/'`
 Prefix to add when leaving the original tag.  
 default: `''`  
 e.g. `'original/'`
+
+## Execute commands
+### Build
+- If package.json includes `build`, `production`, `prod` or `package` in scripts, the command is used for build. (You can change this with [BUILD_COMMAND_TARGET](#build_command_target))  
+- If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
+
+so if `BUILD_COMMAND` is not provided and package.json has `build` script,
+the following commands are executed for build.
+
+```shell
+yarn install
+yarn build
+yarn install --production
+```
+
+### Delete files
+To execute `GitHub Actions`, `src files used for build`, `test files`, `test settings`, etc. are not required.  
+And `GitHub Actions` is downloaded every time when it is used, so fewer files are better.  
+
+`DELETE_TARGETS` option is used for this purpose.  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+
+```shell
+rm -rdf .[!.]*
+rm -rdf *.js
+rm -rdf *.ts
+rm -rdf *.json
+rm -rdf *.lock
+rm -rdf __tests__ src '_config.yml'
+```
+
+The default setting assumes the use of `Action template for TypeScript` or `Action template for JavaScript`.  
+https://github.com/actions/typescript-action  
+https://github.com/actions/javascript-action  
+
+You can see an example of `GitHub Actions` with unnecessary files deleted below.  
+https://github.com/technote-space/release-github-actions/tree/gh-actions
 
 ## Action event details
 ### Target events

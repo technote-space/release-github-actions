@@ -84,7 +84,6 @@ export const getClearFilesCommands = (targets: string[]): CommandType[] => {
 
 export const getBuildCommands = (dir: string): CommandType[] => {
 	let commands: CommandType[] = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
-	const addRemove             = !commands.length;
 
 	const pkgManager        = useNpm(dir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
 	const buildCommand      = detectBuildCommand(dir);
@@ -107,9 +106,7 @@ export const getBuildCommands = (dir: string): CommandType[] => {
 		commands.push(`${pkgManager} install --production`);
 	}
 
-	if (addRemove) {
-		commands.push(...getClearFilesCommands(getDeleteTargets()));
-	}
+	commands.push(...getClearFilesCommands(getDeleteTargets()));
 
 	return commands;
 };
