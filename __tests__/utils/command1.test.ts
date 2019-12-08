@@ -69,7 +69,7 @@ describe('cloneForBranch', () => {
 		}));
 
 		execCalledWith(mockExec, [
-			'git clone --branch=test-branch --depth=3 https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1 || :',
+			'git clone \'--branch=test-branch\' \'--depth=3\' \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1 || :',
 		]);
 	});
 });
@@ -98,9 +98,9 @@ describe('checkBranch', () => {
 
 		const dir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`rm -rdf ${dir}`,
-			'git init .',
-			'git checkout --orphan "test-branch"',
+			`rm -rdf '${dir}'`,
+			'git init \'.\'',
+			'git checkout --orphan test-branch',
 		]);
 	});
 });
@@ -112,14 +112,7 @@ describe('prepareFiles', () => {
 	const commonCheck = (dir: string): (string | any[])[] => {
 		return [
 			['yarn install --production', {cwd: dir}],
-			['rm -rdf .[!.]*', {cwd: dir}],
-			['rm -rdf __tests__', {cwd: dir}],
-			['rm -rdf src', {cwd: dir}],
-			['rm -rdf *.js', {cwd: dir}],
-			['rm -rdf *.ts', {cwd: dir}],
-			['rm -rdf *.json', {cwd: dir}],
-			['rm -rdf *.lock', {cwd: dir}],
-			['rm -rdf _config.yml', {cwd: dir}],
+			['rm -rdf \'.[!.]*\' __tests__ src \'*.js\' \'*.ts\' \'*.json\' \'*.lock\' \'_config.yml\'', {cwd: dir}],
 		];
 	};
 
@@ -140,8 +133,8 @@ describe('prepareFiles', () => {
 
 		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			'git clone --depth=3 https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1',
-			'git fetch https://octocat:test-token@github.com/Hello/World.git refs/heads/test > /dev/null 2>&1',
+			'git clone \'--depth=3\' \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
+			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' refs/heads/test > /dev/null 2>&1',
 			'git checkout -qf test-sha',
 		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
 	});
@@ -162,7 +155,7 @@ describe('prepareFiles', () => {
 
 		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			'git clone https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1',
+			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
 			'git checkout -qf test',
 		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
 	});
@@ -183,9 +176,33 @@ describe('prepareFiles', () => {
 
 		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			'git clone https://octocat:test-token@github.com/Hello/World.git . > /dev/null 2>&1',
+			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
 			'git checkout -qf refs/tags/test',
 		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
+	});
+
+	it('should escape', async() => {
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
+		process.env.GITHUB_WORKSPACE      = 'test-dir';
+		process.env.INPUT_CLEAN_TARGETS   = 'test1, test2; rm -rdf .';
+		const mockExec                    = spyOnExec();
+
+		await prepareFiles(getContext({
+			repo: {
+				owner: 'Hello',
+				repo: 'World',
+			},
+			ref: 'refs/tags/test',
+		}));
+
+		const dir = path.resolve('test-dir/.work/build');
+		execCalledWith(mockExec, ([
+			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
+			'git checkout -qf refs/tags/test',
+			['yarn install --production', {cwd: dir}],
+			['rm -rdf test1 \'test2; rm -rdf .\'', {cwd: dir}],
+		]));
 	});
 });
 
@@ -255,7 +272,7 @@ describe('copyFiles', () => {
 		const buildDir = path.resolve('test-dir/.work/build');
 		const pushDir  = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`,
+			`rsync -rl --exclude '.git' --delete '${buildDir}/' '${pushDir}'`,
 		]);
 	});
 });
@@ -268,8 +285,8 @@ describe('config', () => {
 		await config();
 
 		execCalledWith(mockExec, [
-			'git config user.name "GitHub Actions"',
-			'git config user.email "example@example.com"',
+			'git config \'user.name\' \'GitHub Actions\'',
+			'git config \'user.email\' \'example@example.com\'',
 		]);
 	});
 });
@@ -293,15 +310,16 @@ describe('push', () => {
 		}));
 
 		execCalledWith(mockExec, [
-			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1 > /dev/null 2>&1 || :',
-			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1.2 > /dev/null 2>&1 || :',
-			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1.2.3 > /dev/null 2>&1 || :',
-			'git tag -l | xargs git tag -d',
-			'git fetch https://octocat:test-token@github.com/Hello/World.git --tags > /dev/null 2>&1',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag v1 > /dev/null 2>&1 || :',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2\' > /dev/null 2>&1 || :',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag -l',
+			'git tag -d stdout',
+			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git tag v1',
-			'git tag v1.2',
-			'git tag v1.2.3',
-			'git push --tags https://octocat:test-token@github.com/Hello/World.git "test-branch":"refs/heads/test-branch" > /dev/null 2>&1',
+			'git tag \'v1.2\'',
+			'git tag \'v1.2.3\'',
+			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1',
 		]);
 	});
 
@@ -322,20 +340,22 @@ describe('push', () => {
 		}));
 
 		execCalledWith(mockExec, [
-			'git tag -l | xargs git tag -d',
-			'git fetch https://octocat:test-token@github.com/Hello/World.git --tags > /dev/null 2>&1',
-			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag original/v1.2.3 > /dev/null 2>&1 || :',
-			'git tag original/v1.2.3 v1.2.3',
-			'git push https://octocat:test-token@github.com/Hello/World.git "refs/tags/original/v1.2.3" > /dev/null 2>&1',
-			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1 > /dev/null 2>&1 || :',
-			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1.2 > /dev/null 2>&1 || :',
-			'git push --delete https://octocat:test-token@github.com/Hello/World.git tag v1.2.3 > /dev/null 2>&1 || :',
-			'git tag -l | xargs git tag -d',
-			'git fetch https://octocat:test-token@github.com/Hello/World.git --tags > /dev/null 2>&1',
+			'git tag -l',
+			'git tag -d stdout',
+			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'original/v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag \'original/v1.2.3\' \'v1.2.3\'',
+			'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/v1.2.3\' > /dev/null 2>&1',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag v1 > /dev/null 2>&1 || :',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2\' > /dev/null 2>&1 || :',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag -l',
+			'git tag -d stdout',
+			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git tag v1',
-			'git tag v1.2',
-			'git tag v1.2.3',
-			'git push --tags https://octocat:test-token@github.com/Hello/World.git "test-branch":"refs/heads/test-branch" > /dev/null 2>&1',
+			'git tag \'v1.2\'',
+			'git tag \'v1.2.3\'',
+			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1',
 		]);
 	});
 });

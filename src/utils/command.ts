@@ -1,7 +1,7 @@
 import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
-import { Logger, Command, ContextHelper, GitHelper } from '@technote-space/github-action-helper';
+import { Logger, Command, ContextHelper, GitHelper, Utils } from '@technote-space/github-action-helper';
 import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
 import { ReposListReleasesResponseItem } from '@octokit/rest';
@@ -19,10 +19,11 @@ import {
 } from './misc';
 
 const {getRepository, getTagName} = ContextHelper;
+const {replaceAll}                = Utils;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
-	return Object.keys(directories).reduce((value, directory) => value.split(` -C ${directory}`).join('').split(directory).join(directories[directory]), message);
+	return Object.keys(directories).reduce((value, directory) => replaceAll(replaceAll(value, ` -C ${directory}`, ''), directory, directories[directory]), message);
 };
 
 const logger               = new Logger(replaceDirectory);
@@ -31,15 +32,13 @@ const helper               = new GitHelper(logger, {depth: getFetchDepth()});
 const {startProcess, info} = logger;
 
 export const prepareFiles = async(context: Context): Promise<void> => {
-	startProcess('Preparing files for release');
-
 	const {buildDir} = getParams();
 	fs.mkdirSync(buildDir, {recursive: true});
 
-	startProcess('Cloning the working commit from the remote repo for build');
+	startProcess('Cloning the remote repo for build...');
 	await helper.checkout(buildDir, context);
 
-	startProcess('Running build for release');
+	startProcess('Running build for release...');
 	await helper.runCommand(buildDir, getBuildCommands(buildDir));
 };
 
@@ -52,7 +51,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 	const {buildDir, branchName} = getParams();
 	const tagName                = getTagName(context);
 
-	startProcess('Creating build info file');
+	startProcess('Creating build info file...');
 	const filepath = path.resolve(buildDir, filename);
 	const dir      = path.dirname(filepath);
 	if (!fs.existsSync(dir)) {
@@ -72,7 +71,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 
 export const cloneForBranch = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
-	startProcess('Cloning the branch %s from the remote repo', branchName);
+	startProcess('Cloning the branch [%s]...', branchName);
 
 	await helper.cloneBranch(pushDir, branchName, context);
 };
@@ -83,7 +82,7 @@ export const checkBranch = async(clonedBranch: string): Promise<void> => {
 		info('remote branch %s not found.', branchName);
 		info('now branch: %s', clonedBranch);
 
-		startProcess('Initializing local git repo [%s]', branchName);
+		startProcess('Initializing local git repo [%s]...', branchName);
 		await helper.gitInit(pushDir, branchName);
 	}
 };
@@ -92,7 +91,7 @@ export const config = async(): Promise<void> => {
 	const {pushDir} = getParams();
 	const name      = getCommitName();
 	const email     = getCommitEmail();
-	startProcess('Configuring git committer to be %s <%s>', name, email);
+	startProcess('Configuring git committer to be %s <%s>...', name, email);
 
 	await helper.config(pushDir, name, email);
 };
@@ -102,7 +101,7 @@ export const commit = async(): Promise<boolean> => helper.commit(getParams().pus
 export const push = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	const tagName               = getTagName(context);
-	startProcess('Pushing to %s@%s (tag: %s)', getRepository(context), branchName, tagName);
+	startProcess('Pushing to %s@%s (tag: %s)...', getRepository(context), branchName, tagName);
 
 	const prefix = getOriginalTagPrefix();
 	if (prefix) {
@@ -132,7 +131,7 @@ export const updateRelease = async(release: ReposListReleasesResponseItem | unde
 		return;
 	}
 
-	startProcess('Re-publishing release');
+	startProcess('Re-publishing release...');
 	await octokit.repos.updateRelease({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
@@ -143,14 +142,20 @@ export const updateRelease = async(release: ReposListReleasesResponseItem | unde
 
 export const copyFiles = async(): Promise<void> => {
 	const {buildDir, pushDir} = getParams();
-	startProcess('Copying %s contents to %s', buildDir, pushDir);
+	startProcess('Copying %s contents to %s...', buildDir, pushDir);
 
-	await command.execAsync({command: `rsync -rl --exclude .git --delete "${buildDir}/" ${pushDir}`});
+	await command.execAsync({
+		command: 'rsync',
+		args: ['-rl', '--exclude', '.git', '--delete', `${buildDir}/`, pushDir],
+	});
 };
 
 const initDirectory = async(): Promise<void> => {
 	const {workDir, pushDir} = getParams();
-	await command.execAsync({command: `rm -rdf ${workDir}`});
+	await command.execAsync({
+		command: 'rm',
+		args: ['-rdf', workDir],
+	});
 	fs.mkdirSync(pushDir, {recursive: true});
 };
 
@@ -175,7 +180,7 @@ const executeCommit = async(release: ReposListReleasesResponseItem | undefined, 
 
 export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
 	const {branchName} = getParams();
-	startProcess('Deploying branch %s to %s', branchName, getRepository(context));
+	startProcess('Deploying branch %s to %s...', branchName, getRepository(context));
 
 	const release = await findRelease(octokit, context);
 	await prepareCommit(context);
