@@ -32,7 +32,6 @@ Once you create a new tag, this action will automatically
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
   - [CREATE_PATCH_VERSION_TAG](#create_patch_version_tag)
-  - [OUTPUT_BUILD_INFO_FILENAME](#output_build_info_filename)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
@@ -144,24 +143,6 @@ Whether to create patch version tag (e.g. v1.2.3).
 default: `true`  
 [Detail of tags](#tags)
 
-### OUTPUT_BUILD_INFO_FILENAME
-Filename of build information.  
-default: `''`  
-Absolute path and `..` are not permitted to use.  
-If this setting is not empty, following information is output with the file name.
-```json
-{
-  "tagName": "${tagName}",
-  "branch": "${branch}",
-  "tags": [
-    "${created_tag_1}",
-    "...",
-    "${created_tag_n}"
-  ],
-  "updated_at": "${updated_at}"
-}
-```
-
 ### FETCH_DEPTH
 Limit fetching to the specified number of commits from the tip of each remote branch history.  
 default: `3`  
@@ -224,15 +205,15 @@ The following tags will be created.
 
 ## Sample GitHub Actions using this Action
 - [Release GitHub Actions](https://github.com/technote-space/release-github-actions)
-  - [released.yml](https://github.com/technote-space/release-github-actions/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/release-github-actions/blob/master/.github/workflows/release.yml)
 - [Auto card labeler](https://github.com/technote-space/auto-card-labeler)
-  - [released.yml](https://github.com/technote-space/auto-card-labeler/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/auto-card-labeler/blob/master/.github/workflows/release.yml)
 - [Assign Author](https://github.com/technote-space/assign-author)
-  - [released.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/release.yml)
 - [TOC Generator](https://github.com/technote-space/toc-generator)
-  - [released.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/release.yml)
 - [Package Version Check Action](https://github.com/technote-space/package-version-check-action)
-  - [released.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/release.yml)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  

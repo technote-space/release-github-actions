@@ -16,9 +16,23 @@ import {
 	DEFAULT_ORIGINAL_TAG_PREFIX,
 } from '../constant';
 
-const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm} = Utils;
+type CommandType = string | {
+	command: string;
+	args?: string[] | undefined;
+	quiet?: boolean | undefined;
+	altCommand?: string | undefined;
+	suppressError?: boolean | undefined;
+	suppressOutput?: boolean | undefined;
+	stderrToStdout?: boolean | undefined;
+};
 
-const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')));
+const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm, escapeRegExp} = Utils;
+
+const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS)
+	.split(',')
+	// eslint-disable-next-line no-control-regex
+	.map(target => target.trim().replace(/[\x00-\x1f\x80-\x9f]/, ''))
+	.filter(target => target && !target.startsWith('/') && !target.includes('..')));
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
@@ -51,17 +65,37 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 	return false;
 };
 
-export const getBuildCommands = (dir: string): string[] => {
-	let commands    = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
-	const addRemove = !commands.length;
+export const getClearFilesCommands = (targets: string[]): CommandType[] => {
+	const commands: CommandType[] = [];
+	const searchValues            = '?<>:|"\'@#$%^& ;';
+	const replaceValue            = '$1\\$2';
+	const escapeFunc              = (item: string): string => searchValues.split('').reduce((acc, val) => acc.replace(new RegExp('([^\\\\])(' + escapeRegExp(val) + ')'), replaceValue), item);
+	const beginWithDash           = targets.filter(item => item.startsWith('-')).map(escapeFunc);
+	const withWildcard            = targets.filter(item => !item.startsWith('-') && item.includes('*')).map(escapeFunc);
+	const withoutWildcard         = targets.filter(item => !item.startsWith('-') && !item.includes('*'));
+	if (beginWithDash.length) {
+		commands.push(...beginWithDash.map(target => `rm -rdf -- ${target}`));
+	}
+	if (withWildcard.length) {
+		commands.push(...withWildcard.map(target => `rm -rdf ${target}`));
+	}
+	if (withoutWildcard.length) {
+		commands.push({command: 'rm', args: ['-rdf', ...withoutWildcard]});
+	}
+	return commands;
+};
+
+export const getBuildCommands = (dir: string): CommandType[] => {
+	let commands: CommandType[] = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
+	const addRemove             = !commands.length;
 
 	const pkgManager        = useNpm(dir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
 	const buildCommand      = detectBuildCommand(dir);
 	const runSubCommand     = pkgManager === 'npm' ? ' run ' : ' ';
-	const hasInstallCommand = !!commands.filter(command => command.includes('npm run install') || command.includes(`${pkgManager} install`)).length;
+	const hasInstallCommand = !!commands.filter(command => typeof command === 'string' && (command.includes('npm run install') || command.includes(`${pkgManager} install`))).length;
 
 	if (typeof buildCommand === 'string') {
-		commands = commands.filter(command => !command.startsWith(`npm run ${buildCommand}`) && !command.startsWith(`yarn ${buildCommand}`));
+		commands = commands.filter(command => typeof command !== 'string' || !command.startsWith(`npm run ${buildCommand}`) && !command.startsWith(`yarn ${buildCommand}`));
 		commands.push([pkgManager, runSubCommand, buildCommand].join(''));
 	}
 
@@ -77,7 +111,7 @@ export const getBuildCommands = (dir: string): string[] => {
 	}
 
 	if (addRemove) {
-		commands.push(...getCleanTargets().map(target => `rm -rdf ${target}`));
+		commands.push(...getClearFilesCommands(getCleanTargets()));
 	}
 
 	return commands;

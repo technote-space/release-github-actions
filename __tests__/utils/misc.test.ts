@@ -11,6 +11,7 @@ import {
 	getFetchDepth,
 	isTestTag,
 	getTestTag,
+	getClearFilesCommands,
 	getBuildCommands,
 	detectBuildCommand,
 	isValidTagName,
@@ -245,8 +246,42 @@ describe('getTestTag', () => {
 	});
 });
 
+describe('getClearFilesCommands', () => {
+	testEnv();
+
+	it('should get clear files commands', () => {
+		expect(getClearFilesCommands([])).toEqual([]);
+		expect(getClearFilesCommands(['.[!.]*', '__tests__', 'src', '*.js', '*.ts', '*.json', '*.lock', '_config.yml'])).toEqual([
+			'rm -rdf .[!.]*',
+			'rm -rdf *.js',
+			'rm -rdf *.ts',
+			'rm -rdf *.json',
+			'rm -rdf *.lock',
+			{command: 'rm', args: ['-rdf', '__tests__', 'src', '_config.yml']},
+		]);
+		expect(getClearFilesCommands(['?<>:|"\'@#$%^& ;/?<>:|"\'@#$%^& ;.*', '-?<>:|"\'@#$%^& ;', '*.?<>:|"\'@#$%^& ;'])).toEqual([
+			'rm -rdf -- -\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;',
+			'rm -rdf ?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;/\\?<>:|"\'@#$%^& ;.*',
+			'rm -rdf *.\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;',
+		]);
+		expect(getClearFilesCommands(['test/?>; abc.txt', '-test1 test2.txt', ';rm -rf /', '-test1 test2/*.txt'])).toEqual([
+			'rm -rdf -- -test1\\ test2.txt',
+			'rm -rdf -- -test1\\ test2/*.txt',
+			{command: 'rm', args: ['-rdf', 'test/?>; abc.txt', ';rm -rf /']},
+		]);
+	});
+});
+
 describe('getBuildCommands', () => {
 	testEnv();
+	const rm = [
+		'rm -rdf .[!.]*',
+		'rm -rdf *.js',
+		'rm -rdf *.ts',
+		'rm -rdf *.json',
+		'rm -rdf *.lock',
+		{command: 'rm', args: ['-rdf', '__tests__', 'src', '_config.yml']},
+	];
 
 	it('should get build commands 1', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
@@ -265,14 +300,7 @@ describe('getBuildCommands', () => {
 			'yarn install',
 			'yarn build', // build command of package.json
 			'yarn install --production',
-			'rm -rdf .[!.]*',
-			'rm -rdf __tests__',
-			'rm -rdf src',
-			'rm -rdf *.js',
-			'rm -rdf *.ts',
-			'rm -rdf *.json',
-			'rm -rdf *.lock',
-			'rm -rdf _config.yml',
+			...rm,
 		]);
 	});
 
@@ -309,23 +337,18 @@ describe('getBuildCommands', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
-			'rm -rdf .[!.]*',
-			'rm -rdf __tests__',
-			'rm -rdf src',
-			'rm -rdf *.js',
-			'rm -rdf *.ts',
-			'rm -rdf *.json',
-			'rm -rdf *.lock',
-			'rm -rdf _config.yml',
+			...rm,
 		]);
 	});
 
 	it('should get build commands 7', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
-		process.env.INPUT_CLEAN_TARGETS   = 'test';
+		process.env.INPUT_CLEAN_TARGETS   = 'test1,-test2,test3 test4,-test5 , test6;test7';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
-			'rm -rdf test',
+			'rm -rdf -- -test2',
+			'rm -rdf -- -test5',
+			{command: 'rm', args: ['-rdf', 'test1', 'test3 test4', 'test6;test7']},
 		]);
 	});
 
@@ -359,14 +382,7 @@ describe('getBuildCommands', () => {
 			'npm run build', // build command of package.json
 			'rm -rdf node_modules',
 			'npm install --production',
-			'rm -rdf .[!.]*',
-			'rm -rdf __tests__',
-			'rm -rdf src',
-			'rm -rdf *.js',
-			'rm -rdf *.ts',
-			'rm -rdf *.json',
-			'rm -rdf *.lock',
-			'rm -rdf _config.yml',
+			...rm,
 		]);
 	});
 });
