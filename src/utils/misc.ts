@@ -9,7 +9,6 @@ import {
 	DEFAULT_COMMIT_EMAIL,
 	DEFAULT_SEARCH_BUILD_COMMAND_TARGETS,
 	DEFAULT_BRANCH_NAME,
-	DEFAULT_CLEAN_TARGETS,
 	DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
 	DEFAULT_FETCH_DEPTH,
 	DEFAULT_TEST_TAG_PREFIX,
@@ -28,11 +27,9 @@ type CommandType = string | {
 
 const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm, escapeRegExp} = Utils;
 
-const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS)
-	.split(',')
-	// eslint-disable-next-line no-control-regex
-	.map(target => target.trim().replace(/[\x00-\x1f\x80-\x9f]/, ''))
-	.filter(target => target && !target.startsWith('/') && !target.includes('..')));
+const getDeleteTargets = (): string[] => getArrayInput('DELETE_TARGETS')
+	.map(target => target.replace(/[\x00-\x1f\x80-\x9f]/, '').trim()) // eslint-disable-line no-control-regex
+	.filter(target => target && !target.startsWith('/') && !target.includes('..'));
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
@@ -111,7 +108,7 @@ export const getBuildCommands = (dir: string): CommandType[] => {
 	}
 
 	if (addRemove) {
-		commands.push(...getClearFilesCommands(getCleanTargets()));
+		commands.push(...getClearFilesCommands(getDeleteTargets()));
 	}
 
 	return commands;
