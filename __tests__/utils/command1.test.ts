@@ -112,7 +112,12 @@ describe('prepareFiles', () => {
 	const commonCheck = (dir: string): (string | any[])[] => {
 		return [
 			['yarn install --production', {cwd: dir}],
-			['rm -rdf \'.[!.]*\' __tests__ src \'*.js\' \'*.ts\' \'*.json\' \'*.lock\' \'_config.yml\'', {cwd: dir}],
+			['rm -rdf .[!.]*', {cwd: dir}],
+			['rm -rdf *.js', {cwd: dir}],
+			['rm -rdf *.ts', {cwd: dir}],
+			['rm -rdf *.json', {cwd: dir}],
+			['rm -rdf *.lock', {cwd: dir}],
+			['rm -rdf __tests__ src \'_config.yml\'', {cwd: dir}],
 		];
 	};
 
@@ -181,11 +186,11 @@ describe('prepareFiles', () => {
 		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
 	});
 
-	it('should escape', async() => {
+	it('should clean specified targets 1', async() => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
-		process.env.INPUT_CLEAN_TARGETS   = 'test1, test2; rm -rdf .';
+		process.env.INPUT_CLEAN_TARGETS   = 'test1,-test2,test3 test4,-test5 , test6;test7, test8/*.txt, *.test9';
 		const mockExec                    = spyOnExec();
 
 		await prepareFiles(getContext({
@@ -201,7 +206,38 @@ describe('prepareFiles', () => {
 			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
 			'git checkout -qf refs/tags/test',
 			['yarn install --production', {cwd: dir}],
-			['rm -rdf test1 \'test2; rm -rdf .\'', {cwd: dir}],
+			['rm -rdf -- -test2', {cwd: dir}],
+			['rm -rdf -- -test5', {cwd: dir}],
+			['rm -rdf test8/*.txt', {cwd: dir}],
+			['rm -rdf *.test9', {cwd: dir}],
+			['rm -rdf test1 \'test3 test4\' \'test6;test7\'', {cwd: dir}],
+		]));
+	});
+
+	it('should clean specified targets 2', async() => {
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
+		process.env.GITHUB_WORKSPACE      = 'test-dir';
+		process.env.INPUT_CLEAN_TARGETS   = '-test1, -test2/?<>:|"\'@#$%^& ;.*.test3 , ?<>:|"\'@#$%^& ;/test4 test5/*.txt,;?<>:|"\'@#$%^& ;.txt,rm -rf /';
+		const mockExec                    = spyOnExec();
+
+		await prepareFiles(getContext({
+			repo: {
+				owner: 'Hello',
+				repo: 'World',
+			},
+			ref: 'refs/tags/test',
+		}));
+
+		const dir = path.resolve('test-dir/.work/build');
+		execCalledWith(mockExec, ([
+			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
+			'git checkout -qf refs/tags/test',
+			['yarn install --production', {cwd: dir}],
+			['rm -rdf -- -test1', {cwd: dir}],
+			['rm -rdf -- -test2/\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;.*.test3', {cwd: dir}],
+			['rm -rdf ?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;/test4 test5/*.txt', {cwd: dir}],
+			['rm -rdf \';?<>:|"\'\\\'\'@#$%^& ;.txt\' \'rm -rf /\'', {cwd: dir}],
 		]));
 	});
 });

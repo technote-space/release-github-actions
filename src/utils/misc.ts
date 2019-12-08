@@ -26,9 +26,13 @@ type CommandType = string | {
 	stderrToStdout?: boolean | undefined;
 };
 
-const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm} = Utils;
+const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm, escapeRegExp} = Utils;
 
-const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS).split(',').map(target => target.trim()).filter(target => target && !target.startsWith('/') && !target.includes('..')));
+const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS)
+	.split(',')
+	// eslint-disable-next-line no-control-regex
+	.map(target => target.trim().replace(/[\x00-\x1f\x80-\x9f]/, ''))
+	.filter(target => target && !target.startsWith('/') && !target.includes('..')));
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
@@ -61,6 +65,26 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 	return false;
 };
 
+export const getClearFilesCommands = (targets: string[]): CommandType[] => {
+	const commands: CommandType[] = [];
+	const searchValues            = '?<>:|"\'@#$%^& ;';
+	const replaceValue            = '$1\\$2';
+	const escapeFunc              = (item: string): string => searchValues.split('').reduce((acc, val) => acc.replace(new RegExp('([^\\\\])(' + escapeRegExp(val) + ')'), replaceValue), item);
+	const beginWithDash           = targets.filter(item => item.startsWith('-')).map(escapeFunc);
+	const withWildcard            = targets.filter(item => !item.startsWith('-') && item.includes('*')).map(escapeFunc);
+	const withoutWildcard         = targets.filter(item => !item.startsWith('-') && !item.includes('*'));
+	if (beginWithDash.length) {
+		commands.push(...beginWithDash.map(target => `rm -rdf -- ${target}`));
+	}
+	if (withWildcard.length) {
+		commands.push(...withWildcard.map(target => `rm -rdf ${target}`));
+	}
+	if (withoutWildcard.length) {
+		commands.push({command: 'rm', args: ['-rdf', ...withoutWildcard]});
+	}
+	return commands;
+};
+
 export const getBuildCommands = (dir: string): CommandType[] => {
 	let commands: CommandType[] = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
 	const addRemove             = !commands.length;
@@ -87,7 +111,7 @@ export const getBuildCommands = (dir: string): CommandType[] => {
 	}
 
 	if (addRemove) {
-		commands.push({command: 'rm', args: ['-rdf', ...getCleanTargets()]});
+		commands.push(...getClearFilesCommands(getCleanTargets()));
 	}
 
 	return commands;
