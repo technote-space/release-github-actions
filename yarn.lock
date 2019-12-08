@@ -381,10 +381,10 @@
     shell-escape "^0.2.0"
     sprintf-js "^1.1.2"
 
-"@technote-space/github-action-test-helper@^0.0.26":
-  version "0.0.26"
-  resolved "https://registry.yarnpkg.com/@technote-space/github-action-test-helper/-/github-action-test-helper-0.0.26.tgz#f332bad2516aa6feee09347186bb3bb669bae239"
-  integrity sha512-mckGp8kE2t1E3tx5jVw/XiGXL7c8L8DgF9Po0TIOlxuFdLnj7jYSvwQtYgZfIQuyvn8RuSfWyANpXdMeHx2Jnw==
+"@technote-space/github-action-test-helper@^0.0.27":
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/@technote-space/github-action-test-helper/-/github-action-test-helper-0.0.27.tgz#27d2a06355e644139dbb36375d0ffda3ec1e5674"
+  integrity sha512-NDF5e7zuOfeukeKUKSnNybvZeHgF3AlHq2Wh/iKuiP1zE6xOrT/3cNrKO3tJR1MySi6QNSQMszHroCllt7/LPw==
   dependencies:
     "@actions/github" "^1.1.0"
     js-yaml "^3.13.1"
