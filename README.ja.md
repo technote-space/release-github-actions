@@ -142,12 +142,17 @@ default: `3`
 ### TEST_TAG_PREFIX
 テスト用タグのプリフィックス  
 default: `''`  
-例：`'test/'`
+例：`'test/'`  
+
+### CLEAN_TEST_TAG
+テストタグを掃除するかどうか  
+default: `'false'`  
+例：`'true'`  
 
 ### ORIGINAL_TAG_PREFIX
 元のタグを残す際に付与するプリフィックス  
 default: `''`  
-例：`'original/'`
+例：`'original/'`  
 
 ## Execute commands
 ### ビルド

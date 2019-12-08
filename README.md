@@ -141,12 +141,17 @@ default: `3`
 ### TEST_TAG_PREFIX
 Prefix for test tag.  
 default: `''`  
-e.g. `'test/'`
+e.g. `'test/'`  
+
+### CLEAN_TEST_TAG
+Whether to clean test tag.  
+default: `'false'`  
+e.g. `'true'`  
 
 ### ORIGINAL_TAG_PREFIX
 Prefix to add when leaving the original tag.  
 default: `''`  
-e.g. `'original/'`
+e.g. `'original/'`  
 
 ## Execute commands
 ### Build

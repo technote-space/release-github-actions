@@ -21,6 +21,7 @@ import {
 	isCreateMajorVersionTag,
 	isCreateMinorVersionTag,
 	isCreatePatchVersionTag,
+	isCleanTestTag,
 	getOutputBuildInfoFilename,
 	getCreateTags,
 } from '../../src/utils/misc';
@@ -579,6 +580,30 @@ describe('isCreatePatchVersionTag', () => {
 	it('should return false 2', () => {
 		process.env.INPUT_CREATE_PATCH_VERSION_TAG = '0';
 		expect(isCreatePatchVersionTag()).toBe(false);
+	});
+});
+
+describe('isCleanTestTag', () => {
+	testEnv(rootDir);
+
+	it('should return true 1', () => {
+		process.env.INPUT_CLEAN_TEST_TAG = '1';
+		expect(isCleanTestTag()).toBe(true);
+	});
+
+	it('should return true 2', () => {
+		process.env.INPUT_CLEAN_TEST_TAG = 'true';
+		expect(isCleanTestTag()).toBe(true);
+	});
+
+	it('should return false 1', () => {
+		process.env.INPUT_CLEAN_TEST_TAG = '';
+		expect(isCleanTestTag()).toBe(false);
+	});
+
+	it('should return false 2', () => {
+		process.env.INPUT_CLEAN_TEST_TAG = 'false';
+		expect(isCleanTestTag()).toBe(false);
 	});
 });
 

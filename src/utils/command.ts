@@ -12,14 +12,18 @@ import {
 	getCommitEmail,
 	getCreateTags,
 	getOriginalTagPrefix,
+	isTestTag,
+	isCleanTestTag,
+	getTestTagPrefix,
+	getTestTag,
 	getOutputBuildInfoFilename,
 	getFetchDepth,
 	getParams,
 	getReplaceDirectory,
 } from './misc';
 
-const {getRepository, getTagName} = ContextHelper;
-const {replaceAll}                = Utils;
+const {getRepository, getTagName}  = ContextHelper;
+const {replaceAll, versionCompare} = Utils;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
@@ -98,16 +102,31 @@ export const config = async(): Promise<void> => {
 
 export const commit = async(): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
 
+export const getDeleteTestTag = async(tagName: string, prefix: string): Promise<string[]> => {
+	return (await helper.getTags(getParams().pushDir))
+		.filter(tag => isTestTag(tag))
+		.map(tag => getTestTag(tag))
+		.filter(tag => versionCompare(tag, tagName, false) < 0) // eslint-disable-line no-magic-numbers
+		.map(tag => `${prefix}${tag}`);
+};
+
 export const push = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	const tagName               = getTagName(context);
 	startProcess('Pushing to %s@%s (tag: %s)...', getRepository(context), branchName, tagName);
 
-	const prefix = getOriginalTagPrefix();
-	if (prefix) {
-		const originalTag = prefix + tagName;
+	const prefixForOriginalTag = getOriginalTagPrefix();
+	if (prefixForOriginalTag) {
+		const originalTag = prefixForOriginalTag + tagName;
 		await helper.fetchTags(pushDir, context);
 		await helper.copyTag(pushDir, originalTag, tagName, context);
+	}
+
+	if (!isTestTag(tagName) && isCleanTestTag()) {
+		const prefixForTestTag = getTestTagPrefix();
+		if (prefixForTestTag) {
+			await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForTestTag), context);
+		}
 	}
 
 	const tagNames = getCreateTags(tagName);

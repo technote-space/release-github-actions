@@ -48,10 +48,13 @@ inputs:
     description: Limit fetching to the specified number of commits from the tip of each remote branch history.
     default: '3'
   TEST_TAG_PREFIX:
-    description: Tag name prefix for test
+    description: Tag name prefix for test.
     default: ''
+  CLEAN_TEST_TAG:
+    description: Whether to clean test tag.
+    default: false
   ORIGINAL_TAG_PREFIX:
-    description: Tag name prefix for original tag
+    description: Tag name prefix for original tag.
     default: ''
 
 branding:

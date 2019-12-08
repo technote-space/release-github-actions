@@ -6,6 +6,7 @@ import {
 	testFs,
 	spyOnExec,
 	execCalledWith,
+	setChildProcessParams,
 } from '@technote-space/github-action-test-helper';
 import {
 	replaceDirectory,
@@ -332,10 +333,11 @@ describe('push', () => {
 	testEnv(rootDir);
 
 	it('should run git push command', async() => {
-		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE   = 'test-dir';
-		process.env.INPUT_BRANCH_NAME  = 'test-branch';
-		const mockExec                 = spyOnExec();
+		process.env.INPUT_GITHUB_TOKEN   = 'test-token';
+		process.env.GITHUB_WORKSPACE     = 'test-dir';
+		process.env.INPUT_BRANCH_NAME    = 'test-branch';
+		process.env.INPUT_CLEAN_TEST_TAG = '1';
+		const mockExec                   = spyOnExec();
 
 		await push(getContext({
 			eventName: 'push',
@@ -364,8 +366,56 @@ describe('push', () => {
 		process.env.INPUT_GITHUB_TOKEN        = 'test-token';
 		process.env.GITHUB_WORKSPACE          = 'test-dir';
 		process.env.INPUT_BRANCH_NAME         = 'test-branch';
+		process.env.INPUT_TEST_TAG_PREFIX     = 'test/';
 		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
+		process.env.INPUT_CLEAN_TEST_TAG      = '1';
 		const mockExec                        = spyOnExec();
+
+		await push(getContext({
+			eventName: 'push',
+			ref: 'refs/tags/test/v1.2.3',
+			repo: {
+				owner: 'Hello',
+				repo: 'World',
+			},
+		}));
+
+		execCalledWith(mockExec, [
+			'git tag -l',
+			'git tag -d stdout',
+			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'original/test/v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag \'original/test/v1.2.3\' \'test/v1.2.3\'',
+			'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/test/v1.2.3\' > /dev/null 2>&1',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag test/v1 > /dev/null 2>&1 || :',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'test/v1.2\' > /dev/null 2>&1 || :',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'test/v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag -l',
+			'git tag -d stdout',
+			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
+			'git tag test/v1',
+			'git tag \'test/v1.2\'',
+			'git tag \'test/v1.2.3\'',
+			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1',
+		]);
+	});
+
+	it('should run git push command with clearing test tag', async() => {
+		process.env.INPUT_GITHUB_TOKEN        = 'test-token';
+		process.env.GITHUB_WORKSPACE          = 'test-dir';
+		process.env.INPUT_BRANCH_NAME         = 'test-branch';
+		process.env.INPUT_TEST_TAG_PREFIX     = 'test/';
+		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
+		process.env.INPUT_CLEAN_TEST_TAG      = '1';
+		const mockExec                        = spyOnExec();
+		setChildProcessParams({
+			stdout: (command: string): string => {
+				if (command.endsWith('git tag -l')) {
+					return 'v1\nv1.2\nv1.2.2\ntest/v0\ntest/v1\ntest/v1.1\ntest/v1.2\ntest/v1.2.2\ntest/v1.2.3';
+				}
+				return '';
+			},
+		});
 
 		await push(getContext({
 			eventName: 'push',
@@ -378,16 +428,20 @@ describe('push', () => {
 
 		execCalledWith(mockExec, [
 			'git tag -l',
-			'git tag -d stdout',
+			'git tag -d v1 \'v1.2\' \'v1.2.2\' test/v0 test/v1 \'test/v1.1\' \'test/v1.2\' \'test/v1.2.2\' \'test/v1.2.3\'',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'original/v1.2.3\' > /dev/null 2>&1 || :',
 			'git tag \'original/v1.2.3\' \'v1.2.3\'',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/v1.2.3\' > /dev/null 2>&1',
+			'git tag -l',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag test/v0 > /dev/null 2>&1 || :',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'test/v1.1\' > /dev/null 2>&1 || :',
+			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'test/v1.2.2\' > /dev/null 2>&1 || :',
 			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag v1 > /dev/null 2>&1 || :',
 			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2\' > /dev/null 2>&1 || :',
 			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2.3\' > /dev/null 2>&1 || :',
 			'git tag -l',
-			'git tag -d stdout',
+			'git tag -d v1 \'v1.2\' \'v1.2.2\' test/v0 test/v1 \'test/v1.1\' \'test/v1.2\' \'test/v1.2.2\' \'test/v1.2.3\'',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git tag v1',
 			'git tag \'v1.2\'',
