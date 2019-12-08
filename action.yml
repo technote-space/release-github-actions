@@ -1,6 +1,9 @@
 name: Release GitHub Actions
-description: This is a GitHub Action that automates the release of GitHub Action.
+
+description: This is a GitHub Actions that automates the release of GitHub Actions.
+
 author: technote-space
+
 inputs:
   GITHUB_TOKEN:
     description: Secret GitHub API token to use for making API requests.
@@ -50,9 +53,11 @@ inputs:
   ORIGINAL_TAG_PREFIX:
     description: Tag name prefix for original tag
     default: ''
+
 branding:
   icon: 'tag'
   color: 'green'
+
 runs:
   using: node12
   main: lib/main.js

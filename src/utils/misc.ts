@@ -34,9 +34,9 @@ const getDeleteTargets = (): string[] => getArrayInput('DELETE_TARGETS')
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
 export const getSearchBuildCommandTargets = (): string[] => {
-	const command = getInput('BUILD_COMMAND_TARGET');
-	if (command) {
-		return [command];
+	const command = getArrayInput('BUILD_COMMAND_TARGET');
+	if (command.length) {
+		return command;
 	}
 	return DEFAULT_SEARCH_BUILD_COMMAND_TARGETS;
 };
