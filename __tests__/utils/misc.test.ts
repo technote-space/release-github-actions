@@ -411,6 +411,10 @@ describe('detectBuildCommand', () => {
 	it('should detect build command 3', () => {
 		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test6'))).toBe('prod');
 	});
+
+	it('should detect build command 4', () => {
+		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test7'))).toBe('package');
+	});
 });
 
 describe('isValidTagName', () => {

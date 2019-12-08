@@ -14,6 +14,7 @@ export const DEFAULT_SEARCH_BUILD_COMMAND_TARGETS = [
 	'build',
 	'production',
 	'prod',
+	'package',
 ];
 export const TARGET_EVENTS                        = {
 	'create': [
