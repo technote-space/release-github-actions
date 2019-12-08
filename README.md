@@ -107,11 +107,11 @@ default: `'feat: Build for release'`
 
 ### COMMIT_NAME
 Commit name.  
-default: `'GitHub Actions'`
+default: `'github-actions[bot]'`
 
 ### COMMIT_EMAIL
 Commit email.  
-default: `'example@example.com'`
+default: `'41898282+github-actions[bot]@users.noreply.github.com'`
 
 ### BRANCH_NAME
 Branch name for `GitHub Actions` release.  

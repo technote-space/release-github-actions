@@ -321,8 +321,8 @@ describe('config', () => {
 		await config();
 
 		execCalledWith(mockExec, [
-			'git config \'user.name\' \'GitHub Actions\'',
-			'git config \'user.email\' \'example@example.com\'',
+			'git config \'user.name\' \'github-actions[bot]\'',
+			'git config \'user.email\' \'41898282+github-actions[bot]@users.noreply.github.com\'',
 		]);
 	});
 });

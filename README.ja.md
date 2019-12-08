@@ -107,11 +107,11 @@ default: `'feat: Build for release'`
 
 ### COMMIT_NAME
 コミット時に設定する名前  
-default: `'GitHub Actions'`
+default: `'github-actions[bot]'`
 
 ### COMMIT_EMAIL
 コミット時に設定するメールアドレス  
-default: `'example@example.com'`
+default: `'41898282+github-actions[bot]@users.noreply.github.com'`
 
 ### BRANCH_NAME
 GitHub Actions 用のブランチ名  

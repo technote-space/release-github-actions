@@ -16,10 +16,10 @@ inputs:
     default: 'feat: Build for release'
   COMMIT_NAME:
     description: Git commit name.
-    default: 'GitHub Actions'
+    default: 'github-actions[bot]'
   COMMIT_EMAIL:
     description: Git commit email.
-    default: 'example@example.com'
+    default: '41898282+github-actions[bot]@users.noreply.github.com'
   BRANCH_NAME:
     description: Branch name.
     default: 'gh-actions'
