@@ -22,7 +22,7 @@
 - [インストール](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
 - [オプション](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3)
   - [BUILD_COMMAND](#build_command)
-  - [DELETE_TARGETS](#delete_targets)
+  - [CLEAN_TARGETS](#clean_targets)
   - [PACKAGE_MANAGER](#package_manager)
   - [COMMIT_MESSAGE](#commit_message)
   - [COMMIT_NAME](#commit_name)
