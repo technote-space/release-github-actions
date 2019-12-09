@@ -6,6 +6,8 @@ import {
 	testFs,
 	spyOnExec,
 	execCalledWith,
+	testChildProcess,
+	setChildProcessParams,
 } from '@technote-space/github-action-test-helper';
 import {
 	replaceDirectory,
@@ -15,13 +17,16 @@ import {
 	createBuildInfoFile,
 	copyFiles,
 	config,
+	getDeleteTestTag,
+	deleteTestTags,
 	push,
 } from '../../src/utils/command';
 
 const setExists = testFs();
+const rootDir   = path.resolve(__dirname, '..', '..');
 
 describe('replaceDirectory', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	const workDir  = path.resolve('test-dir/.work');
 	const buildDir = path.resolve('test-dir/.work/build');
@@ -53,7 +58,7 @@ describe('replaceDirectory', () => {
 });
 
 describe('cloneForBranch', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should run clone command', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
@@ -75,7 +80,7 @@ describe('cloneForBranch', () => {
 });
 
 describe('checkBranch', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should do nothing', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
@@ -106,7 +111,7 @@ describe('checkBranch', () => {
 });
 
 describe('prepareFiles', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const commonCheck = (dir: string): (string | any[])[] => {
@@ -243,7 +248,7 @@ describe('prepareFiles', () => {
 });
 
 describe('createBuildInfoFile', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should do nothing', async() => {
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = '/';
@@ -321,20 +326,157 @@ describe('config', () => {
 		await config();
 
 		execCalledWith(mockExec, [
-			'git config \'user.name\' \'GitHub Actions\'',
-			'git config \'user.email\' \'example@example.com\'',
+			'git config \'user.name\' \'github-actions[bot]\'',
+			'git config \'user.email\' \'41898282+github-actions[bot]@users.noreply.github.com\'',
+		]);
+	});
+});
+
+describe('getDeleteTestTag', () => {
+	testChildProcess();
+
+	it('should return empty', async() => {
+		setChildProcessParams({
+			stdout: (command: string): string => {
+				if (command.endsWith('git tag -l')) {
+					return '';
+				}
+				return '';
+			},
+		});
+
+		expect(await getDeleteTestTag('v1.2.3', 'test/')).toEqual([]);
+	});
+
+	it('should get delete test tag', async() => {
+		setChildProcessParams({
+			stdout: (command: string): string => {
+				if (command.endsWith('git tag -l')) {
+					return 'v1\nv1.2\nv1.2.2\ntest/v0\ntest/v1\ntest/v1.1\ntest/v1.2\ntest/v1.2.2\ntest/v1.2.3\ntest/v1.2.3.1';
+				}
+				return '';
+			},
+		});
+
+		expect(await getDeleteTestTag('v1.2.3', 'test/')).toEqual([
+			'test/v0',
+			'test/v1.1',
+			'test/v1.2.2',
+		]);
+	});
+
+	it('should get delete original test tag', async() => {
+		setChildProcessParams({
+			stdout: (command: string): string => {
+				if (command.endsWith('git tag -l')) {
+					return 'v1\noriginal/v1.2\nv1.2.2\ntest/v0\noriginal/test/v1\ntest/v1.1\ntest/v1.2\noriginal/test/v1.2.2\noriginal/test/v1.2.3\ntest/v1.2.3.1';
+				}
+				return '';
+			},
+		});
+
+		expect(await getDeleteTestTag('v1.2.3', 'original/test/')).toEqual([
+			'original/test/v1.2.2',
+		]);
+	});
+});
+
+describe('deleteTestTags', () => {
+	testEnv(rootDir);
+	testChildProcess();
+	const context = getContext({
+		eventName: 'push',
+		ref: 'refs/tags/v1.2.3',
+		repo: {
+			owner: 'Hello',
+			repo: 'World',
+		},
+	});
+	const tags    = 'v1\nv1.2\nv1.2.2\ntest/v0\noriginal/test/v0\ntest/v1\noriginal/test/v1\ntest/v1.1\noriginal/test/v1.1\ntest/v1.2\noriginal/test/v1.2\ntest/v1.2.2\noriginal/test/v1.2.2\ntest/v1.2.3\noriginal/test/v1.2.3';
+
+	it('should do nothing 1', async() => {
+		process.env.INPUT_GITHUB_TOKEN        = 'test-token';
+		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
+		process.env.INPUT_CLEAN_TEST_TAG      = '1';
+		const mockExec                        = spyOnExec();
+
+		await deleteTestTags(context);
+
+		execCalledWith(mockExec, []);
+	});
+
+	it('should do nothing 2', async() => {
+		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		process.env.INPUT_CLEAN_TEST_TAG  = '';
+		const mockExec                    = spyOnExec();
+
+		await deleteTestTags(context);
+
+		execCalledWith(mockExec, []);
+	});
+
+	it('should delete test tags', async() => {
+		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		process.env.INPUT_CLEAN_TEST_TAG  = '1';
+		const mockExec                    = spyOnExec();
+		setChildProcessParams({
+			stdout: (command: string): string => {
+				if (command.endsWith('git tag -l')) {
+					return tags;
+				}
+				return '';
+			},
+		});
+
+		await deleteTestTags(context);
+
+		execCalledWith(mockExec, [
+			'git tag -l',
+			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' > /dev/null 2>&1 || :',
+			'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' > /dev/null 2>&1 || :',
+		]);
+	});
+
+	it('should delete original test tags', async() => {
+		process.env.INPUT_GITHUB_TOKEN        = 'test-token';
+		process.env.INPUT_TEST_TAG_PREFIX     = 'test/';
+		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
+		process.env.INPUT_CLEAN_TEST_TAG      = '1';
+		const mockExec                        = spyOnExec();
+		setChildProcessParams({
+			stdout: (command: string): string => {
+				if (command.endsWith('git tag -l')) {
+					return tags;
+				}
+				return '';
+			},
+		});
+
+		await deleteTestTags(context);
+
+		execCalledWith(mockExec, [
+			'git tag -l',
+			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' > /dev/null 2>&1 || :',
+			'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' > /dev/null 2>&1 || :',
+			'git tag -l',
+			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/original/test/v0 \'tags/original/test/v1.1\' \'tags/original/test/v1.2.2\' > /dev/null 2>&1 || :',
+			'git tag -d original/test/v0 \'original/test/v1.1\' \'original/test/v1.2.2\' > /dev/null 2>&1 || :',
 		]);
 	});
 });
 
 describe('push', () => {
-	testEnv();
+	testEnv(rootDir);
+	testChildProcess();
 
 	it('should run git push command', async() => {
-		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		process.env.GITHUB_WORKSPACE   = 'test-dir';
-		process.env.INPUT_BRANCH_NAME  = 'test-branch';
-		const mockExec                 = spyOnExec();
+		process.env.INPUT_GITHUB_TOKEN   = 'test-token';
+		process.env.GITHUB_WORKSPACE     = 'test-dir';
+		process.env.INPUT_BRANCH_NAME    = 'test-branch';
+		process.env.INPUT_CLEAN_TEST_TAG = '1';
+		const mockExec                   = spyOnExec();
 
 		await push(getContext({
 			eventName: 'push',
@@ -346,9 +488,8 @@ describe('push', () => {
 		}));
 
 		execCalledWith(mockExec, [
-			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag v1 > /dev/null 2>&1 || :',
-			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2\' > /dev/null 2>&1 || :',
-			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2.3\' > /dev/null 2>&1 || :',
+			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/v1 \'tags/v1.2\' \'tags/v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag -d v1 \'v1.2\' \'v1.2.3\' > /dev/null 2>&1 || :',
 			'git tag -l',
 			'git tag -d stdout',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
@@ -363,12 +504,14 @@ describe('push', () => {
 		process.env.INPUT_GITHUB_TOKEN        = 'test-token';
 		process.env.GITHUB_WORKSPACE          = 'test-dir';
 		process.env.INPUT_BRANCH_NAME         = 'test-branch';
+		process.env.INPUT_TEST_TAG_PREFIX     = 'test/';
 		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
+		process.env.INPUT_CLEAN_TEST_TAG      = '1';
 		const mockExec                        = spyOnExec();
 
 		await push(getContext({
 			eventName: 'push',
-			ref: 'refs/tags/v1.2.3',
+			ref: 'refs/tags/test/v1.2.3',
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -379,18 +522,18 @@ describe('push', () => {
 			'git tag -l',
 			'git tag -d stdout',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
-			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'original/v1.2.3\' > /dev/null 2>&1 || :',
-			'git tag \'original/v1.2.3\' \'v1.2.3\'',
-			'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/v1.2.3\' > /dev/null 2>&1',
-			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag v1 > /dev/null 2>&1 || :',
-			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2\' > /dev/null 2>&1 || :',
-			'git push --delete \'https://octocat:test-token@github.com/Hello/World.git\' tag \'v1.2.3\' > /dev/null 2>&1 || :',
+			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/original/test/v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag -d \'original/test/v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag \'original/test/v1.2.3\' \'test/v1.2.3\'',
+			'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/test/v1.2.3\' > /dev/null 2>&1',
+			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v1 \'tags/test/v1.2\' \'tags/test/v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag -d test/v1 \'test/v1.2\' \'test/v1.2.3\' > /dev/null 2>&1 || :',
 			'git tag -l',
 			'git tag -d stdout',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
-			'git tag v1',
-			'git tag \'v1.2\'',
-			'git tag \'v1.2.3\'',
+			'git tag test/v1',
+			'git tag \'test/v1.2\'',
+			'git tag \'test/v1.2.3\'',
 			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1',
 		]);
 	});

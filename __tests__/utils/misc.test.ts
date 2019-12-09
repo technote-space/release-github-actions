@@ -21,6 +21,7 @@ import {
 	isCreateMajorVersionTag,
 	isCreateMinorVersionTag,
 	isCreatePatchVersionTag,
+	isEnabledCleanTestTag,
 	getOutputBuildInfoFilename,
 	getCreateTags,
 } from '../../src/utils/misc';
@@ -33,6 +34,8 @@ import {
 	DEFAULT_FETCH_DEPTH,
 	TARGET_EVENTS,
 } from '../../src/constant';
+
+const rootDir = path.resolve(__dirname, '..', '..');
 
 describe('isTargetEvent', () => {
 	it('should return true 1', () => {
@@ -141,11 +144,11 @@ describe('isTargetEvent', () => {
 });
 
 describe('getSearchBuildCommandTargets', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get targets', () => {
-		process.env.INPUT_BUILD_COMMAND_TARGET = 'test';
-		expect(getSearchBuildCommandTargets()).toEqual(['test']);
+		process.env.INPUT_BUILD_COMMAND_TARGET = 'test1,test2\ntest3';
+		expect(getSearchBuildCommandTargets()).toEqual(['test1', 'test2', 'test3']);
 	});
 
 	it('should get default targets', () => {
@@ -154,7 +157,7 @@ describe('getSearchBuildCommandTargets', () => {
 });
 
 describe('getCommitMessage', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get commit message', () => {
 		process.env.INPUT_COMMIT_MESSAGE = 'test';
@@ -162,12 +165,13 @@ describe('getCommitMessage', () => {
 	});
 
 	it('should get default commit message', () => {
+		process.env.INPUT_COMMIT_MESSAGE = '';
 		expect(getCommitMessage()).toBe(DEFAULT_COMMIT_MESSAGE);
 	});
 });
 
 describe('getCommitName', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get commit name', () => {
 		process.env.INPUT_COMMIT_NAME = 'test';
@@ -175,12 +179,13 @@ describe('getCommitName', () => {
 	});
 
 	it('should get default commit name', () => {
+		process.env.INPUT_COMMIT_NAME = '';
 		expect(getCommitName()).toBe(DEFAULT_COMMIT_NAME);
 	});
 });
 
 describe('getCommitEmail', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get commit email', () => {
 		process.env.INPUT_COMMIT_EMAIL = 'test';
@@ -188,12 +193,13 @@ describe('getCommitEmail', () => {
 	});
 
 	it('should get default commit email', () => {
+		process.env.INPUT_COMMIT_EMAIL = '';
 		expect(getCommitEmail()).toBe(DEFAULT_COMMIT_EMAIL);
 	});
 });
 
 describe('getBranchName', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get branch name', () => {
 		process.env.INPUT_BRANCH_NAME = 'test';
@@ -201,12 +207,13 @@ describe('getBranchName', () => {
 	});
 
 	it('should get default branch name', () => {
+		process.env.INPUT_BRANCH_NAME = '';
 		expect(getBranchName()).toBe(DEFAULT_BRANCH_NAME);
 	});
 });
 
 describe('getFetchDepth', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get fetch depth', () => {
 		process.env.INPUT_FETCH_DEPTH = '10';
@@ -214,6 +221,7 @@ describe('getFetchDepth', () => {
 	});
 
 	it('should get default fetch depth 1', () => {
+		process.env.INPUT_FETCH_DEPTH = '';
 		expect(getFetchDepth()).toBe(DEFAULT_FETCH_DEPTH);
 	});
 
@@ -224,7 +232,7 @@ describe('getFetchDepth', () => {
 });
 
 describe('isTestTag', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should return true', () => {
 		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
@@ -238,7 +246,7 @@ describe('isTestTag', () => {
 });
 
 describe('getTestTag', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get test tag', () => {
 		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
@@ -247,7 +255,7 @@ describe('getTestTag', () => {
 });
 
 describe('getClearFilesCommands', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get clear files commands', () => {
 		expect(getClearFilesCommands([])).toEqual([]);
@@ -273,7 +281,7 @@ describe('getClearFilesCommands', () => {
 });
 
 describe('getBuildCommands', () => {
-	testEnv();
+	testEnv(rootDir);
 	const rm = [
 		'rm -rdf .[!.]*',
 		'rm -rdf *.js',
@@ -289,8 +297,9 @@ describe('getBuildCommands', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'test',
-			'yarn build', // build command of package.json
+			'yarn build',
 			'yarn install --production',
+			...rm,
 		]);
 	});
 
@@ -298,7 +307,7 @@ describe('getBuildCommands', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
-			'yarn build', // build command of package.json
+			'yarn build',
 			'yarn install --production',
 			...rm,
 		]);
@@ -311,6 +320,7 @@ describe('getBuildCommands', () => {
 			'yarn install',
 			'yarn build',
 			'yarn install --production',
+			...rm,
 		]);
 	});
 
@@ -320,6 +330,7 @@ describe('getBuildCommands', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'yarn build',
+			...rm,
 		]);
 	});
 
@@ -330,6 +341,7 @@ describe('getBuildCommands', () => {
 			'yarn install',
 			'test',
 			'yarn install --production',
+			...rm,
 		]);
 	});
 
@@ -358,9 +370,10 @@ describe('getBuildCommands', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'npm install',
 			'test',
-			'npm run build', // build command of package.json
+			'npm run build',
 			'rm -rdf node_modules',
 			'npm install --production',
+			...rm,
 		]);
 	});
 
@@ -369,9 +382,10 @@ describe('getBuildCommands', () => {
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'npm install',
 			'test',
-			'npm run build', // build command of package.json
+			'npm run build',
 			'rm -rdf node_modules',
 			'npm install --production',
+			...rm,
 		]);
 	});
 
@@ -379,10 +393,20 @@ describe('getBuildCommands', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'npm';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'npm install',
-			'npm run build', // build command of package.json
+			'npm run build',
 			'rm -rdf node_modules',
 			'npm install --production',
 			...rm,
+		]);
+	});
+
+	it('should get build commands 11', () => {
+		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
+		process.env.INPUT_CLEAN_TARGETS   = '';
+		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
+			'yarn install',
+			'yarn build',
+			'yarn install --production',
 		]);
 	});
 });
@@ -411,10 +435,14 @@ describe('detectBuildCommand', () => {
 	it('should detect build command 3', () => {
 		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test6'))).toBe('prod');
 	});
+
+	it('should detect build command 4', () => {
+		expect(detectBuildCommand(path.resolve(__dirname, '..', 'fixtures', 'test7'))).toBe('package');
+	});
 });
 
 describe('isValidTagName', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should return true 1', () => {
 		expect(isValidTagName('0')).toBe(true);
@@ -475,9 +503,10 @@ describe('getPatchTag', () => {
 });
 
 describe('isCreateMajorVersionTag', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should return true 1', () => {
+		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = '';
 		expect(isCreateMajorVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
@@ -501,9 +530,10 @@ describe('isCreateMajorVersionTag', () => {
 });
 
 describe('isCreateMinorVersionTag', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should return true 1', () => {
+		process.env.INPUT_CREATE_MINOR_VERSION_TAG = '';
 		expect(isCreateMinorVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
@@ -527,9 +557,10 @@ describe('isCreateMinorVersionTag', () => {
 });
 
 describe('isCreatePatchVersionTag', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should return true 1', () => {
+		process.env.INPUT_CREATE_PATCH_VERSION_TAG = '';
 		expect(isCreatePatchVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
@@ -552,8 +583,32 @@ describe('isCreatePatchVersionTag', () => {
 	});
 });
 
+describe('isEnabledCleanTestTag', () => {
+	testEnv(rootDir);
+
+	it('should return true 1', () => {
+		process.env.INPUT_CLEAN_TEST_TAG = '1';
+		expect(isEnabledCleanTestTag()).toBe(true);
+	});
+
+	it('should return true 2', () => {
+		process.env.INPUT_CLEAN_TEST_TAG = 'true';
+		expect(isEnabledCleanTestTag()).toBe(true);
+	});
+
+	it('should return false 1', () => {
+		process.env.INPUT_CLEAN_TEST_TAG = '';
+		expect(isEnabledCleanTestTag()).toBe(false);
+	});
+
+	it('should return false 2', () => {
+		process.env.INPUT_CLEAN_TEST_TAG = 'false';
+		expect(isEnabledCleanTestTag()).toBe(false);
+	});
+});
+
 describe('getOutputBuildInfoFilename', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get filename', () => {
 		process.env.INPUT_OUTPUT_BUILD_INFO_FILENAME = 'test';
@@ -581,7 +636,7 @@ describe('getOutputBuildInfoFilename', () => {
 });
 
 describe('getCreateTags', () => {
-	testEnv();
+	testEnv(rootDir);
 
 	it('should get create tags 1', () => {
 		expect(getCreateTags('v1.2.3')).toEqual(['v1', 'v1.2', 'v1.2.3']);

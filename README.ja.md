@@ -21,20 +21,24 @@
 - [スクリーンショット](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88)
 - [インストール](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
 - [オプション](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3)
-  - [PACKAGE_MANAGER](#package_manager)
   - [BUILD_COMMAND](#build_command)
+  - [CLEAN_TARGETS](#clean_targets)
+  - [PACKAGE_MANAGER](#package_manager)
   - [COMMIT_MESSAGE](#commit_message)
   - [COMMIT_NAME](#commit_name)
   - [COMMIT_EMAIL](#commit_email)
   - [BRANCH_NAME](#branch_name)
-  - [CLEAN_TARGETS](#clean_targets)
   - [BUILD_COMMAND_TARGET](#build_command_target)
   - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
   - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
   - [CREATE_PATCH_VERSION_TAG](#create_patch_version_tag)
   - [FETCH_DEPTH](#fetch_depth)
   - [TEST_TAG_PREFIX](#test_tag_prefix)
+  - [CLEAN_TEST_TAG](#clean_test_tag)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
+- [Execute commands](#execute-commands)
+  - [ビルド](#%E3%83%93%E3%83%AB%E3%83%89)
+  - [ファイル削除](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%89%8A%E9%99%A4)
 - [Action イベント詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
   - [対象イベント](#%E5%AF%BE%E8%B1%A1%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88)
   - [condition](#condition)
@@ -77,29 +81,22 @@
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
 
 ## オプション
+### BUILD_COMMAND
+ビルド用コマンド  
+default: `''`  
+[More details of execute command](#execute-commands)
+
+### CLEAN_TARGETS
+リリース前に掃除するファイルやディレクトリ (カンマ区切り)  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+絶対パスや `..` は使用できません。  
+[More details of execute command](#execute-commands)
+
 ### PACKAGE_MANAGER
 依存関係のインストールに使用するパッケージマネージャー  
 `yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます。  
 （`npm` または `yarn`）  
 default: `''`  
-例：`npm`  
-
-### BUILD_COMMAND
-ビルド用コマンド  
-default: `''`  
-- `build`、 `production` または `prod` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。([BUILD_COMMAND_TARGET](#build_command_target) で変更可能です)  
-- `npm run install` や `yarn install` のようなインストール用コマンドが存在しない場合、インストール用コマンドが追加されます。  
-- ビルド用コマンドが空の場合、いくつかのファイルが削除されます。 (詳細：[CLEAN_TARGETS](#clean_targets)).  
-
-したがって、`BUILD_COMMAND` が設定されていない かつ package.json に `build` が存在する場合、以下のコマンドが実行されます。
-```shell
-yarn install
-yarn build
-yarn install --production
-rm -rdf .[!.]*
-...
-rm -rdf _config.yml
-```
 
 ### COMMIT_MESSAGE
 コミット時に設定するメッセージ  
@@ -107,26 +104,21 @@ default: `'feat: Build for release'`
 
 ### COMMIT_NAME
 コミット時に設定する名前  
-default: `'GitHub Actions'`
+default: `'github-actions[bot]'`
 
 ### COMMIT_EMAIL
 コミット時に設定するメールアドレス  
-default: `'example@example.com'`
+default: `'41898282+github-actions[bot]@users.noreply.github.com'`
 
 ### BRANCH_NAME
 GitHub Actions 用のブランチ名  
 default: `'gh-actions'`
 
-### CLEAN_TARGETS
-リリース前に削除するファイルやディレクトリ (カンマ区切り)  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
-絶対パスや `..` は使用できません。  
-`BUILD_COMMAND`が指定されている場合、このパラメーターは無視されます。  
-
 ### BUILD_COMMAND_TARGET
 ビルド用コマンド検索ターゲット  
 default: `''`  
-例：`compile`
+例：`compile`  
+このオプションが設定されていない場合、`build`, `production`, `prod` と `package` が使用されます。  
 
 ### CREATE_MAJOR_VERSION_TAG
 メジャーバージョンタグ(例：v1)を作成するかどうか  
@@ -150,12 +142,53 @@ default: `3`
 ### TEST_TAG_PREFIX
 テスト用タグのプリフィックス  
 default: `''`  
-例：`'test/'`
+例：`'test/'`  
+
+### CLEAN_TEST_TAG
+テストタグを掃除するかどうか  
+default: `'false'`  
+例：`'true'`  
 
 ### ORIGINAL_TAG_PREFIX
 元のタグを残す際に付与するプリフィックス  
 default: `''`  
-例：`'original/'`
+例：`'original/'`  
+
+## Execute commands
+### ビルド
+- `build`、 `production` または `prod` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。([BUILD_COMMAND_TARGET](#build_command_target) で変更可能です)  
+- `npm run install` や `yarn install` のようなインストール用コマンドが存在しない場合、インストール用コマンドが追加されます。  
+
+したがって、`BUILD_COMMAND` が設定されていない かつ package.json に `build` が存在する場合、以下のコマンドが実行されます。
+
+```shell
+yarn install
+yarn build
+yarn install --production
+```
+
+### ファイル削除
+`GitHub Actions` の実行には「ビルドに使用するソース」や「テストファイル」、「テストの設定」などを必要としません。  
+そして `GitHub Actions` は使用されるたびにダウンロードされるため、ファイルは少ないほうが良いです。  
+
+`CLEAN_TARGETS` オプションはこの目的のために使用されます。  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+
+```shell
+rm -rdf .[!.]*
+rm -rdf *.js
+rm -rdf *.ts
+rm -rdf *.json
+rm -rdf *.lock
+rm -rdf __tests__ src '_config.yml'
+```
+
+このデフォルト値は「TypeScriptのActionテンプレート」や「JavaScriptのActionテンプレート」の使用を想定した値になっています。  
+https://github.com/actions/typescript-action  
+https://github.com/actions/javascript-action  
+
+不要なファイルが削除された`GitHub Actions`の例を以下で確認できます。  
+https://github.com/technote-space/release-github-actions/tree/gh-actions
 
 ## Action イベント詳細
 ### 対象イベント

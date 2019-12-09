@@ -4,6 +4,7 @@
   "scripts": {
     "build": "test1",
     "production": "test2",
-    "prod": "test3"
+    "prod": "test3",
+    "package": "test4"
   }
 }

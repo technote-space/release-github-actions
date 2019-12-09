@@ -12,14 +12,17 @@ import {
 	getCommitEmail,
 	getCreateTags,
 	getOriginalTagPrefix,
+	isTestTag,
+	isEnabledCleanTestTag,
+	getTestTagPrefix,
 	getOutputBuildInfoFilename,
 	getFetchDepth,
 	getParams,
 	getReplaceDirectory,
 } from './misc';
 
-const {getRepository, getTagName} = ContextHelper;
-const {replaceAll}                = Utils;
+const {getRepository, getTagName}                   = ContextHelper;
+const {replaceAll, versionCompare, getPrefixRegExp} = Utils;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
@@ -98,19 +101,44 @@ export const config = async(): Promise<void> => {
 
 export const commit = async(): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
 
+export const getDeleteTestTag = async(tagName: string, prefix): Promise<string[]> => {
+	return (await helper.getTags(getParams().pushDir))
+		.filter(tag => getPrefixRegExp(prefix).test(tag))
+		.map(tag => tag.replace(getPrefixRegExp(prefix), ''))
+		.filter(tag => versionCompare(tag, tagName, false) < 0) // eslint-disable-line no-magic-numbers
+		.map(tag => `${prefix}${tag}`);
+};
+
+export const deleteTestTags = async(context: Context): Promise<void> => {
+	const tagName   = getTagName(context);
+	const {pushDir} = getParams();
+	if (!isTestTag(tagName) && isEnabledCleanTestTag()) {
+		const prefixForTestTag = getTestTagPrefix();
+		if (prefixForTestTag) {
+			await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForTestTag), context);
+
+			const prefixForOriginalTag = getOriginalTagPrefix();
+			if (prefixForOriginalTag) {
+				await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForOriginalTag + prefixForTestTag), context);
+			}
+		}
+	}
+};
+
 export const push = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	const tagName               = getTagName(context);
 	startProcess('Pushing to %s@%s (tag: %s)...', getRepository(context), branchName, tagName);
 
-	const prefix = getOriginalTagPrefix();
-	if (prefix) {
-		const originalTag = prefix + tagName;
+	const prefixForOriginalTag = getOriginalTagPrefix();
+	if (prefixForOriginalTag) {
+		const originalTag = prefixForOriginalTag + tagName;
 		await helper.fetchTags(pushDir, context);
 		await helper.copyTag(pushDir, originalTag, tagName, context);
 	}
 
 	const tagNames = getCreateTags(tagName);
+	await deleteTestTags(context);
 	await helper.deleteTag(pushDir, tagNames, context);
 	await helper.fetchTags(pushDir, context);
 	await helper.addLocalTag(pushDir, tagNames);

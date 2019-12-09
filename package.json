@@ -1,6 +1,6 @@
 {
   "name": "@technote-space/release-github-actions",
-  "version": "1.7.3",
+  "version": "2.0.0",
   "description": "GitHub actions to auto release.",
   "author": "Technote <technote.space@gmail.com> (https://technote.space)",
   "license": "MIT",
@@ -22,13 +22,13 @@
     "@actions/core": "^1.2.0",
     "@actions/github": "^1.1.0",
     "@technote-space/filter-github-action": "^0.1.12",
-    "@technote-space/github-action-helper": "^0.6.13",
+    "@technote-space/github-action-helper": "^0.6.18",
     "moment": "^2.24.0"
   },
   "devDependencies": {
-    "@technote-space/github-action-test-helper": "^0.0.26",
+    "@technote-space/github-action-test-helper": "^0.0.27",
     "@types/jest": "^24.0.23",
-    "@types/node": "^12.12.14",
+    "@types/node": "^12.12.15",
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@typescript-eslint/parser": "^2.10.0",
     "eslint": "^6.7.2",

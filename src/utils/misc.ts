@@ -9,7 +9,6 @@ import {
 	DEFAULT_COMMIT_EMAIL,
 	DEFAULT_SEARCH_BUILD_COMMAND_TARGETS,
 	DEFAULT_BRANCH_NAME,
-	DEFAULT_CLEAN_TARGETS,
 	DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
 	DEFAULT_FETCH_DEPTH,
 	DEFAULT_TEST_TAG_PREFIX,
@@ -28,18 +27,16 @@ type CommandType = string | {
 
 const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm, escapeRegExp} = Utils;
 
-const getCleanTargets = (): string[] => uniqueArray((getInput('CLEAN_TARGETS') || DEFAULT_CLEAN_TARGETS)
-	.split(',')
-	// eslint-disable-next-line no-control-regex
-	.map(target => target.trim().replace(/[\x00-\x1f\x80-\x9f]/, ''))
-	.filter(target => target && !target.startsWith('/') && !target.includes('..')));
+const getCleanTargets = (): string[] => getArrayInput('CLEAN_TARGETS')
+	.map(target => target.replace(/[\x00-\x1f\x80-\x9f]/, '').trim()) // eslint-disable-line no-control-regex
+	.filter(target => target && !target.startsWith('/') && !target.includes('..'));
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
 export const getSearchBuildCommandTargets = (): string[] => {
-	const command = getInput('BUILD_COMMAND_TARGET');
-	if (command) {
-		return [command];
+	const command = getArrayInput('BUILD_COMMAND_TARGET');
+	if (command.length) {
+		return command;
 	}
 	return DEFAULT_SEARCH_BUILD_COMMAND_TARGETS;
 };
@@ -87,7 +84,6 @@ export const getClearFilesCommands = (targets: string[]): CommandType[] => {
 
 export const getBuildCommands = (dir: string): CommandType[] => {
 	let commands: CommandType[] = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
-	const addRemove             = !commands.length;
 
 	const pkgManager        = useNpm(dir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
 	const buildCommand      = detectBuildCommand(dir);
@@ -110,9 +106,7 @@ export const getBuildCommands = (dir: string): CommandType[] => {
 		commands.push(`${pkgManager} install --production`);
 	}
 
-	if (addRemove) {
-		commands.push(...getClearFilesCommands(getCleanTargets()));
-	}
+	commands.push(...getClearFilesCommands(getCleanTargets()));
 
 	return commands;
 };
@@ -148,6 +142,8 @@ export const isCreateMajorVersionTag = (): boolean => getBoolValue(getInput('CRE
 export const isCreateMinorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MINOR_VERSION_TAG') || 'true');
 
 export const isCreatePatchVersionTag = (): boolean => getBoolValue(getInput('CREATE_PATCH_VERSION_TAG') || 'true');
+
+export const isEnabledCleanTestTag = (): boolean => getBoolValue(getInput('CLEAN_TEST_TAG'));
 
 export const getOutputBuildInfoFilename = (): string => {
 	const filename = (getInput('OUTPUT_BUILD_INFO_FILENAME') || DEFAULT_OUTPUT_BUILD_INFO_FILENAME).trim();
