@@ -139,8 +139,8 @@ export const push = async(context: Context): Promise<void> => {
 
 	const tagNames = getCreateTags(tagName);
 	await deleteTestTags(context);
-	await helper.deleteTag(pushDir, tagNames, context);
 	await helper.fetchTags(pushDir, context);
+	await helper.deleteTag(pushDir, tagNames, context);
 	await helper.addLocalTag(pushDir, tagNames);
 	await helper.push(pushDir, branchName, true, context);
 };
