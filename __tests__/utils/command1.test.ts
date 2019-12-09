@@ -192,7 +192,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
-		process.env.INPUT_DELETE_TARGETS  = 'test1,-test2,test3 test4,-test5 , test6;test7, test8/*.txt, *.test9';
+		process.env.INPUT_CLEAN_TARGETS   = 'test1,-test2,test3 test4,-test5 , test6;test7, test8/*.txt, *.test9';
 		const mockExec                    = spyOnExec();
 
 		await prepareFiles(getContext({
@@ -220,7 +220,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
-		process.env.INPUT_DELETE_TARGETS  = '-test1, -test2/?<>:|"\'@#$%^& ;.*.test3 , ?<>:|"\'@#$%^& ;/test4 test5/*.txt,;?<>:|"\'@#$%^& ;.txt,rm -rf /';
+		process.env.INPUT_CLEAN_TARGETS   = '-test1, -test2/?<>:|"\'@#$%^& ;.*.test3 , ?<>:|"\'@#$%^& ;/test4 test5/*.txt,;?<>:|"\'@#$%^& ;.txt,rm -rf /';
 		const mockExec                    = spyOnExec();
 
 		await prepareFiles(getContext({

@@ -27,7 +27,7 @@ type CommandType = string | {
 
 const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm, escapeRegExp} = Utils;
 
-const getDeleteTargets = (): string[] => getArrayInput('DELETE_TARGETS')
+const getCleanTargets = (): string[] => getArrayInput('CLEAN_TARGETS')
 	.map(target => target.replace(/[\x00-\x1f\x80-\x9f]/, '').trim()) // eslint-disable-line no-control-regex
 	.filter(target => target && !target.startsWith('/') && !target.includes('..'));
 
@@ -106,7 +106,7 @@ export const getBuildCommands = (dir: string): CommandType[] => {
 		commands.push(`${pkgManager} install --production`);
 	}
 
-	commands.push(...getClearFilesCommands(getDeleteTargets()));
+	commands.push(...getClearFilesCommands(getCleanTargets()));
 
 	return commands;
 };

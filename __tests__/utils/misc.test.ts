@@ -355,7 +355,7 @@ describe('getBuildCommands', () => {
 
 	it('should get build commands 7', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
-		process.env.INPUT_DELETE_TARGETS  = 'test1,-test2,test3 test4,-test5 , test6;test7';
+		process.env.INPUT_CLEAN_TARGETS   = 'test1,-test2,test3 test4,-test5 , test6;test7';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test1'))).toEqual([
 			'yarn install --production',
 			'rm -rdf -- -test2',
@@ -402,7 +402,7 @@ describe('getBuildCommands', () => {
 
 	it('should get build commands 11', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
-		process.env.INPUT_DELETE_TARGETS  = '';
+		process.env.INPUT_CLEAN_TARGETS   = '';
 		expect(getBuildCommands(path.resolve(__dirname, '..', 'fixtures', 'test4'))).toEqual([
 			'yarn install',
 			'yarn build',
