@@ -13,7 +13,7 @@ import {
 	getCreateTags,
 	getOriginalTagPrefix,
 	isTestTag,
-	isCleanTestTag,
+	isEnabledCleanTestTag,
 	getTestTagPrefix,
 	getTestTag,
 	getOutputBuildInfoFilename,
@@ -102,12 +102,12 @@ export const config = async(): Promise<void> => {
 
 export const commit = async(): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
 
-export const getDeleteTestTag = async(tagName: string, prefix: string): Promise<string[]> => {
+export const getDeleteTestTag = async(tagName: string): Promise<string[]> => {
 	return (await helper.getTags(getParams().pushDir))
 		.filter(tag => isTestTag(tag))
 		.map(tag => getTestTag(tag))
 		.filter(tag => versionCompare(tag, tagName, false) < 0) // eslint-disable-line no-magic-numbers
-		.map(tag => `${prefix}${tag}`);
+		.map(tag => `${getTestTagPrefix()}${tag}`);
 };
 
 export const push = async(context: Context): Promise<void> => {
@@ -122,10 +122,10 @@ export const push = async(context: Context): Promise<void> => {
 		await helper.copyTag(pushDir, originalTag, tagName, context);
 	}
 
-	if (!isTestTag(tagName) && isCleanTestTag()) {
+	if (!isTestTag(tagName) && isEnabledCleanTestTag()) {
 		const prefixForTestTag = getTestTagPrefix();
 		if (prefixForTestTag) {
-			await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForTestTag), context);
+			await helper.deleteTag(pushDir, await getDeleteTestTag(tagName), context);
 		}
 	}
 

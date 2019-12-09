@@ -6,6 +6,7 @@ import {
 	testFs,
 	spyOnExec,
 	execCalledWith,
+	testChildProcess,
 	setChildProcessParams,
 } from '@technote-space/github-action-test-helper';
 import {
@@ -16,6 +17,7 @@ import {
 	createBuildInfoFile,
 	copyFiles,
 	config,
+	getDeleteTestTag,
 	push,
 } from '../../src/utils/command';
 
@@ -329,8 +331,45 @@ describe('config', () => {
 	});
 });
 
+describe('getDeleteTestTag', () => {
+	testChildProcess();
+
+	it('should return empty', async() => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		setChildProcessParams({
+			stdout: (command: string): string => {
+				if (command.endsWith('git tag -l')) {
+					return '';
+				}
+				return '';
+			},
+		});
+
+		expect(await getDeleteTestTag('v1.2.3')).toEqual([]);
+	});
+
+	it('should get delete test tag', async() => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+		setChildProcessParams({
+			stdout: (command: string): string => {
+				if (command.endsWith('git tag -l')) {
+					return 'v1\nv1.2\nv1.2.2\ntest/v0\ntest/v1\ntest/v1.1\ntest/v1.2\ntest/v1.2.2\ntest/v1.2.3\ntest/v1.2.3.1';
+				}
+				return '';
+			},
+		});
+
+		expect(await getDeleteTestTag('v1.2.3')).toEqual([
+			'test/v0',
+			'test/v1.1',
+			'test/v1.2.2',
+		]);
+	});
+});
+
 describe('push', () => {
 	testEnv(rootDir);
+	testChildProcess();
 
 	it('should run git push command', async() => {
 		process.env.INPUT_GITHUB_TOKEN   = 'test-token';

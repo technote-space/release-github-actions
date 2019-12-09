@@ -143,7 +143,7 @@ export const isCreateMinorVersionTag = (): boolean => getBoolValue(getInput('CRE
 
 export const isCreatePatchVersionTag = (): boolean => getBoolValue(getInput('CREATE_PATCH_VERSION_TAG') || 'true');
 
-export const isCleanTestTag = (): boolean => getBoolValue(getInput('CLEAN_TEST_TAG'));
+export const isEnabledCleanTestTag = (): boolean => getBoolValue(getInput('CLEAN_TEST_TAG'));
 
 export const getOutputBuildInfoFilename = (): string => {
 	const filename = (getInput('OUTPUT_BUILD_INFO_FILENAME') || DEFAULT_OUTPUT_BUILD_INFO_FILENAME).trim();
