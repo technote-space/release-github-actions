@@ -138,9 +138,10 @@ export const push = async(context: Context): Promise<void> => {
 	}
 
 	const tagNames = getCreateTags(tagName);
-	await deleteTestTags(context);
 	await helper.fetchTags(pushDir, context);
-	await helper.deleteTag(pushDir, tagNames, context);
+	await deleteTestTags(context);
+	// eslint-disable-next-line no-magic-numbers
+	await helper.deleteTag(pushDir, tagNames, context, 1);
 	await helper.addLocalTag(pushDir, tagNames);
 	await helper.push(pushDir, branchName, true, context);
 };
