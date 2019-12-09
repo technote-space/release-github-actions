@@ -22,7 +22,7 @@ Once you create a new tag, this action will automatically
 - [Installation](#installation)
 - [Options](#options)
   - [BUILD_COMMAND](#build_command)
-  - [DELETE_TARGETS](#delete_targets)
+  - [CLEAN_TARGETS](#clean_targets)
   - [PACKAGE_MANAGER](#package_manager)
   - [COMMIT_MESSAGE](#commit_message)
   - [COMMIT_NAME](#commit_name)
@@ -96,7 +96,7 @@ Absolute path and `..` are not permitted to use.
 Package manager to use to install dependencies.  
 If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used to specify it explicitly.  
 （`npm` or `yarn`）  
-default: `''`
+default: `''`  
 
 ### COMMIT_MESSAGE
 Commit message.  
