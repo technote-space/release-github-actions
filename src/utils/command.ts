@@ -15,15 +15,14 @@ import {
 	isTestTag,
 	isEnabledCleanTestTag,
 	getTestTagPrefix,
-	getTestTag,
 	getOutputBuildInfoFilename,
 	getFetchDepth,
 	getParams,
 	getReplaceDirectory,
 } from './misc';
 
-const {getRepository, getTagName}  = ContextHelper;
-const {replaceAll, versionCompare} = Utils;
+const {getRepository, getTagName}                   = ContextHelper;
+const {replaceAll, versionCompare, getPrefixRegExp} = Utils;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
@@ -102,12 +101,12 @@ export const config = async(): Promise<void> => {
 
 export const commit = async(): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
 
-export const getDeleteTestTag = async(tagName: string, prefix = ''): Promise<string[]> => {
+export const getDeleteTestTag = async(tagName: string, prefix): Promise<string[]> => {
 	return (await helper.getTags(getParams().pushDir))
-		.filter(tag => isTestTag(tag))
-		.map(tag => getTestTag(tag))
+		.filter(tag => getPrefixRegExp(prefix).test(tag))
+		.map(tag => tag.replace(getPrefixRegExp(prefix), ''))
 		.filter(tag => versionCompare(tag, tagName, false) < 0) // eslint-disable-line no-magic-numbers
-		.map(tag => `${prefix}${getTestTagPrefix()}${tag}`);
+		.map(tag => `${prefix}${tag}`);
 };
 
 export const deleteTestTags = async(context: Context): Promise<void> => {
@@ -116,11 +115,11 @@ export const deleteTestTags = async(context: Context): Promise<void> => {
 	if (!isTestTag(tagName) && isEnabledCleanTestTag()) {
 		const prefixForTestTag = getTestTagPrefix();
 		if (prefixForTestTag) {
-			await helper.deleteTag(pushDir, await getDeleteTestTag(tagName), context);
+			await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForTestTag), context);
 
 			const prefixForOriginalTag = getOriginalTagPrefix();
 			if (prefixForOriginalTag) {
-				await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForOriginalTag), context);
+				await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForOriginalTag + prefixForTestTag), context);
 			}
 		}
 	}

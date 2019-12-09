@@ -336,7 +336,6 @@ describe('getDeleteTestTag', () => {
 	testChildProcess();
 
 	it('should return empty', async() => {
-		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
 		setChildProcessParams({
 			stdout: (command: string): string => {
 				if (command.endsWith('git tag -l')) {
@@ -346,11 +345,10 @@ describe('getDeleteTestTag', () => {
 			},
 		});
 
-		expect(await getDeleteTestTag('v1.2.3')).toEqual([]);
+		expect(await getDeleteTestTag('v1.2.3', 'test/')).toEqual([]);
 	});
 
 	it('should get delete test tag', async() => {
-		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
 		setChildProcessParams({
 			stdout: (command: string): string => {
 				if (command.endsWith('git tag -l')) {
@@ -360,10 +358,25 @@ describe('getDeleteTestTag', () => {
 			},
 		});
 
-		expect(await getDeleteTestTag('v1.2.3')).toEqual([
+		expect(await getDeleteTestTag('v1.2.3', 'test/')).toEqual([
 			'test/v0',
 			'test/v1.1',
 			'test/v1.2.2',
+		]);
+	});
+
+	it('should get delete original test tag', async() => {
+		setChildProcessParams({
+			stdout: (command: string): string => {
+				if (command.endsWith('git tag -l')) {
+					return 'v1\noriginal/v1.2\nv1.2.2\ntest/v0\noriginal/test/v1\ntest/v1.1\ntest/v1.2\noriginal/test/v1.2.2\noriginal/test/v1.2.3\ntest/v1.2.3.1';
+				}
+				return '';
+			},
+		});
+
+		expect(await getDeleteTestTag('v1.2.3', 'original/test/')).toEqual([
+			'original/test/v1.2.2',
 		]);
 	});
 });
