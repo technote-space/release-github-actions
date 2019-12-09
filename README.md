@@ -96,7 +96,7 @@ Absolute path and `..` are not permitted to use.
 Package manager to use to install dependencies.  
 If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used to specify it explicitly.  
 （`npm` or `yarn`）  
-default: `''`
+default: `''`  
 
 ### COMMIT_MESSAGE
 Commit message.  

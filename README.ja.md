@@ -87,17 +87,16 @@ default: `''`
 [More details of execute command](#execute-commands)
 
 ### CLEAN_TARGETS
-[More details of execute command](#execute-commands)
 リリース前に掃除するファイルやディレクトリ (カンマ区切り)  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 絶対パスや `..` は使用できません。  
+[More details of execute command](#execute-commands)
 
 ### PACKAGE_MANAGER
 依存関係のインストールに使用するパッケージマネージャー  
 `yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます。  
 （`npm` または `yarn`）  
 default: `''`  
-例：`npm`  
 
 ### COMMIT_MESSAGE
 コミット時に設定するメッセージ  
