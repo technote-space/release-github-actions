@@ -22,7 +22,7 @@ Once you create a new tag, this action will automatically
 - [Installation](#installation)
 - [Options](#options)
   - [BUILD_COMMAND](#build_command)
-  - [DELETE_TARGETS](#delete_targets)
+  - [CLEAN_TARGETS](#clean_targets)
   - [PACKAGE_MANAGER](#package_manager)
   - [COMMIT_MESSAGE](#commit_message)
   - [COMMIT_NAME](#commit_name)
