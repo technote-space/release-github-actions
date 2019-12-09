@@ -22,7 +22,7 @@
 - [インストール](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
 - [オプション](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3)
   - [BUILD_COMMAND](#build_command)
-  - [DELETE_TARGETS](#delete_targets)
+  - [CLEAN_TARGETS](#clean_targets)
   - [PACKAGE_MANAGER](#package_manager)
   - [COMMIT_MESSAGE](#commit_message)
   - [COMMIT_NAME](#commit_name)
@@ -87,17 +87,16 @@ default: `''`
 [More details of execute command](#execute-commands)
 
 ### CLEAN_TARGETS
-[More details of execute command](#execute-commands)
 リリース前に掃除するファイルやディレクトリ (カンマ区切り)  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 絶対パスや `..` は使用できません。  
+[More details of execute command](#execute-commands)
 
 ### PACKAGE_MANAGER
 依存関係のインストールに使用するパッケージマネージャー  
 `yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます。  
 （`npm` または `yarn`）  
 default: `''`  
-例：`npm`  
 
 ### COMMIT_MESSAGE
 コミット時に設定するメッセージ  
