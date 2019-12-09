@@ -86,8 +86,8 @@ Build command.
 default: `''`  
 [More details of execute command](#execute-commands)
 
-### DELETE_TARGETS
-Files or directories to delete before release (Comma separated).  
+### CLEAN_TARGETS
+Files or directories to clean before release (Comma separated).  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 Absolute path and `..` are not permitted to use.  
 [More details of execute command](#execute-commands)
@@ -172,7 +172,7 @@ yarn install --production
 To execute `GitHub Actions`, `src files used for build`, `test files`, `test settings`, etc. are not required.  
 And `GitHub Actions` is downloaded every time when it is used, so fewer files are better.  
 
-`DELETE_TARGETS` option is used for this purpose.  
+`CLEAN_TARGETS` option is used for this purpose.  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 
 ```shell

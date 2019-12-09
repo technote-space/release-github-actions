@@ -86,9 +86,9 @@
 default: `''`  
 [More details of execute command](#execute-commands)
 
-### DELETE_TARGETS
+### CLEAN_TARGETS
 [More details of execute command](#execute-commands)
-リリース前に削除するファイルやディレクトリ (カンマ区切り)  
+リリース前に掃除するファイルやディレクトリ (カンマ区切り)  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 絶対パスや `..` は使用できません。  
 
@@ -172,7 +172,7 @@ yarn install --production
 `GitHub Actions` の実行には「ビルドに使用するソース」や「テストファイル」、「テストの設定」などを必要としません。  
 そして `GitHub Actions` は使用されるたびにダウンロードされるため、ファイルは少ないほうが良いです。  
 
-`DELETE_TARGETS` オプションはこの目的のために使用されます。  
+`CLEAN_TARGETS` オプションはこの目的のために使用されます。  
 default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
 
 ```shell

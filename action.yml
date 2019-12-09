@@ -26,8 +26,8 @@ inputs:
   BRANCH_NAME:
     description: Branch name.
     default: 'gh-actions'
-  DELETE_TARGETS:
-    description: Files or directories to delete before release. (Comma separated)
+  CLEAN_TARGETS:
+    description: Files or directories to clean before release. (Comma separated)
     default: '.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml'
   BUILD_COMMAND_TARGET:
     description: Command for search build command.
