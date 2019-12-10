@@ -74,7 +74,7 @@
        runs-on: ubuntu-latest
        steps:
          - name: Release GitHub Actions
-           uses: technote-space/release-github-actions@v1
+           uses: technote-space/release-github-actions@v2
            with:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
    ```
