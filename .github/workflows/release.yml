@@ -13,6 +13,7 @@ jobs:
           fetch-depth: 3
 
       - name: Release GitHub Actions
+        # uses: technote-space/release-github-actions@v2
         uses: technote-space/release-github-actions@gh-actions
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
