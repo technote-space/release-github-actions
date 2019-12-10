@@ -435,7 +435,7 @@ describe('deleteTestTags', () => {
 		execCalledWith(mockExec, [
 			'git tag -l',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' > /dev/null 2>&1 || :',
-			'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' > /dev/null 2>&1 || :',
+			'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' || :',
 		]);
 	});
 
@@ -459,10 +459,10 @@ describe('deleteTestTags', () => {
 		execCalledWith(mockExec, [
 			'git tag -l',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' > /dev/null 2>&1 || :',
-			'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' > /dev/null 2>&1 || :',
+			'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' || :',
 			'git tag -l',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/original/test/v0 \'tags/original/test/v1.1\' \'tags/original/test/v1.2.2\' > /dev/null 2>&1 || :',
-			'git tag -d original/test/v0 \'original/test/v1.1\' \'original/test/v1.2.2\' > /dev/null 2>&1 || :',
+			'git tag -d original/test/v0 \'original/test/v1.1\' \'original/test/v1.2.2\' || :',
 		]);
 	});
 });
@@ -494,9 +494,9 @@ describe('push', () => {
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/v1 > /dev/null 2>&1 || :',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/v1.2\' > /dev/null 2>&1 || :',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/v1.2.3\' > /dev/null 2>&1 || :',
-			'git tag -d v1 > /dev/null 2>&1 || :',
-			'git tag -d \'v1.2\' > /dev/null 2>&1 || :',
-			'git tag -d \'v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag -d v1 || :',
+			'git tag -d \'v1.2\' || :',
+			'git tag -d \'v1.2.3\' || :',
 			'git tag v1',
 			'git tag \'v1.2\'',
 			'git tag \'v1.2.3\'',
@@ -527,7 +527,7 @@ describe('push', () => {
 			'git tag -d stdout',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/original/test/v1.2.3\' > /dev/null 2>&1 || :',
-			'git tag -d \'original/test/v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag -d \'original/test/v1.2.3\' || :',
 			'git tag \'original/test/v1.2.3\' \'test/v1.2.3\'',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/test/v1.2.3\' > /dev/null 2>&1',
 			'git tag -l',
@@ -536,9 +536,9 @@ describe('push', () => {
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v1 > /dev/null 2>&1 || :',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/test/v1.2\' > /dev/null 2>&1 || :',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/test/v1.2.3\' > /dev/null 2>&1 || :',
-			'git tag -d test/v1 > /dev/null 2>&1 || :',
-			'git tag -d \'test/v1.2\' > /dev/null 2>&1 || :',
-			'git tag -d \'test/v1.2.3\' > /dev/null 2>&1 || :',
+			'git tag -d test/v1 || :',
+			'git tag -d \'test/v1.2\' || :',
+			'git tag -d \'test/v1.2.3\' || :',
 			'git tag test/v1',
 			'git tag \'test/v1.2\'',
 			'git tag \'test/v1.2.3\'',
