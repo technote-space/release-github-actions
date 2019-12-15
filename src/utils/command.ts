@@ -75,7 +75,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 export const clone = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	startProcess('Fetching...');
-	await helper.fetchOrigin(pushDir, context);
+	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`+refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
 
 	startProcess('Switching branch to [%s]...', branchName);
 	await helper.switchBranch(pushDir, branchName);
