@@ -11,7 +11,7 @@ import {
 } from '@technote-space/github-action-test-helper';
 import {
 	replaceDirectory,
-	cloneForBranch,
+	clone,
 	checkBranch,
 	prepareFiles,
 	createBuildInfoFile,
@@ -57,7 +57,7 @@ describe('replaceDirectory', () => {
 	});
 });
 
-describe('cloneForBranch', () => {
+describe('clone', () => {
 	testEnv(rootDir);
 
 	it('should run clone command', async() => {
@@ -66,15 +66,20 @@ describe('cloneForBranch', () => {
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
 		const mockExec                 = spyOnExec();
 
-		await cloneForBranch(getContext({
+		await clone(getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
 			},
 		}));
 
+		const pushDir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			'git clone \'--branch=test-branch\' \'--depth=3\' \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1 || :',
+			`rm -rdf '${pushDir}'`,
+			'git init \'.\'',
+			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+			'git fetch origin',
+			'git checkout -b test-branch origin/test-branch || :',
 		]);
 	});
 });
