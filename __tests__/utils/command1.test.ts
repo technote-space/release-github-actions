@@ -11,7 +11,7 @@ import {
 } from '@technote-space/github-action-test-helper';
 import {
 	replaceDirectory,
-	cloneForBranch,
+	clone,
 	checkBranch,
 	prepareFiles,
 	createBuildInfoFile,
@@ -57,7 +57,7 @@ describe('replaceDirectory', () => {
 	});
 });
 
-describe('cloneForBranch', () => {
+describe('clone', () => {
 	testEnv(rootDir);
 
 	it('should run clone command', async() => {
@@ -66,7 +66,7 @@ describe('cloneForBranch', () => {
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
 		const mockExec                 = spyOnExec();
 
-		await cloneForBranch(getContext({
+		await clone(getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -74,7 +74,10 @@ describe('cloneForBranch', () => {
 		}));
 
 		execCalledWith(mockExec, [
-			'git clone \'--branch=test-branch\' \'--depth=3\' \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1 || :',
+			'git init \'.\'',
+			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+			'git fetch --no-tags origin \'+refs/heads/test-branch:refs/remotes/origin/test-branch\'',
+			'git checkout -b test-branch origin/test-branch || :',
 		]);
 	});
 });
@@ -101,9 +104,7 @@ describe('checkBranch', () => {
 
 		await checkBranch('test-branch2');
 
-		const dir = path.resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
-			`rm -rdf '${dir}'`,
 			'git init \'.\'',
 			'git checkout --orphan test-branch',
 		]);
@@ -489,7 +490,7 @@ describe('push', () => {
 
 		execCalledWith(mockExec, [
 			'git tag -l',
-			'git tag -d stdout',
+			'git tag -d stdout || :',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/v1 > /dev/null 2>&1 || :',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/v1.2\' > /dev/null 2>&1 || :',
@@ -524,14 +525,14 @@ describe('push', () => {
 
 		execCalledWith(mockExec, [
 			'git tag -l',
-			'git tag -d stdout',
+			'git tag -d stdout || :',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/original/test/v1.2.3\' > /dev/null 2>&1 || :',
 			'git tag -d \'original/test/v1.2.3\' || :',
 			'git tag \'original/test/v1.2.3\' \'test/v1.2.3\'',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/test/v1.2.3\' > /dev/null 2>&1',
 			'git tag -l',
-			'git tag -d stdout',
+			'git tag -d stdout || :',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v1 > /dev/null 2>&1 || :',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/test/v1.2\' > /dev/null 2>&1 || :',

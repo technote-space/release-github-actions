@@ -72,11 +72,13 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 	}));
 };
 
-export const cloneForBranch = async(context: Context): Promise<void> => {
+export const clone = async(context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
-	startProcess('Cloning the branch [%s]...', branchName);
+	startProcess('Fetching...');
+	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`+refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
 
-	await helper.cloneBranch(pushDir, branchName, context);
+	startProcess('Switching branch to [%s]...', branchName);
+	await helper.switchBranch(pushDir, branchName);
 };
 
 export const checkBranch = async(clonedBranch: string): Promise<void> => {
@@ -179,18 +181,8 @@ export const copyFiles = async(): Promise<void> => {
 	});
 };
 
-const initDirectory = async(): Promise<void> => {
-	const {workDir, pushDir} = getParams();
-	await command.execAsync({
-		command: 'rm',
-		args: ['-rdf', workDir],
-	});
-	fs.mkdirSync(pushDir, {recursive: true});
-};
-
 export const prepareCommit = async(context: Context): Promise<void> => {
-	await initDirectory();
-	await cloneForBranch(context);
+	await clone(context);
 	await checkBranch(await helper.getCurrentBranchName(getParams().pushDir));
 	await prepareFiles(context);
 	await createBuildInfoFile(context);
