@@ -198,7 +198,7 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
 |push: *|[condition](#condition)|
 |release: published|[condition](#condition)|
 |release: rerequested|[condition](#condition)|
-|created: *|[condition](#condition)|
+|create: *|[condition](#condition)|
 ### condition
 - tags
   - semantic versioning tag (e.g. `v1.2.3`)
