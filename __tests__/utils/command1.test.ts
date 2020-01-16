@@ -76,7 +76,7 @@ describe('clone', () => {
 		execCalledWith(mockExec, [
 			'git init \'.\'',
 			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
-			'git fetch --no-tags origin \'+refs/heads/test-branch:refs/remotes/origin/test-branch\'',
+			'git fetch --no-tags origin \'+refs/heads/test-branch:refs/remotes/origin/test-branch\' || :',
 			'git checkout -b test-branch origin/test-branch || :',
 		]);
 	});
