@@ -238,15 +238,15 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
 
 ## このアクションを使用しているアクションの例
 - [Release GitHub Actions](https://github.com/technote-space/release-github-actions)
-  - [released.yml](https://github.com/technote-space/release-github-actions/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/release-github-actions/blob/master/.github/workflows/release.yml)
 - [Auto card labeler](https://github.com/technote-space/auto-card-labeler)
-  - [released.yml](https://github.com/technote-space/auto-card-labeler/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/auto-card-labeler/blob/master/.github/workflows/release.yml)
 - [Assign Author](https://github.com/technote-space/assign-author)
-  - [released.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/release.yml)
 - [TOC Generator](https://github.com/technote-space/toc-generator)
-  - [released.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/release.yml)
 - [Package Version Check Action](https://github.com/technote-space/package-version-check-action)
-  - [released.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/released.yml)
+  - [release.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/release.yml)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  
