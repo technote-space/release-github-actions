@@ -1,4 +1,7 @@
-on: create
+on:
+  create:
+  repository_dispatch:
+    types: [release]
 
 name: Release
 
@@ -8,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Release GitHub Actions
-        # uses: technote-space/release-github-actions@v2
         uses: technote-space/release-github-actions@gh-actions
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
