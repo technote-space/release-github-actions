@@ -60,6 +60,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 	if (!fs.existsSync(dir)) {
 		fs.mkdirSync(dir, {recursive: true});
 	}
+
 	fs.writeFileSync(filepath, JSON.stringify({
 		owner: context.repo.owner,
 		repo: context.repo.repo,

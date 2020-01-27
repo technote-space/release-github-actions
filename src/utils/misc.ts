@@ -38,6 +38,7 @@ export const getSearchBuildCommandTargets = (): string[] => {
 	if (command.length) {
 		return command;
 	}
+
 	return DEFAULT_SEARCH_BUILD_COMMAND_TARGETS;
 };
 
@@ -70,15 +71,19 @@ export const getClearFilesCommands = (targets: string[]): CommandType[] => {
 	const beginWithDash           = targets.filter(item => item.startsWith('-')).map(escapeFunc);
 	const withWildcard            = targets.filter(item => !item.startsWith('-') && item.includes('*')).map(escapeFunc);
 	const withoutWildcard         = targets.filter(item => !item.startsWith('-') && !item.includes('*'));
+
 	if (beginWithDash.length) {
 		commands.push(...beginWithDash.map(target => `rm -rdf -- ${target}`));
 	}
+
 	if (withWildcard.length) {
 		commands.push(...withWildcard.map(target => `rm -rdf ${target}`));
 	}
+
 	if (withoutWildcard.length) {
 		commands.push({command: 'rm', args: ['-rdf', ...withoutWildcard]});
 	}
+
 	return commands;
 };
 
@@ -124,6 +129,7 @@ export const getFetchDepth = (): number => {
 	if (depth && /^\d+$/.test(depth)) {
 		return parseInt(depth, 10);
 	}
+
 	return DEFAULT_FETCH_DEPTH;
 };
 
@@ -150,6 +156,7 @@ export const getOutputBuildInfoFilename = (): string => {
 	if (filename.startsWith('/') || filename.includes('..')) {
 		return '';
 	}
+
 	return filename;
 };
 
