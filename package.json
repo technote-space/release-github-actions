@@ -17,7 +17,9 @@
   "bugs": {
     "url": "https://github.com/technote-space/release-github-actions/issues"
   },
-  "main": "lib/main.js",
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@actions/core": "^1.2.2",
     "@actions/github": "^2.1.0",
