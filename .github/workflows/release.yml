@@ -70,11 +70,13 @@ jobs:
         run: yarn build
       - name: Publish
         run: |
-          npm config set //registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN
-          npm publish
+          if [ -n "$NPM_AUTH_TOKEN" ]; then
+            npm config set //registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN
+            npm publish
+          fi
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-        if: matrix.target == 'npm' && env.NPM_AUTH_TOKEN
+        if: matrix.target == 'npm'
       - name: Publish
         run: npm publish
         env:
