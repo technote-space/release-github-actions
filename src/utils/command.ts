@@ -31,10 +31,9 @@ export const replaceDirectory = (message: string): string => {
 
 const logger               = new Logger(replaceDirectory);
 const command              = new Command(logger);
-const helper               = new GitHelper(logger, {depth: getFetchDepth()});
 const {startProcess, info} = logger;
 
-export const prepareFiles = async(context: Context): Promise<void> => {
+export const prepareFiles = async(helper: GitHelper, context: Context): Promise<void> => {
 	const {buildDir} = getParams();
 	fs.mkdirSync(buildDir, {recursive: true});
 
@@ -73,7 +72,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 	}));
 };
 
-export const clone = async(context: Context): Promise<void> => {
+export const clone = async(helper: GitHelper, context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	startProcess('Fetching...');
 	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`+refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
@@ -82,7 +81,7 @@ export const clone = async(context: Context): Promise<void> => {
 	await helper.switchBranch(pushDir, branchName);
 };
 
-export const checkBranch = async(clonedBranch: string): Promise<void> => {
+export const checkBranch = async(clonedBranch: string, helper: GitHelper): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	if (branchName !== clonedBranch) {
 		info('remote branch %s not found.', branchName);
@@ -93,7 +92,7 @@ export const checkBranch = async(clonedBranch: string): Promise<void> => {
 	}
 };
 
-export const config = async(): Promise<void> => {
+export const config = async(helper: GitHelper): Promise<void> => {
 	const {pushDir} = getParams();
 	const name      = getCommitName();
 	const email     = getCommitEmail();
@@ -102,9 +101,9 @@ export const config = async(): Promise<void> => {
 	await helper.config(pushDir, name, email);
 };
 
-export const commit = async(): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
+export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
 
-export const getDeleteTestTag = async(tagName: string, prefix): Promise<string[]> => {
+export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<string[]> => {
 	return (await helper.getTags(getParams().pushDir))
 		.filter(tag => getPrefixRegExp(prefix).test(tag))
 		.map(tag => tag.replace(getPrefixRegExp(prefix), ''))
@@ -112,23 +111,23 @@ export const getDeleteTestTag = async(tagName: string, prefix): Promise<string[]
 		.map(tag => `${prefix}${tag}`);
 };
 
-export const deleteTestTags = async(context: Context): Promise<void> => {
+export const deleteTestTags = async(helper: GitHelper, context: Context): Promise<void> => {
 	const tagName   = getTagName(context);
 	const {pushDir} = getParams();
 	if (!isTestTag(tagName) && isEnabledCleanTestTag()) {
 		const prefixForTestTag = getTestTagPrefix();
 		if (prefixForTestTag) {
-			await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForTestTag), context);
+			await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForTestTag, helper), context);
 
 			const prefixForOriginalTag = getOriginalTagPrefix();
 			if (prefixForOriginalTag) {
-				await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForOriginalTag + prefixForTestTag), context);
+				await helper.deleteTag(pushDir, await getDeleteTestTag(tagName, prefixForOriginalTag + prefixForTestTag, helper), context);
 			}
 		}
 	}
 };
 
-export const push = async(context: Context): Promise<void> => {
+export const push = async(helper: GitHelper, context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	const tagName               = getTagName(context);
 	startProcess('Pushing to %s@%s (tag: %s)...', getRepository(context), branchName, tagName);
@@ -142,7 +141,7 @@ export const push = async(context: Context): Promise<void> => {
 
 	const tagNames = getCreateTags(tagName);
 	await helper.fetchTags(pushDir, context);
-	await deleteTestTags(context);
+	await deleteTestTags(helper, context);
 	// eslint-disable-next-line no-magic-numbers
 	await helper.deleteTag(pushDir, tagNames, context, 1);
 	await helper.addLocalTag(pushDir, tagNames);
@@ -182,20 +181,21 @@ export const copyFiles = async(): Promise<void> => {
 	});
 };
 
-export const prepareCommit = async(context: Context): Promise<void> => {
-	await clone(context);
-	await checkBranch(await helper.getCurrentBranchName(getParams().pushDir));
-	await prepareFiles(context);
+export const prepareCommit = async(helper: GitHelper, context: Context): Promise<void> => {
+	await clone(helper, context);
+	await checkBranch(await helper.getCurrentBranchName(getParams().pushDir), helper);
+	await prepareFiles(helper, context);
 	await createBuildInfoFile(context);
 	await copyFiles();
 };
 
-const executeCommit = async(release: ReposListReleasesResponseItem | undefined, octokit: GitHub, context: Context): Promise<boolean> => {
-	await config();
-	if (!await commit()) {
+const executeCommit = async(release: ReposListReleasesResponseItem | undefined, helper: GitHelper, octokit: GitHub, context: Context): Promise<boolean> => {
+	await config(helper);
+	if (!await commit(helper)) {
 		return false;
 	}
-	await push(context);
+
+	await push(helper, context);
 	await updateRelease(release, octokit, context);
 	return true;
 };
@@ -204,7 +204,8 @@ export const deploy = async(octokit: GitHub, context: Context): Promise<void> =>
 	const {branchName} = getParams();
 	startProcess('Deploying branch %s to %s...', branchName, getRepository(context));
 
+	const helper  = new GitHelper(logger, {depth: getFetchDepth()});
 	const release = await findRelease(octokit, context);
-	await prepareCommit(context);
-	await executeCommit(release, octokit, context);
+	await prepareCommit(helper, context);
+	await executeCommit(release, helper, octokit, context);
 };

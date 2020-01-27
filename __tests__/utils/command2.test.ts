@@ -30,7 +30,7 @@ const common  = async(callback: Function, method: (GitHub, Context) => Promise<v
 			return getApiFixture(path.resolve(__dirname, '..', 'fixtures'), 'repos.updateRelease');
 		});
 
-	await method(new GitHub(''), getContext({
+	await method(new GitHub('test-token'), getContext({
 		eventName: 'push',
 		repo: {
 			owner: 'Hello',

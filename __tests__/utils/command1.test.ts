@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import path from 'path';
+import { Logger, GitHelper } from '@technote-space/github-action-helper';
 import {
 	getContext,
 	testEnv,
@@ -24,6 +25,8 @@ import {
 
 const setExists = testFs();
 const rootDir   = path.resolve(__dirname, '..', '..');
+const logger    = new Logger();
+const helper    = new GitHelper(logger, {token: 'test-token'});
 
 describe('replaceDirectory', () => {
 	testEnv(rootDir);
@@ -66,7 +69,7 @@ describe('clone', () => {
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
 		const mockExec                 = spyOnExec();
 
-		await clone(getContext({
+		await clone(helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -91,7 +94,7 @@ describe('checkBranch', () => {
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
 		const mockExec                 = spyOnExec();
 
-		await checkBranch('test-branch');
+		await checkBranch('test-branch', helper);
 
 		expect(mockExec).not.toBeCalled();
 	});
@@ -102,7 +105,7 @@ describe('checkBranch', () => {
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
 		const mockExec                 = spyOnExec();
 
-		await checkBranch('test-branch2');
+		await checkBranch('test-branch2', helper);
 
 		execCalledWith(mockExec, [
 			'git init \'.\'',
@@ -133,7 +136,7 @@ describe('prepareFiles', () => {
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
 		const mockExec                    = spyOnExec();
 
-		await prepareFiles(getContext({
+		await prepareFiles(helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -156,7 +159,7 @@ describe('prepareFiles', () => {
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
 		const mockExec                    = spyOnExec();
 
-		await prepareFiles(getContext({
+		await prepareFiles(helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -177,7 +180,7 @@ describe('prepareFiles', () => {
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
 		const mockExec                    = spyOnExec();
 
-		await prepareFiles(getContext({
+		await prepareFiles(helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -199,7 +202,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_CLEAN_TARGETS   = 'test1,-test2,test3 test4,-test5 , test6;test7, test8/*.txt, *.test9';
 		const mockExec                    = spyOnExec();
 
-		await prepareFiles(getContext({
+		await prepareFiles(helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -227,7 +230,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_CLEAN_TARGETS   = '-test1, -test2/?<>:|"\'@#$%^& ;.*.test3 , ?<>:|"\'@#$%^& ;/test4 test5/*.txt,;?<>:|"\'@#$%^& ;.txt,rm -rf /';
 		const mockExec                    = spyOnExec();
 
-		await prepareFiles(getContext({
+		await prepareFiles(helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -324,7 +327,7 @@ describe('config', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const mockExec               = spyOnExec();
 
-		await config();
+		await config(helper);
 
 		execCalledWith(mockExec, [
 			'git config \'user.name\' \'github-actions[bot]\'',
@@ -339,27 +342,27 @@ describe('getDeleteTestTag', () => {
 	it('should return empty', async() => {
 		setChildProcessParams({
 			stdout: (command: string): string => {
-				if (command.endsWith('git tag -l')) {
+				if (command.endsWith('git tag')) {
 					return '';
 				}
 				return '';
 			},
 		});
 
-		expect(await getDeleteTestTag('v1.2.3', 'test/')).toEqual([]);
+		expect(await getDeleteTestTag('v1.2.3', 'test/', helper)).toEqual([]);
 	});
 
 	it('should get delete test tag', async() => {
 		setChildProcessParams({
 			stdout: (command: string): string => {
-				if (command.endsWith('git tag -l')) {
+				if (command.endsWith('git tag')) {
 					return 'v1\nv1.2\nv1.2.2\ntest/v0\ntest/v1\ntest/v1.1\ntest/v1.2\ntest/v1.2.2\ntest/v1.2.3\ntest/v1.2.3.1';
 				}
 				return '';
 			},
 		});
 
-		expect(await getDeleteTestTag('v1.2.3', 'test/')).toEqual([
+		expect(await getDeleteTestTag('v1.2.3', 'test/', helper)).toEqual([
 			'test/v0',
 			'test/v1.1',
 			'test/v1.2.2',
@@ -369,14 +372,14 @@ describe('getDeleteTestTag', () => {
 	it('should get delete original test tag', async() => {
 		setChildProcessParams({
 			stdout: (command: string): string => {
-				if (command.endsWith('git tag -l')) {
+				if (command.endsWith('git tag')) {
 					return 'v1\noriginal/v1.2\nv1.2.2\ntest/v0\noriginal/test/v1\ntest/v1.1\ntest/v1.2\noriginal/test/v1.2.2\noriginal/test/v1.2.3\ntest/v1.2.3.1';
 				}
 				return '';
 			},
 		});
 
-		expect(await getDeleteTestTag('v1.2.3', 'original/test/')).toEqual([
+		expect(await getDeleteTestTag('v1.2.3', 'original/test/', helper)).toEqual([
 			'original/test/v1.2.2',
 		]);
 	});
@@ -401,7 +404,7 @@ describe('deleteTestTags', () => {
 		process.env.INPUT_CLEAN_TEST_TAG      = '1';
 		const mockExec                        = spyOnExec();
 
-		await deleteTestTags(context);
+		await deleteTestTags(helper, context);
 
 		execCalledWith(mockExec, []);
 	});
@@ -412,7 +415,7 @@ describe('deleteTestTags', () => {
 		process.env.INPUT_CLEAN_TEST_TAG  = '';
 		const mockExec                    = spyOnExec();
 
-		await deleteTestTags(context);
+		await deleteTestTags(helper, context);
 
 		execCalledWith(mockExec, []);
 	});
@@ -424,17 +427,17 @@ describe('deleteTestTags', () => {
 		const mockExec                    = spyOnExec();
 		setChildProcessParams({
 			stdout: (command: string): string => {
-				if (command.endsWith('git tag -l')) {
+				if (command.endsWith('git tag')) {
 					return tags;
 				}
 				return '';
 			},
 		});
 
-		await deleteTestTags(context);
+		await deleteTestTags(helper, context);
 
 		execCalledWith(mockExec, [
-			'git tag -l',
+			'git tag',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' > /dev/null 2>&1 || :',
 			'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' || :',
 		]);
@@ -448,20 +451,20 @@ describe('deleteTestTags', () => {
 		const mockExec                        = spyOnExec();
 		setChildProcessParams({
 			stdout: (command: string): string => {
-				if (command.endsWith('git tag -l')) {
+				if (command.endsWith('git tag')) {
 					return tags;
 				}
 				return '';
 			},
 		});
 
-		await deleteTestTags(context);
+		await deleteTestTags(helper, context);
 
 		execCalledWith(mockExec, [
-			'git tag -l',
+			'git tag',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' > /dev/null 2>&1 || :',
 			'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' || :',
-			'git tag -l',
+			'git tag',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/original/test/v0 \'tags/original/test/v1.1\' \'tags/original/test/v1.2.2\' > /dev/null 2>&1 || :',
 			'git tag -d original/test/v0 \'original/test/v1.1\' \'original/test/v1.2.2\' || :',
 		]);
@@ -479,7 +482,7 @@ describe('push', () => {
 		process.env.INPUT_CLEAN_TEST_TAG = '1';
 		const mockExec                   = spyOnExec();
 
-		await push(getContext({
+		await push(helper, getContext({
 			eventName: 'push',
 			ref: 'refs/tags/v1.2.3',
 			repo: {
@@ -489,7 +492,7 @@ describe('push', () => {
 		}));
 
 		execCalledWith(mockExec, [
-			'git tag -l',
+			'git tag',
 			'git tag -d stdout || :',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/v1 > /dev/null 2>&1 || :',
@@ -514,7 +517,7 @@ describe('push', () => {
 		process.env.INPUT_CLEAN_TEST_TAG      = '1';
 		const mockExec                        = spyOnExec();
 
-		await push(getContext({
+		await push(helper, getContext({
 			eventName: 'push',
 			ref: 'refs/tags/test/v1.2.3',
 			repo: {
@@ -524,14 +527,14 @@ describe('push', () => {
 		}));
 
 		execCalledWith(mockExec, [
-			'git tag -l',
+			'git tag',
 			'git tag -d stdout || :',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/original/test/v1.2.3\' > /dev/null 2>&1 || :',
 			'git tag -d \'original/test/v1.2.3\' || :',
 			'git tag \'original/test/v1.2.3\' \'test/v1.2.3\'',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/test/v1.2.3\' > /dev/null 2>&1',
-			'git tag -l',
+			'git tag',
 			'git tag -d stdout || :',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v1 > /dev/null 2>&1 || :',
