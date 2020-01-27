@@ -183,7 +183,7 @@ export const getCreateTags = (tagName: string): string[] => {
 	];
 	const createTag = isTestTag(tagName) ? (create: createTagType): string => getTestTagPrefix() + create(getTestTag(tagName)) : (create: createTagType): string => create(tagName);
 
-	return uniqueArray(settings.filter(setting => setting.condition()).map(setting => createTag(setting.createTag)).concat(tagName));
+	return uniqueArray(settings.filter(setting => setting.condition()).map(setting => createTag(setting.createTag)).concat(tagName)).sort().reverse();
 };
 
 export const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {

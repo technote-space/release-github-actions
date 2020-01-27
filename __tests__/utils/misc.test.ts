@@ -639,39 +639,39 @@ describe('getCreateTags', () => {
 	testEnv(rootDir);
 
 	it('should get create tags 1', () => {
-		expect(getCreateTags('v1.2.3')).toEqual(['v1', 'v1.2', 'v1.2.3']);
+		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1.2', 'v1']);
 	});
 
 	it('should get create tags 2', () => {
-		expect(getCreateTags('v1')).toEqual(['v1', 'v1.0', 'v1.0.0']);
+		expect(getCreateTags('v1')).toEqual(['v1.0.0', 'v1.0', 'v1']);
 	});
 
 	it('should get create tags 3', () => {
-		expect(getCreateTags('v1.2')).toEqual(['v1', 'v1.2', 'v1.2.0']);
+		expect(getCreateTags('v1.2')).toEqual(['v1.2.0', 'v1.2', 'v1']);
 	});
 
 	it('should get create tags 4', () => {
 		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = 'false';
-		expect(getCreateTags('v1.2.3')).toEqual(['v1.2', 'v1.2.3']);
+		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1.2']);
 	});
 
 	it('should get create tags 5', () => {
 		process.env.INPUT_CREATE_MINOR_VERSION_TAG = 'false';
-		expect(getCreateTags('v1.2.3')).toEqual(['v1', 'v1.2.3']);
+		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1']);
 	});
 
 	it('should get create tags 6', () => {
-		expect(getCreateTags('v1.2.3.4')).toEqual(['v1', 'v1.2', 'v1.2.3', 'v1.2.3.4']);
+		expect(getCreateTags('v1.2.3.4')).toEqual(['v1.2.3.4', 'v1.2.3', 'v1.2', 'v1']);
 	});
 
 	it('should get create tags 7', () => {
 		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'false';
-		expect(getCreateTags('v1.2.3')).toEqual(['v1', 'v1.2', 'v1.2.3']);
+		expect(getCreateTags('v1.2.3')).toEqual(['v1.2.3', 'v1.2', 'v1']);
 	});
 
 	it('should get create tags 8', () => {
 		process.env.INPUT_CREATE_PATCH_VERSION_TAG = 'false';
-		expect(getCreateTags('v1.2.3.4')).toEqual(['v1', 'v1.2', 'v1.2.3.4']);
+		expect(getCreateTags('v1.2.3.4')).toEqual(['v1.2.3.4', 'v1.2', 'v1']);
 	});
 
 	it('should get create tags 9', () => {
@@ -683,7 +683,7 @@ describe('getCreateTags', () => {
 
 	it('should get create tags 10', () => {
 		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
-		expect(getCreateTags('test/v1.2.3')).toEqual(['test/v1', 'test/v1.2', 'test/v1.2.3']);
+		expect(getCreateTags('test/v1.2.3')).toEqual(['test/v1.2.3', 'test/v1.2', 'test/v1']);
 	});
 
 	it('should get create tags 11', () => {
