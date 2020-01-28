@@ -1,6 +1,6 @@
 {
   "name": "@technote-space/release-github-actions",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "GitHub actions to auto release.",
   "author": "Technote <technote.space@gmail.com> (https://technote.space)",
   "license": "MIT",
@@ -18,7 +18,8 @@
     "url": "https://github.com/technote-space/release-github-actions/issues"
   },
   "files": [
-    "lib"
+    "lib",
+    "action.yml"
   ],
   "dependencies": {
     "@actions/core": "^1.2.2",
