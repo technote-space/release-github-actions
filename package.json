@@ -18,7 +18,7 @@
     "url": "https://github.com/technote-space/release-github-actions/issues"
   },
   "files": [
-    "dist"
+    "lib"
   ],
   "dependencies": {
     "@actions/core": "^1.2.2",
