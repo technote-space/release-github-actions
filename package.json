@@ -2,7 +2,11 @@
   "name": "@technote-space/release-github-actions",
   "version": "2.0.12",
   "description": "GitHub actions to auto release.",
-  "author": "Technote <technote.space@gmail.com> (https://technote.space)",
+  "author": {
+    "name": "Technote",
+    "email": "technote.space@gmail.com",
+    "url": "https://technote.space"
+  },
   "license": "MIT",
   "keywords": [
     "github",
