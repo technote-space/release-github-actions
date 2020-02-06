@@ -74,7 +74,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 export const clone = async(helper: GitHelper, context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	startProcess('Fetching...');
-	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`+refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
+	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
 
 	startProcess('Switching branch to [%s]...', branchName);
 	await helper.switchBranch(pushDir, branchName);
@@ -102,7 +102,7 @@ export const config = async(helper: GitHelper): Promise<void> => {
 
 export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
 
-export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<string[]> => {
+export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<Array<string>> => {
 	return (await helper.getTags(getParams().pushDir))
 		.filter(tag => getPrefixRegExp(prefix).test(tag))
 		.map(tag => tag.replace(getPrefixRegExp(prefix), ''))

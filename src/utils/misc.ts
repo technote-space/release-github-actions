@@ -17,7 +17,7 @@ import {
 
 type CommandType = string | {
 	command: string;
-	args?: string[] | undefined;
+	args?: Array<string> | undefined;
 	quiet?: boolean | undefined;
 	altCommand?: string | undefined;
 	suppressError?: boolean | undefined;
@@ -27,13 +27,13 @@ type CommandType = string | {
 
 const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm, escapeRegExp} = Utils;
 
-const getCleanTargets = (): string[] => getArrayInput('CLEAN_TARGETS')
+const getCleanTargets = (): Array<string> => getArrayInput('CLEAN_TARGETS')
 	.map(target => target.replace(/[\x00-\x1f\x80-\x9f]/, '').trim()) // eslint-disable-line no-control-regex
 	.filter(target => target && !target.startsWith('/') && !target.includes('..'));
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
-export const getSearchBuildCommandTargets = (): string[] => {
+export const getSearchBuildCommandTargets = (): Array<string> => {
 	const command = getArrayInput('BUILD_COMMAND_TARGET');
 	if (command.length) {
 		return command;
@@ -160,7 +160,7 @@ export const getOutputBuildInfoFilename = (): string => {
 	return filename;
 };
 
-const getVersionFragments = (tagName: string): string[] => tagName.trim().replace(/^v?/gi, '').split('.');
+const getVersionFragments = (tagName: string): Array<string> => tagName.trim().replace(/^v?/gi, '').split('.');
 
 type createTagType = (tagName: string) => string;
 
@@ -175,7 +175,7 @@ export const getPatchTag = (tagName: string): string => 'v' + getVersionFragment
 
 export const isValidTagName = (tagName: string): boolean => isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && isSemanticVersioningTagName(getTestTag(tagName)));
 
-export const getCreateTags = (tagName: string): string[] => {
+export const getCreateTags = (tagName: string): Array<string> => {
 	const settings  = [
 		{condition: isCreateMajorVersionTag, createTag: getMajorTag},
 		{condition: isCreateMinorVersionTag, createTag: getMinorTag},
