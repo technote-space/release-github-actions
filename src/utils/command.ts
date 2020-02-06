@@ -100,7 +100,7 @@ export const config = async(helper: GitHelper): Promise<void> => {
 	await helper.config(pushDir, name, email);
 };
 
-export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
+export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage(), {allowEmpty: true});
 
 export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<Array<string>> => {
 	return (await helper.getTags(getParams().pushDir))
@@ -190,10 +190,7 @@ export const prepareCommit = async(helper: GitHelper, context: Context): Promise
 
 const executeCommit = async(release: Octokit.ReposListReleasesResponseItem | undefined, helper: GitHelper, octokit: Octokit, context: Context): Promise<boolean> => {
 	await config(helper);
-	if (!await commit(helper)) {
-		return false;
-	}
-
+	await commit(helper);
 	await push(helper, context);
 	await updateRelease(release, octokit, context);
 	return true;
