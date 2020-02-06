@@ -16,7 +16,8 @@ Once you create a new tag, this action will automatically
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
+<details>
+<summary>Details</summary>
 
 - [Screenshots](#screenshots)
 - [Installation](#installation)
@@ -48,6 +49,7 @@ Once you create a new tag, this action will automatically
 - [Sample GitHub Actions using this Action](#sample-github-actions-using-this-action)
 - [Author](#author)
 
+</details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Screenshots
