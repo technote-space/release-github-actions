@@ -79,7 +79,7 @@ describe('clone', () => {
 		execCalledWith(mockExec, [
 			'git init \'.\'',
 			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
-			'git fetch --no-tags origin \'+refs/heads/test-branch:refs/remotes/origin/test-branch\' || :',
+			'git fetch --no-tags origin \'refs/heads/test-branch:refs/remotes/origin/test-branch\' || :',
 			'git checkout -b test-branch origin/test-branch || :',
 		]);
 	});
@@ -117,20 +117,28 @@ describe('checkBranch', () => {
 describe('prepareFiles', () => {
 	testEnv(rootDir);
 
+	const buildDir = path.resolve('test-dir/.work/build');
+	const pushDir  = path.resolve('test-dir/.work/push');
+
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const commonCheck = (dir: string): (string | any[])[] => {
+	const commonCheck = (): (string | any[])[] => {
 		return [
-			['yarn install --production', {cwd: dir}],
-			['rm -rdf .[!.]*', {cwd: dir}],
-			['rm -rdf *.js', {cwd: dir}],
-			['rm -rdf *.ts', {cwd: dir}],
-			['rm -rdf *.json', {cwd: dir}],
-			['rm -rdf *.lock', {cwd: dir}],
-			['rm -rdf __tests__ src \'_config.yml\'', {cwd: dir}],
+			['yarn install --production', {cwd: buildDir}],
+			[`mv -f '${path.resolve(buildDir, 'action.yaml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${path.resolve(buildDir, 'action.yml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			['rm -rdf .[!.]*', {cwd: buildDir}],
+			['rm -rdf *.js', {cwd: buildDir}],
+			['rm -rdf *.ts', {cwd: buildDir}],
+			['rm -rdf *.json', {cwd: buildDir}],
+			['rm -rdf *.lock', {cwd: buildDir}],
+			['rm -rdf *.yml', {cwd: buildDir}],
+			['rm -rdf *.yaml', {cwd: buildDir}],
+			['rm -rdf __tests__ src', {cwd: buildDir}],
+			[`mv -f '${path.resolve(pushDir, 'action.yml')}' '${path.resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
 		];
 	};
 
-	it('should run commands', async() => {
+	it('should checkout branch', async() => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
@@ -145,33 +153,12 @@ describe('prepareFiles', () => {
 			sha: 'test-sha',
 		}));
 
-		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			'git clone \'--depth=3\' \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
-			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' refs/heads/test > /dev/null 2>&1',
+			'git init \'.\'',
+			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+			'git fetch --no-tags origin \'refs/heads/test:refs/remotes/origin/test\' || :',
 			'git checkout -qf test-sha',
-		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
-	});
-
-	it('should checkout branch', async() => {
-		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
-		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
-		process.env.GITHUB_WORKSPACE      = 'test-dir';
-		const mockExec                    = spyOnExec();
-
-		await prepareFiles(helper, getContext({
-			repo: {
-				owner: 'Hello',
-				repo: 'World',
-			},
-			ref: 'refs/heads/test',
-		}));
-
-		const dir = path.resolve('test-dir/.work/build');
-		execCalledWith(mockExec, ([
-			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
-			'git checkout -qf test',
-		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
+		] as any[]).concat(commonCheck())); // eslint-disable-line @typescript-eslint/no-explicit-any
 	});
 
 	it('should checkout tag', async() => {
@@ -186,13 +173,15 @@ describe('prepareFiles', () => {
 				repo: 'World',
 			},
 			ref: 'refs/tags/test',
+			sha: 'test-sha',
 		}));
 
-		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
-			'git checkout -qf refs/tags/test',
-		] as any[]).concat(commonCheck(dir))); // eslint-disable-line @typescript-eslint/no-explicit-any
+			'git init \'.\'',
+			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+			'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
+			'git checkout -qf test-sha',
+		] as any[]).concat(commonCheck())); // eslint-disable-line @typescript-eslint/no-explicit-any
 	});
 
 	it('should clean specified targets 1', async() => {
@@ -208,18 +197,23 @@ describe('prepareFiles', () => {
 				repo: 'World',
 			},
 			ref: 'refs/tags/test',
+			sha: 'test-sha',
 		}));
 
-		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
-			'git checkout -qf refs/tags/test',
-			['yarn install --production', {cwd: dir}],
-			['rm -rdf -- -test2', {cwd: dir}],
-			['rm -rdf -- -test5', {cwd: dir}],
-			['rm -rdf test8/*.txt', {cwd: dir}],
-			['rm -rdf *.test9', {cwd: dir}],
-			['rm -rdf test1 \'test3 test4\' \'test6;test7\'', {cwd: dir}],
+			'git init \'.\'',
+			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+			'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
+			'git checkout -qf test-sha',
+			['yarn install --production', {cwd: buildDir}],
+			[`mv -f '${path.resolve(buildDir, 'action.yaml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${path.resolve(buildDir, 'action.yml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			['rm -rdf -- -test2', {cwd: buildDir}],
+			['rm -rdf -- -test5', {cwd: buildDir}],
+			['rm -rdf test8/*.txt', {cwd: buildDir}],
+			['rm -rdf *.test9', {cwd: buildDir}],
+			['rm -rdf test1 \'test3 test4\' \'test6;test7\'', {cwd: buildDir}],
+			[`mv -f '${path.resolve(pushDir, 'action.yml')}' '${path.resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
 		]));
 	});
 
@@ -236,17 +230,22 @@ describe('prepareFiles', () => {
 				repo: 'World',
 			},
 			ref: 'refs/tags/test',
+			sha: 'test-sha',
 		}));
 
-		const dir = path.resolve('test-dir/.work/build');
 		execCalledWith(mockExec, ([
-			'git clone \'https://octocat:test-token@github.com/Hello/World.git\' \'.\' > /dev/null 2>&1',
-			'git checkout -qf refs/tags/test',
-			['yarn install --production', {cwd: dir}],
-			['rm -rdf -- -test1', {cwd: dir}],
-			['rm -rdf -- -test2/\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;.*.test3', {cwd: dir}],
-			['rm -rdf ?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;/test4 test5/*.txt', {cwd: dir}],
-			['rm -rdf \';?<>:|"\'\\\'\'@#$%^& ;.txt\' \'rm -rf /\'', {cwd: dir}],
+			'git init \'.\'',
+			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+			'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
+			'git checkout -qf test-sha',
+			['yarn install --production', {cwd: buildDir}],
+			[`mv -f '${path.resolve(buildDir, 'action.yaml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${path.resolve(buildDir, 'action.yml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			['rm -rdf -- -test1', {cwd: buildDir}],
+			['rm -rdf -- -test2/\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;.*.test3', {cwd: buildDir}],
+			['rm -rdf ?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;/test4 test5/*.txt', {cwd: buildDir}],
+			['rm -rdf \';?<>:|"\'\\\'\'@#$%^& ;.txt\' \'rm -rf /\'', {cwd: buildDir}],
+			[`mv -f '${path.resolve(pushDir, 'action.yml')}' '${path.resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
 		]));
 	});
 });
