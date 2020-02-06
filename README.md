@@ -14,9 +14,12 @@ Once you create a new tag, this action will automatically
 1. Change [tags](#tags) to release branch
 1. If there is release which has same tag name and has been published, re-publish it (Because if the tag is changed, the release will be in a draft state).
 
+## Table of Contents
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
+<details>
+<summary>Details</summary>
 
 - [Screenshots](#screenshots)
 - [Installation](#installation)
@@ -48,6 +51,7 @@ Once you create a new tag, this action will automatically
 - [Sample GitHub Actions using this Action](#sample-github-actions-using-this-action)
 - [Author](#author)
 
+</details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Screenshots
