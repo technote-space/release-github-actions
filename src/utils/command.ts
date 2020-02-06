@@ -2,9 +2,8 @@ import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
 import { Logger, Command, ContextHelper, GitHelper, Utils } from '@technote-space/github-action-helper';
-import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
-import { ReposListReleasesResponseItem } from '@octokit/rest';
+import { Octokit } from '@octokit/rest';
 import {
 	getBuildCommands,
 	getCommitMessage,
@@ -148,7 +147,7 @@ export const push = async(helper: GitHelper, context: Context): Promise<void> =>
 	await helper.push(pushDir, branchName, true, context);
 };
 
-const findRelease = async(octokit: GitHub, context: Context): Promise<ReposListReleasesResponseItem | undefined> => {
+const findRelease = async(octokit: Octokit, context: Context): Promise<Octokit.ReposListReleasesResponseItem | undefined> => {
 	const tagName  = getTagName(context);
 	const releases = await octokit.repos.listReleases({
 		owner: context.repo.owner,
@@ -157,7 +156,7 @@ const findRelease = async(octokit: GitHub, context: Context): Promise<ReposListR
 	return releases.data.find(release => release.tag_name === tagName);
 };
 
-export const updateRelease = async(release: ReposListReleasesResponseItem | undefined, octokit: GitHub, context: Context): Promise<void> => {
+export const updateRelease = async(release: Octokit.ReposListReleasesResponseItem | undefined, octokit: Octokit, context: Context): Promise<void> => {
 	if (!release || release.draft) {
 		return;
 	}
@@ -189,7 +188,7 @@ export const prepareCommit = async(helper: GitHelper, context: Context): Promise
 	await copyFiles();
 };
 
-const executeCommit = async(release: ReposListReleasesResponseItem | undefined, helper: GitHelper, octokit: GitHub, context: Context): Promise<boolean> => {
+const executeCommit = async(release: Octokit.ReposListReleasesResponseItem | undefined, helper: GitHelper, octokit: Octokit, context: Context): Promise<boolean> => {
 	await config(helper);
 	if (!await commit(helper)) {
 		return false;
@@ -200,7 +199,7 @@ const executeCommit = async(release: ReposListReleasesResponseItem | undefined, 
 	return true;
 };
 
-export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
+export const deploy = async(octokit: Octokit, context: Context): Promise<void> => {
 	const {branchName} = getParams();
 	startProcess('Deploying branch %s to %s...', branchName, getRepository(context));
 
