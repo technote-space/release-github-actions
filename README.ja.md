@@ -249,6 +249,12 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
   - [release.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/release.yml)
 - [Package Version Check Action](https://github.com/technote-space/package-version-check-action)
   - [release.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/release.yml)
+- [Get Diff Action](https://github.com/technote-space/get-diff-action)
+  - [release.yml](https://github.com/technote-space/get-diff-action/blob/master/.github/workflows/release.yml)
+- [Create Project Card Action](https://github.com/technote-space/create-project-card-action)
+  - [release.yml](https://github.com/technote-space/create-project-card-action/blob/master/.github/workflows/release.yml)
+- [Get git comment action](https://github.com/technote-space/get-git-comment-action)
+  - [release.yml](https://github.com/technote-space/get-git-comment-action/blob/master/.github/workflows/release.yml)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  

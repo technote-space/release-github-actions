@@ -41,7 +41,7 @@ describe('isTargetEvent', () => {
 	it('should return true 1', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'push',
-			ref: 'tags/v1.2.3',
+			ref: 'refs/tags/v1.2.3',
 		}))).toBe(true);
 	});
 
@@ -74,21 +74,21 @@ describe('isTargetEvent', () => {
 	it('should return true 4', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'create',
-			ref: 'tags/v1.2.3',
+			ref: 'refs/tags/v1.2.3',
 		}))).toBe(true);
 	});
 
 	it('should return false 1', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'pull_request',
-			ref: 'tags/test',
+			ref: 'refs/tags/test',
 		}))).toBe(false);
 	});
 
 	it('should return false 2', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'push',
-			ref: 'tags/test',
+			ref: 'refs/tags/test',
 		}))).toBe(false);
 	});
 
@@ -96,7 +96,7 @@ describe('isTargetEvent', () => {
 		process.env.INPUT_BRANCH_PREFIX = 'release';
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'push',
-			ref: 'heads/release/v1.2.3',
+			ref: 'refs/heads/release/v1.2.3',
 		}))).toBe(false);
 	});
 
@@ -104,7 +104,7 @@ describe('isTargetEvent', () => {
 		process.env.INPUT_BRANCH_PREFIX = 'release';
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'push',
-			ref: 'heads/release/v1.2.3',
+			ref: 'refs/heads/release/v1.2.3',
 		}))).toBe(false);
 	});
 
@@ -125,7 +125,7 @@ describe('isTargetEvent', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'release',
 			action: 'created',
-			ref: 'tags/v1.2.3',
+			ref: 'refs/tags/v1.2.3',
 		}, {
 			payload: {
 				release: {
@@ -138,7 +138,7 @@ describe('isTargetEvent', () => {
 	it('should return false 7', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'create',
-			ref: 'heads/v1.2.3',
+			ref: 'refs/heads/v1.2.3',
 		}))).toBe(false);
 	});
 });
