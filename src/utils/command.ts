@@ -33,14 +33,14 @@ const command              = new Command(logger);
 const {startProcess, info} = logger;
 
 export const prepareFiles = async(helper: GitHelper, context: Context): Promise<void> => {
-	const {buildDir} = getParams();
+	const {buildDir, pushDir} = getParams();
 	fs.mkdirSync(buildDir, {recursive: true});
 
 	startProcess('Cloning the remote repo for build...');
 	await helper.checkout(buildDir, context);
 
 	startProcess('Running build for release...');
-	await helper.runCommand(buildDir, getBuildCommands(buildDir));
+	await helper.runCommand(buildDir, getBuildCommands(buildDir, pushDir));
 };
 
 export const createBuildInfoFile = async(context: Context): Promise<void> => {

@@ -88,7 +88,7 @@ default: `''`
 
 ### CLEAN_TARGETS
 Files or directories to clean before release (Comma separated).  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
 Absolute path and `..` are not permitted to use.  
 [More details of execute command](#execute-commands)
 
@@ -173,7 +173,7 @@ To execute `GitHub Actions`, `src files used for build`, `test files`, `test set
 And `GitHub Actions` is downloaded every time when it is used, so fewer files are better.  
 
 `CLEAN_TARGETS` option is used for this purpose.  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
 
 ```shell
 rm -rdf .[!.]*
@@ -181,7 +181,9 @@ rm -rdf *.js
 rm -rdf *.ts
 rm -rdf *.json
 rm -rdf *.lock
-rm -rdf __tests__ src '_config.yml'
+rm -rdf *.yml
+rm -rdf *.yaml
+rm -rdf __tests__ src
 ```
 
 The default setting assumes the use of `Action template for TypeScript` or `Action template for JavaScript`.  

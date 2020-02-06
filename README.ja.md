@@ -88,7 +88,7 @@ default: `''`
 
 ### CLEAN_TARGETS
 リリース前に掃除するファイルやディレクトリ (カンマ区切り)  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
 絶対パスや `..` は使用できません。  
 [More details of execute command](#execute-commands)
 
@@ -172,7 +172,7 @@ yarn install --production
 そして `GitHub Actions` は使用されるたびにダウンロードされるため、ファイルは少ないほうが良いです。  
 
 `CLEAN_TARGETS` オプションはこの目的のために使用されます。  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
 
 ```shell
 rm -rdf .[!.]*
@@ -180,7 +180,9 @@ rm -rdf *.js
 rm -rdf *.ts
 rm -rdf *.json
 rm -rdf *.lock
-rm -rdf __tests__ src '_config.yml'
+rm -rdf *.yml
+rm -rdf *.yaml
+rm -rdf __tests__ src
 ```
 
 このデフォルト値は「TypeScriptのActionテンプレート」や「JavaScriptのActionテンプレート」の使用を想定した値になっています。  
