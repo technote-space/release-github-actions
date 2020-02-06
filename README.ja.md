@@ -189,6 +189,8 @@ rm -rdf *.yaml
 rm -rdf __tests__ src
 ```
 
+(action.yml は削除の対象ではありません)
+
 このデフォルト値は「TypeScriptのActionテンプレート」や「JavaScriptのActionテンプレート」の使用を想定した値になっています。  
 https://github.com/actions/typescript-action  
 https://github.com/actions/javascript-action  

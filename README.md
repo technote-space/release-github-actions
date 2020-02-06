@@ -190,6 +190,8 @@ rm -rdf *.yaml
 rm -rdf __tests__ src
 ```
 
+(action.yml is not subject to deletion.)
+
 The default setting assumes the use of `Action template for TypeScript` or `Action template for JavaScript`.  
 https://github.com/actions/typescript-action  
 https://github.com/actions/javascript-action  
