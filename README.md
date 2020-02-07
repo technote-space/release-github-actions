@@ -14,9 +14,12 @@ Once you create a new tag, this action will automatically
 1. Change [tags](#tags) to release branch
 1. If there is release which has same tag name and has been published, re-publish it (Because if the tag is changed, the release will be in a draft state).
 
+## Table of Contents
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
+<details>
+<summary>Details</summary>
 
 - [Screenshots](#screenshots)
 - [Installation](#installation)
@@ -48,6 +51,7 @@ Once you create a new tag, this action will automatically
 - [Sample GitHub Actions using this Action](#sample-github-actions-using-this-action)
 - [Author](#author)
 
+</details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Screenshots
@@ -88,7 +92,7 @@ default: `''`
 
 ### CLEAN_TARGETS
 Files or directories to clean before release (Comma separated).  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
 Absolute path and `..` are not permitted to use.  
 [More details of execute command](#execute-commands)
 
@@ -173,7 +177,7 @@ To execute `GitHub Actions`, `src files used for build`, `test files`, `test set
 And `GitHub Actions` is downloaded every time when it is used, so fewer files are better.  
 
 `CLEAN_TARGETS` option is used for this purpose.  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,_config.yml`  
+default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
 
 ```shell
 rm -rdf .[!.]*
@@ -181,8 +185,12 @@ rm -rdf *.js
 rm -rdf *.ts
 rm -rdf *.json
 rm -rdf *.lock
-rm -rdf __tests__ src '_config.yml'
+rm -rdf *.yml
+rm -rdf *.yaml
+rm -rdf __tests__ src
 ```
+
+(action.yml is not subject to deletion.)
 
 The default setting assumes the use of `Action template for TypeScript` or `Action template for JavaScript`.  
 https://github.com/actions/typescript-action  
@@ -248,6 +256,12 @@ The following tags will be created.
   - [release.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/release.yml)
 - [Package Version Check Action](https://github.com/technote-space/package-version-check-action)
   - [release.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/release.yml)
+- [Get Diff Action](https://github.com/technote-space/get-diff-action)
+  - [release.yml](https://github.com/technote-space/get-diff-action/blob/master/.github/workflows/release.yml)
+- [Create Project Card Action](https://github.com/technote-space/create-project-card-action)
+  - [release.yml](https://github.com/technote-space/create-project-card-action/blob/master/.github/workflows/release.yml)
+- [Get git comment action](https://github.com/technote-space/get-git-comment-action)
+  - [release.yml](https://github.com/technote-space/get-git-comment-action/blob/master/.github/workflows/release.yml)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  

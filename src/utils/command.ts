@@ -2,9 +2,8 @@ import fs from 'fs';
 import moment from 'moment';
 import path from 'path';
 import { Logger, Command, ContextHelper, GitHelper, Utils } from '@technote-space/github-action-helper';
-import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
-import { ReposListReleasesResponseItem } from '@octokit/rest';
+import { Octokit } from '@octokit/rest';
 import {
 	getBuildCommands,
 	getCommitMessage,
@@ -34,14 +33,14 @@ const command              = new Command(logger);
 const {startProcess, info} = logger;
 
 export const prepareFiles = async(helper: GitHelper, context: Context): Promise<void> => {
-	const {buildDir} = getParams();
+	const {buildDir, pushDir} = getParams();
 	fs.mkdirSync(buildDir, {recursive: true});
 
 	startProcess('Cloning the remote repo for build...');
 	await helper.checkout(buildDir, context);
 
 	startProcess('Running build for release...');
-	await helper.runCommand(buildDir, getBuildCommands(buildDir));
+	await helper.runCommand(buildDir, getBuildCommands(buildDir, pushDir));
 };
 
 export const createBuildInfoFile = async(context: Context): Promise<void> => {
@@ -75,7 +74,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 export const clone = async(helper: GitHelper, context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	startProcess('Fetching...');
-	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`+refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
+	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
 
 	startProcess('Switching branch to [%s]...', branchName);
 	await helper.switchBranch(pushDir, branchName);
@@ -101,9 +100,9 @@ export const config = async(helper: GitHelper): Promise<void> => {
 	await helper.config(pushDir, name, email);
 };
 
-export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
+export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage(), {allowEmpty: true});
 
-export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<string[]> => {
+export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<Array<string>> => {
 	return (await helper.getTags(getParams().pushDir))
 		.filter(tag => getPrefixRegExp(prefix).test(tag))
 		.map(tag => tag.replace(getPrefixRegExp(prefix), ''))
@@ -148,7 +147,7 @@ export const push = async(helper: GitHelper, context: Context): Promise<void> =>
 	await helper.push(pushDir, branchName, true, context);
 };
 
-const findRelease = async(octokit: GitHub, context: Context): Promise<ReposListReleasesResponseItem | undefined> => {
+const findRelease = async(octokit: Octokit, context: Context): Promise<Octokit.ReposListReleasesResponseItem | undefined> => {
 	const tagName  = getTagName(context);
 	const releases = await octokit.repos.listReleases({
 		owner: context.repo.owner,
@@ -157,7 +156,7 @@ const findRelease = async(octokit: GitHub, context: Context): Promise<ReposListR
 	return releases.data.find(release => release.tag_name === tagName);
 };
 
-export const updateRelease = async(release: ReposListReleasesResponseItem | undefined, octokit: GitHub, context: Context): Promise<void> => {
+export const updateRelease = async(release: Octokit.ReposListReleasesResponseItem | undefined, octokit: Octokit, context: Context): Promise<void> => {
 	if (!release || release.draft) {
 		return;
 	}
@@ -189,18 +188,15 @@ export const prepareCommit = async(helper: GitHelper, context: Context): Promise
 	await copyFiles();
 };
 
-const executeCommit = async(release: ReposListReleasesResponseItem | undefined, helper: GitHelper, octokit: GitHub, context: Context): Promise<boolean> => {
+const executeCommit = async(release: Octokit.ReposListReleasesResponseItem | undefined, helper: GitHelper, octokit: Octokit, context: Context): Promise<boolean> => {
 	await config(helper);
-	if (!await commit(helper)) {
-		return false;
-	}
-
+	await commit(helper);
 	await push(helper, context);
 	await updateRelease(release, octokit, context);
 	return true;
 };
 
-export const deploy = async(octokit: GitHub, context: Context): Promise<void> => {
+export const deploy = async(octokit: Octokit, context: Context): Promise<void> => {
 	const {branchName} = getParams();
 	startProcess('Deploying branch %s to %s...', branchName, getRepository(context));
 

@@ -1,10 +1,19 @@
 /* eslint-disable no-magic-numbers */
 import path from 'path';
 import nock from 'nock';
-import { GitHub } from '@actions/github/lib/github';
 import { Context } from '@actions/github/lib/context';
-import { ReposListReleasesResponseItem } from '@octokit/rest';
-import { getContext, testEnv, disableNetConnect, getApiFixture, spyOnExec, testChildProcess, testFs, setChildProcessParams } from '@technote-space/github-action-test-helper';
+import { Octokit } from '@octokit/rest';
+import {
+	getContext,
+	testEnv,
+	disableNetConnect,
+	getApiFixture,
+	spyOnExec,
+	testChildProcess,
+	testFs,
+	setChildProcessParams,
+	getOctokit,
+} from '@technote-space/github-action-test-helper';
 import {
 	updateRelease,
 	deploy,
@@ -30,7 +39,7 @@ const common  = async(callback: Function, method: (GitHub, Context) => Promise<v
 			return getApiFixture(path.resolve(__dirname, '..', 'fixtures'), 'repos.updateRelease');
 		});
 
-	await method(new GitHub('test-token'), getContext({
+	await method(getOctokit(), getContext({
 		eventName: 'push',
 		repo: {
 			owner: 'Hello',
@@ -46,7 +55,7 @@ const common  = async(callback: Function, method: (GitHub, Context) => Promise<v
 describe('updateRelease', () => {
 	disableNetConnect(nock);
 
-	const getReleaseItem = (override: object): ReposListReleasesResponseItem => Object.assign({
+	const getReleaseItem = (override: object): Octokit.ReposListReleasesResponseItem => Object.assign({
 		url: '',
 		'html_url': '',
 		'assets_url': '',
@@ -90,7 +99,7 @@ describe('updateRelease', () => {
 		await common((fn1, fn2) => {
 			expect(fn1).not.toBeCalled();
 			expect(fn2).not.toBeCalled();
-		}, async(octokit: GitHub, context: Context) => {
+		}, async(octokit: Octokit, context: Context) => {
 			await updateRelease(undefined, octokit, context);
 		});
 	});
@@ -99,7 +108,7 @@ describe('updateRelease', () => {
 		await common((fn1, fn2) => {
 			expect(fn1).not.toBeCalled();
 			expect(fn2).not.toBeCalled();
-		}, async(octokit: GitHub, context: Context) => {
+		}, async(octokit: Octokit, context: Context) => {
 			await updateRelease(getReleaseItem({draft: true}), octokit, context);
 		});
 	});
@@ -108,7 +117,7 @@ describe('updateRelease', () => {
 		await common((fn1, fn2) => {
 			expect(fn1).not.toBeCalled();
 			expect(fn2).toBeCalledTimes(1);
-		}, async(octokit: GitHub, context: Context) => {
+		}, async(octokit: Octokit, context: Context) => {
 			await updateRelease(getReleaseItem({}), octokit, context);
 		});
 	});
@@ -119,17 +128,6 @@ describe('deploy', () => {
 	testEnv(rootDir);
 	testChildProcess();
 	testFs();
-
-	it('should not commit', async() => {
-		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		setChildProcessParams({stdout: ''});
-
-		await common((fn1, fn2, mockExec) => {
-			expect(mockExec).toBeCalled();
-			expect(fn1).toBeCalledTimes(1);
-			expect(fn2).not.toBeCalled();
-		}, deploy);
-	});
 
 	it('should commit', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
