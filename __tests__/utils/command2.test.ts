@@ -129,17 +129,6 @@ describe('deploy', () => {
 	testChildProcess();
 	testFs();
 
-	it('should not commit', async() => {
-		process.env.INPUT_GITHUB_TOKEN = 'test-token';
-		setChildProcessParams({stdout: ''});
-
-		await common((fn1, fn2, mockExec) => {
-			expect(mockExec).toBeCalled();
-			expect(fn1).toBeCalledTimes(1);
-			expect(fn2).not.toBeCalled();
-		}, deploy);
-	});
-
 	it('should commit', async() => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
 		setChildProcessParams({stdout: 'A test.txt'});

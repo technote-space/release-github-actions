@@ -17,7 +17,7 @@ import {
 
 type CommandType = string | {
 	command: string;
-	args?: string[] | undefined;
+	args?: Array<string> | undefined;
 	quiet?: boolean | undefined;
 	altCommand?: string | undefined;
 	suppressError?: boolean | undefined;
@@ -27,13 +27,13 @@ type CommandType = string | {
 
 const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm, escapeRegExp} = Utils;
 
-const getCleanTargets = (): string[] => getArrayInput('CLEAN_TARGETS')
+const getCleanTargets = (): Array<string> => getArrayInput('CLEAN_TARGETS')
 	.map(target => target.replace(/[\x00-\x1f\x80-\x9f]/, '').trim()) // eslint-disable-line no-control-regex
 	.filter(target => target && !target.startsWith('/') && !target.includes('..'));
 
 const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
 
-export const getSearchBuildCommandTargets = (): string[] => {
+export const getSearchBuildCommandTargets = (): Array<string> => {
 	const command = getArrayInput('BUILD_COMMAND_TARGET');
 	if (command.length) {
 		return command;
@@ -63,14 +63,38 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 	return false;
 };
 
-export const getClearFilesCommands = (targets: string[]): CommandType[] => {
-	const commands: CommandType[] = [];
-	const searchValues            = '?<>:|"\'@#$%^& ;';
-	const replaceValue            = '$1\\$2';
-	const escapeFunc              = (item: string): string => searchValues.split('').reduce((acc, val) => acc.replace(new RegExp('([^\\\\])(' + escapeRegExp(val) + ')'), replaceValue), item);
-	const beginWithDash           = targets.filter(item => item.startsWith('-')).map(escapeFunc);
-	const withWildcard            = targets.filter(item => !item.startsWith('-') && item.includes('*')).map(escapeFunc);
-	const withoutWildcard         = targets.filter(item => !item.startsWith('-') && !item.includes('*'));
+export const getBackupCommands = (buildDir: string, pushDir: string): Array<CommandType> => [
+	{
+		command: 'mv',
+		args: ['-f', path.resolve(buildDir, 'action.yaml'), path.resolve(pushDir, 'action.yml')],
+		suppressError: true,
+		quiet: true,
+	},
+	{
+		command: 'mv',
+		args: ['-f', path.resolve(buildDir, 'action.yml'), path.resolve(pushDir, 'action.yml')],
+		suppressError: true,
+		quiet: true,
+	},
+];
+
+export const getRestoreBackupCommands = (buildDir: string, pushDir: string): Array<CommandType> => [
+	{
+		command: 'mv',
+		args: ['-f', path.resolve(pushDir, 'action.yml'), path.resolve(buildDir, 'action.yml')],
+		suppressError: true,
+		quiet: true,
+	},
+];
+
+export const getClearFilesCommands = (targets: Array<string>): Array<CommandType> => {
+	const commands: Array<CommandType> = [];
+	const searchValues                 = '?<>:|"\'@#$%^& ;';
+	const replaceValue                 = '$1\\$2';
+	const escapeFunc                   = (item: string): string => searchValues.split('').reduce((acc, val) => acc.replace(new RegExp('([^\\\\])(' + escapeRegExp(val) + ')'), replaceValue), item);
+	const beginWithDash                = targets.filter(item => item.startsWith('-')).map(escapeFunc);
+	const withWildcard                 = targets.filter(item => !item.startsWith('-') && item.includes('*')).map(escapeFunc);
+	const withoutWildcard              = targets.filter(item => !item.startsWith('-') && !item.includes('*'));
 
 	if (beginWithDash.length) {
 		commands.push(...beginWithDash.map(target => `rm -rdf -- ${target}`));
@@ -87,11 +111,11 @@ export const getClearFilesCommands = (targets: string[]): CommandType[] => {
 	return commands;
 };
 
-export const getBuildCommands = (dir: string): CommandType[] => {
-	let commands: CommandType[] = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
+export const getBuildCommands = (buildDir: string, pushDir: string): Array<CommandType> => {
+	let commands: Array<CommandType> = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
 
-	const pkgManager        = useNpm(dir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
-	const buildCommand      = detectBuildCommand(dir);
+	const pkgManager        = useNpm(buildDir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
+	const buildCommand      = detectBuildCommand(buildDir);
 	const runSubCommand     = pkgManager === 'npm' ? ' run ' : ' ';
 	const hasInstallCommand = !!commands.filter(command => typeof command === 'string' && (command.includes('npm run install') || command.includes(`${pkgManager} install`))).length;
 
@@ -111,7 +135,9 @@ export const getBuildCommands = (dir: string): CommandType[] => {
 		commands.push(`${pkgManager} install --production`);
 	}
 
+	commands.push(...getBackupCommands(buildDir, pushDir));
 	commands.push(...getClearFilesCommands(getCleanTargets()));
+	commands.push(...getRestoreBackupCommands(buildDir, pushDir));
 
 	return commands;
 };
@@ -160,7 +186,7 @@ export const getOutputBuildInfoFilename = (): string => {
 	return filename;
 };
 
-const getVersionFragments = (tagName: string): string[] => tagName.trim().replace(/^v?/gi, '').split('.');
+const getVersionFragments = (tagName: string): Array<string> => tagName.trim().replace(/^v?/gi, '').split('.');
 
 type createTagType = (tagName: string) => string;
 
@@ -175,7 +201,7 @@ export const getPatchTag = (tagName: string): string => 'v' + getVersionFragment
 
 export const isValidTagName = (tagName: string): boolean => isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && isSemanticVersioningTagName(getTestTag(tagName)));
 
-export const getCreateTags = (tagName: string): string[] => {
+export const getCreateTags = (tagName: string): Array<string> => {
 	const settings  = [
 		{condition: isCreateMajorVersionTag, createTag: getMajorTag},
 		{condition: isCreateMinorVersionTag, createTag: getMinorTag},

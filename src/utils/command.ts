@@ -33,14 +33,14 @@ const command              = new Command(logger);
 const {startProcess, info} = logger;
 
 export const prepareFiles = async(helper: GitHelper, context: Context): Promise<void> => {
-	const {buildDir} = getParams();
+	const {buildDir, pushDir} = getParams();
 	fs.mkdirSync(buildDir, {recursive: true});
 
 	startProcess('Cloning the remote repo for build...');
 	await helper.checkout(buildDir, context);
 
 	startProcess('Running build for release...');
-	await helper.runCommand(buildDir, getBuildCommands(buildDir));
+	await helper.runCommand(buildDir, getBuildCommands(buildDir, pushDir));
 };
 
 export const createBuildInfoFile = async(context: Context): Promise<void> => {
@@ -74,7 +74,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 export const clone = async(helper: GitHelper, context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	startProcess('Fetching...');
-	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`+refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
+	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
 
 	startProcess('Switching branch to [%s]...', branchName);
 	await helper.switchBranch(pushDir, branchName);
@@ -100,9 +100,9 @@ export const config = async(helper: GitHelper): Promise<void> => {
 	await helper.config(pushDir, name, email);
 };
 
-export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage());
+export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage(), {allowEmpty: true});
 
-export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<string[]> => {
+export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<Array<string>> => {
 	return (await helper.getTags(getParams().pushDir))
 		.filter(tag => getPrefixRegExp(prefix).test(tag))
 		.map(tag => tag.replace(getPrefixRegExp(prefix), ''))
@@ -190,10 +190,7 @@ export const prepareCommit = async(helper: GitHelper, context: Context): Promise
 
 const executeCommit = async(release: Octokit.ReposListReleasesResponseItem | undefined, helper: GitHelper, octokit: Octokit, context: Context): Promise<boolean> => {
 	await config(helper);
-	if (!await commit(helper)) {
-		return false;
-	}
-
+	await commit(helper);
 	await push(helper, context);
 	await updateRelease(release, octokit, context);
 	return true;
