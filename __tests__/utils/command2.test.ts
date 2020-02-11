@@ -19,7 +19,7 @@ import {
 	deploy,
 } from '../../src/utils/command';
 
-const rootDir = path.resolve(__dirname, '..', '..');
+const rootDir = path.resolve(__dirname, '../..');
 const common  = async(callback: Function, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
 	const mockExec = spyOnExec();
 	const fn1      = jest.fn();

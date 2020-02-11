@@ -144,7 +144,7 @@ export const push = async(helper: GitHelper, context: Context): Promise<void> =>
 	// eslint-disable-next-line no-magic-numbers
 	await helper.deleteTag(pushDir, tagNames, context, 1);
 	await helper.addLocalTag(pushDir, tagNames);
-	await helper.push(pushDir, branchName, true, context);
+	await helper.push(pushDir, branchName, context, {withTag: true});
 };
 
 const findRelease = async(octokit: Octokit, context: Context): Promise<Octokit.ReposListReleasesResponseItem | undefined> => {
