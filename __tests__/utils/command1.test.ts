@@ -491,7 +491,7 @@ describe('push', () => {
 		}));
 
 		execCalledWith(mockExec, [
-			'git tag > /dev/null 2>&1',
+			'git tag',
 			'git tag -d stdout > /dev/null 2>&1',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/v1.2.3\' > /dev/null 2>&1 || :',
@@ -526,14 +526,14 @@ describe('push', () => {
 		}));
 
 		execCalledWith(mockExec, [
-			'git tag > /dev/null 2>&1',
+			'git tag',
 			'git tag -d stdout > /dev/null 2>&1',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/original/test/v1.2.3\' > /dev/null 2>&1 || :',
 			'git tag -d \'original/test/v1.2.3\' || :',
 			'git tag \'original/test/v1.2.3\' \'test/v1.2.3\'',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/test/v1.2.3\' > /dev/null 2>&1',
-			'git tag > /dev/null 2>&1',
+			'git tag',
 			'git tag -d stdout > /dev/null 2>&1',
 			'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
 			'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/test/v1.2.3\' > /dev/null 2>&1 || :',
