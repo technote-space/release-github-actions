@@ -9,6 +9,8 @@ import {
 	execCalledWith,
 	testChildProcess,
 	setChildProcessParams,
+	spyOnStdout,
+	stdoutCalledWith,
 } from '@technote-space/github-action-test-helper';
 import {
 	replaceDirectory,
@@ -480,6 +482,7 @@ describe('push', () => {
 		process.env.INPUT_BRANCH_NAME    = 'test-branch';
 		process.env.INPUT_CLEAN_TEST_TAG = '1';
 		const mockExec                   = spyOnExec();
+		const mockStdout                 = spyOnStdout();
 
 		await push(helper, getContext({
 			eventName: 'push',
@@ -505,6 +508,27 @@ describe('push', () => {
 			'git tag v1',
 			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1 || :',
 		]);
+		stdoutCalledWith(mockStdout, [
+			'::endgroup::',
+			'::group::Pushing to Hello/World@test-branch (tag: v1.2.3)...',
+			'[command]git fetch origin --tags',
+			'[command]git push origin --delete tags/v1.2.3',
+			'[command]git push origin --delete tags/v1.2',
+			'[command]git push origin --delete tags/v1',
+			'[command]git tag -d \'v1.2.3\'',
+			'  >> stdout',
+			'[command]git tag -d \'v1.2\'',
+			'  >> stdout',
+			'[command]git tag -d v1',
+			'  >> stdout',
+			'[command]git tag \'v1.2.3\'',
+			'  >> stdout',
+			'[command]git tag \'v1.2\'',
+			'  >> stdout',
+			'[command]git tag v1',
+			'  >> stdout',
+			'[command]git push --tags origin test-branch:refs/heads/test-branch',
+		]);
 	});
 
 	it('should run git push command with pushing original tag', async() => {
@@ -515,6 +539,7 @@ describe('push', () => {
 		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
 		process.env.INPUT_CLEAN_TEST_TAG      = '1';
 		const mockExec                        = spyOnExec();
+		const mockStdout                      = spyOnStdout();
 
 		await push(helper, getContext({
 			eventName: 'push',
@@ -546,6 +571,34 @@ describe('push', () => {
 			'git tag \'test/v1.2\'',
 			'git tag test/v1',
 			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1 || :',
+		]);
+		stdoutCalledWith(mockStdout, [
+			'::endgroup::',
+			'::group::Pushing to Hello/World@test-branch (tag: test/v1.2.3)...',
+			'[command]git fetch origin --tags',
+			'[command]git push origin --delete tags/original/test/v1.2.3',
+			'[command]git tag -d \'original/test/v1.2.3\'',
+			'  >> stdout',
+			'[command]git tag \'original/test/v1.2.3\' \'test/v1.2.3\'',
+			'  >> stdout',
+			'[command]git push origin refs/tags/original/test/v1.2.3',
+			'[command]git fetch origin --tags',
+			'[command]git push origin --delete tags/test/v1.2.3',
+			'[command]git push origin --delete tags/test/v1.2',
+			'[command]git push origin --delete tags/test/v1',
+			'[command]git tag -d \'test/v1.2.3\'',
+			'  >> stdout',
+			'[command]git tag -d \'test/v1.2\'',
+			'  >> stdout',
+			'[command]git tag -d test/v1',
+			'  >> stdout',
+			'[command]git tag \'test/v1.2.3\'',
+			'  >> stdout',
+			'[command]git tag \'test/v1.2\'',
+			'  >> stdout',
+			'[command]git tag test/v1',
+			'  >> stdout',
+			'[command]git push --tags origin test-branch:refs/heads/test-branch',
 		]);
 	});
 });
