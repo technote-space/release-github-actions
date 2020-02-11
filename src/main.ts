@@ -22,4 +22,7 @@ async function run(): Promise<void> {
 	await deploy(Utils.getOctokit(), context);
 }
 
-run().catch(error => setFailed(error.message));
+run().catch(error => {
+	console.log(error);
+	setFailed(error.message);
+});

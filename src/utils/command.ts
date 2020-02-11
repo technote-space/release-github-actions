@@ -103,7 +103,7 @@ export const config = async(helper: GitHelper): Promise<void> => {
 export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage(), {allowEmpty: true});
 
 export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<Array<string>> => {
-	return (await helper.getTags(getParams().pushDir))
+	return (await helper.getTags(getParams().pushDir, {quiet: true}))
 		.filter(tag => getPrefixRegExp(prefix).test(tag))
 		.map(tag => tag.replace(getPrefixRegExp(prefix), ''))
 		.filter(tag => versionCompare(tag, tagName, false) < 0) // eslint-disable-line no-magic-numbers
@@ -144,7 +144,7 @@ export const push = async(helper: GitHelper, context: Context): Promise<void> =>
 	// eslint-disable-next-line no-magic-numbers
 	await helper.deleteTag(pushDir, tagNames, context, 1);
 	await helper.addLocalTag(pushDir, tagNames);
-	await helper.push(pushDir, branchName, true, context);
+	await helper.push(pushDir, branchName, context, {withTag: true});
 };
 
 const findRelease = async(octokit: Octokit, context: Context): Promise<Octokit.ReposListReleasesResponseItem | undefined> => {
