@@ -102,13 +102,11 @@ export const config = async(helper: GitHelper): Promise<void> => {
 
 export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage(), {allowEmpty: true});
 
-export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<Array<string>> => {
-	return (await helper.getTags(getParams().pushDir, {quiet: true}))
+export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<Array<string>> => (await helper.getTags(getParams().pushDir, {quiet: true}))
 		.filter(tag => getPrefixRegExp(prefix).test(tag))
 		.map(tag => tag.replace(getPrefixRegExp(prefix), ''))
 		.filter(tag => versionCompare(tag, tagName, false) < 0) // eslint-disable-line no-magic-numbers
 		.map(tag => `${prefix}${tag}`);
-};
 
 export const deleteTestTags = async(helper: GitHelper, context: Context): Promise<void> => {
 	const tagName   = getTagName(context);
