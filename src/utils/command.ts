@@ -20,8 +20,8 @@ import {
 	getReplaceDirectory,
 } from './misc';
 
-const {getRepository, getTagName}                   = ContextHelper;
-const {replaceAll, versionCompare, getPrefixRegExp} = Utils;
+const {getRepository, getTagName}                               = ContextHelper;
+const {replaceAll, versionCompare, getPrefixRegExp, getRefspec} = Utils;
 
 export const replaceDirectory = (message: string): string => {
 	const directories = getReplaceDirectory();
@@ -74,7 +74,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 export const clone = async(helper: GitHelper, context: Context): Promise<void> => {
 	const {pushDir, branchName} = getParams();
 	startProcess('Fetching...');
-	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [`refs/heads/${branchName}:refs/remotes/origin/${branchName}`]);
+	await helper.fetchOrigin(pushDir, context, ['--no-tags'], [getRefspec(branchName)]);
 
 	startProcess('Switching branch to [%s]...', branchName);
 	await helper.switchBranch(pushDir, branchName);
@@ -102,13 +102,11 @@ export const config = async(helper: GitHelper): Promise<void> => {
 
 export const commit = async(helper: GitHelper): Promise<boolean> => helper.commit(getParams().pushDir, getCommitMessage(), {allowEmpty: true});
 
-export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<Array<string>> => {
-	return (await helper.getTags(getParams().pushDir, {quiet: true}))
-		.filter(tag => getPrefixRegExp(prefix).test(tag))
-		.map(tag => tag.replace(getPrefixRegExp(prefix), ''))
-		.filter(tag => versionCompare(tag, tagName, false) < 0) // eslint-disable-line no-magic-numbers
-		.map(tag => `${prefix}${tag}`);
-};
+export const getDeleteTestTag = async(tagName: string, prefix, helper: GitHelper): Promise<Array<string>> => (await helper.getTags(getParams().pushDir, {quiet: true}))
+	.filter(tag => getPrefixRegExp(prefix).test(tag))
+	.map(tag => tag.replace(getPrefixRegExp(prefix), ''))
+	.filter(tag => versionCompare(tag, tagName, false) < 0) // eslint-disable-line no-magic-numbers
+	.map(tag => `${prefix}${tag}`);
 
 export const deleteTestTags = async(helper: GitHelper, context: Context): Promise<void> => {
 	const tagName   = getTagName(context);

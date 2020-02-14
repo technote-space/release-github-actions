@@ -31,8 +31,6 @@ const getCleanTargets = (): Array<string> => getArrayInput('CLEAN_TARGETS')
 	.map(target => target.replace(/[\x00-\x1f\x80-\x9f]/, '').trim()) // eslint-disable-line no-control-regex
 	.filter(target => target && !target.startsWith('/') && !target.includes('..'));
 
-const normalizeCommand = (command: string): string => command.trim().replace(/\s{2,}/g, ' ');
-
 export const getSearchBuildCommandTargets = (): Array<string> => {
 	const command = getArrayInput('BUILD_COMMAND_TARGET');
 	if (command.length) {
@@ -56,7 +54,7 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 	const scripts = parsed['scripts'];
 	for (const target of getSearchBuildCommandTargets()) {
 		if (target in scripts) {
-			return normalizeCommand(target);
+			return target;
 		}
 	}
 
@@ -112,7 +110,7 @@ export const getClearFilesCommands = (targets: Array<string>): Array<CommandType
 };
 
 export const getBuildCommands = (buildDir: string, pushDir: string): Array<CommandType> => {
-	let commands: Array<CommandType> = getArrayInput('BUILD_COMMAND', false, '&&').map(normalizeCommand);
+	let commands: Array<CommandType> = getArrayInput('BUILD_COMMAND', false, '&&');
 
 	const pkgManager        = useNpm(buildDir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
 	const buildCommand      = detectBuildCommand(buildDir);

@@ -81,6 +81,8 @@ Once you create a new tag, this action will automatically
            uses: technote-space/release-github-actions@v3
            with:
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+   #           TEST_TAG_PREFIX: test/
+   #           CLEAN_TEST_TAG: true
    ```
 [More details of target event](#action-event-details)
 
@@ -247,21 +249,25 @@ The following tags will be created.
 
 ## Sample GitHub Actions using this Action
 - [Release GitHub Actions](https://github.com/technote-space/release-github-actions)
-  - [release.yml](https://github.com/technote-space/release-github-actions/blob/master/.github/workflows/release.yml)
+  - [ci.yml](https://github.com/technote-space/release-github-actions/blob/master/.github/workflows/ci.yml)
 - [Auto card labeler](https://github.com/technote-space/auto-card-labeler)
-  - [release.yml](https://github.com/technote-space/auto-card-labeler/blob/master/.github/workflows/release.yml)
+  - [ci.yml](https://github.com/technote-space/auto-card-labeler/blob/master/.github/workflows/ci.yml)
 - [Assign Author](https://github.com/technote-space/assign-author)
-  - [release.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/release.yml)
+  - [ci.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/ci.yml)
 - [TOC Generator](https://github.com/technote-space/toc-generator)
-  - [release.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/release.yml)
+  - [ci.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/ci.yml)
 - [Package Version Check Action](https://github.com/technote-space/package-version-check-action)
-  - [release.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/release.yml)
+  - [ci.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/ci.yml)
 - [Get Diff Action](https://github.com/technote-space/get-diff-action)
-  - [release.yml](https://github.com/technote-space/get-diff-action/blob/master/.github/workflows/release.yml)
+  - [ci.yml](https://github.com/technote-space/get-diff-action/blob/master/.github/workflows/ci.yml)
 - [Create Project Card Action](https://github.com/technote-space/create-project-card-action)
-  - [release.yml](https://github.com/technote-space/create-project-card-action/blob/master/.github/workflows/release.yml)
+  - [ci.yml](https://github.com/technote-space/create-project-card-action/blob/master/.github/workflows/ci.yml)
 - [Get git comment action](https://github.com/technote-space/get-git-comment-action)
-  - [release.yml](https://github.com/technote-space/get-git-comment-action/blob/master/.github/workflows/release.yml)
+  - [ci.yml](https://github.com/technote-space/get-git-comment-action/blob/master/.github/workflows/ci.yml)
+- [PR Commit Body Action](https://github.com/technote-space/pr-commit-body-action)
+  - [ci.yml](https://github.com/technote-space/pr-commit-body-action/blob/master/.github/workflows/ci.yml)
+- [WP Version Check Action](https://github.com/technote-space/wp-version-check-action)
+  - [ci.yml](https://github.com/technote-space/wp-version-check-action/blob/master/.github/workflows/ci.yml)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  

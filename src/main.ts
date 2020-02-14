@@ -6,10 +6,7 @@ import { Logger, ContextHelper, Utils } from '@technote-space/github-action-help
 import { deploy } from './utils/command';
 import { TARGET_EVENTS } from './constant';
 
-/**
- * run
- */
-async function run(): Promise<void> {
+const run = async(): Promise<void> => {
 	const logger  = new Logger();
 	const context = new Context();
 	ContextHelper.showActionInfo(path.resolve(__dirname, '..'), logger, context);
@@ -20,7 +17,7 @@ async function run(): Promise<void> {
 	}
 
 	await deploy(Utils.getOctokit(), context);
-}
+};
 
 run().catch(error => {
 	console.log(error);
