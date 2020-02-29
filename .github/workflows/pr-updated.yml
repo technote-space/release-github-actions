@@ -60,9 +60,15 @@ jobs:
             echo "::set-env name=RUNNING::"
           fi
 
+      - name: Get version
+        uses: technote-space/get-next-version-action@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: env.RUNNING
       - name: Check package version
         uses: technote-space/package-version-check-action@v1
         with:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           BRANCH_PREFIX: release/
-        if: env.RUNNING
+          NEXT_VERSION: ${{ env.NEXT_VERSION }}
+        if: env.NEXT_VERSION
