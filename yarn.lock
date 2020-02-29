@@ -450,28 +450,28 @@
   dependencies:
     type-detect "4.0.8"
 
-"@technote-space/filter-github-action@^0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.2.4.tgz#927f147c4b3ca0afa6af49875687c7d51d2e336d"
-  integrity sha512-/EK6LVXUr0w91bFIiIcYrG2KTxeOd8V58P+5IWstFArp6Svf5I1uOtPmZmvt4pOfTQtRiSVRNnVQZmGe5Lu8Pw==
+"@technote-space/filter-github-action@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.2.5.tgz#53aea7cf9026bb86cb89ad2053197d07336e9c86"
+  integrity sha512-+hKxXMVdmkB0tTVZLvUwwLLHYiweD8DJZUuPjjrmXJgu6HC6j349gywYCSBmBjoFAlGip+vhbpKnWBNDV2ht+g==
   dependencies:
     "@actions/core" "^1.2.2"
     "@actions/github" "^2.1.1"
 
-"@technote-space/github-action-helper@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@technote-space/github-action-helper/-/github-action-helper-1.2.1.tgz#16cdf2c68b693c4f3a29ea4f7100b9ce54475a0f"
-  integrity sha512-1mdkIyekaBTBsPLkCVW8utZLRDHUcQguhrqixzTtXWGgLsA7pELjABAr2jQ42Z6Ww9VvsnjaoVBwzgD0/XWPxg==
+"@technote-space/github-action-helper@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@technote-space/github-action-helper/-/github-action-helper-1.2.2.tgz#59b7df8e33b76b85318b5ed31b43f60ccb92493f"
+  integrity sha512-19qwKzHKbfRGy8avyYi3x/ekvLoWvE3Qv2bUf6kQDQDPS2/WRW2p9lCUtSjEecZ3Sa65t/cTcgjYuMUWwOtc8g==
   dependencies:
     "@actions/core" "^1.2.2"
     "@actions/github" "^2.1.1"
     shell-escape "^0.2.0"
     sprintf-js "^1.1.2"
 
-"@technote-space/github-action-test-helper@^0.2.4":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@technote-space/github-action-test-helper/-/github-action-test-helper-0.2.4.tgz#9ff122c173caed66d7d1a7c98136f397e876e5de"
-  integrity sha512-yU+KbfZ8+nn6uwMK0TN8W+PoyM2zS8x0lYABVS+077wqLubLIs5PQyFRggNOZPVg51aRWFI1if87VG7QBuan8Q==
+"@technote-space/github-action-test-helper@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@technote-space/github-action-test-helper/-/github-action-test-helper-0.2.5.tgz#86529a9c9478eb19dfcdcef02da1760df029c5cc"
+  integrity sha512-AU0WBHoBNMrSX0vKnCBeNQ2+sdOGHEs2O8IqYVocITsqe3tCwpcYRaubulXfP6tpgW+0SOtMyjgvL9DEyDDFhA==
   dependencies:
     "@actions/github" "^2.1.1"
     js-yaml "^3.13.1"
