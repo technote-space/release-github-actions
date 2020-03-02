@@ -54,16 +54,6 @@ Once you create a new tag, this action will automatically
 </details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Screenshots
-1. Before publish release  
-   ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
-1. Publish release (Create tag)  
-   ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
-1. Running `GitHub Actions`  
-   ![Running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
-1. After running `GitHub Actions`  
-   ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
-
 ## Installation
 1. Setup workflow  
    e.g. `.github/workflows/release.yml`
@@ -85,6 +75,16 @@ Once you create a new tag, this action will automatically
    #           CLEAN_TEST_TAG: true
    ```
 [More details of target event](#action-event-details)
+
+## Screenshots
+1. Before publish release  
+   ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
+1. Publish release (Create tag)  
+   ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
+1. Running `GitHub Actions`  
+   ![Running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
+1. After running `GitHub Actions`  
+   ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
 ## Options
 ### BUILD_COMMAND
