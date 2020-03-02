@@ -160,6 +160,9 @@ Prefix to add when leaving the original tag.
 default: `''`  
 e.g. `'original/'`  
 
+## CLI Tool
+[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
+
 ## Execute commands
 ### Build
 - If package.json includes `build`, `production`, `prod` or `package` in scripts, the command is used for build. (You can change this with [BUILD_COMMAND_TARGET](#build_command_target))  
