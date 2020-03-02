@@ -160,6 +160,9 @@ default: `'false'`
 default: `''`  
 例：`'original/'`  
 
+## CLI ツール
+[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
+
 ## Execute commands
 ### ビルド
 - `build`、 `production`、 `prod` または `package` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。([BUILD_COMMAND_TARGET](#build_command_target) で変更可能です)  
