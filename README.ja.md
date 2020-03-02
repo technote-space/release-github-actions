@@ -21,8 +21,8 @@
 <details>
 <summary>Details</summary>
 
-- [スクリーンショット](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88)
 - [インストール](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
+- [スクリーンショット](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88)
 - [オプション](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3)
   - [BUILD_COMMAND](#build_command)
   - [CLEAN_TARGETS](#clean_targets)
@@ -39,6 +39,7 @@
   - [TEST_TAG_PREFIX](#test_tag_prefix)
   - [CLEAN_TEST_TAG](#clean_test_tag)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
+- [CLI ツール](#cli-%E3%83%84%E3%83%BC%E3%83%AB)
 - [Execute commands](#execute-commands)
   - [ビルド](#%E3%83%93%E3%83%AB%E3%83%89)
   - [ファイル削除](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%89%8A%E9%99%A4)
