@@ -21,8 +21,8 @@ Once you create a new tag, this action will automatically
 <details>
 <summary>Details</summary>
 
-- [Screenshots](#screenshots)
 - [Installation](#installation)
+- [Screenshots](#screenshots)
 - [Options](#options)
   - [BUILD_COMMAND](#build_command)
   - [CLEAN_TARGETS](#clean_targets)
@@ -39,6 +39,7 @@ Once you create a new tag, this action will automatically
   - [TEST_TAG_PREFIX](#test_tag_prefix)
   - [CLEAN_TEST_TAG](#clean_test_tag)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
+- [CLI Tool](#cli-tool)
 - [Execute commands](#execute-commands)
   - [Build](#build)
   - [Delete files](#delete-files)
@@ -53,16 +54,6 @@ Once you create a new tag, this action will automatically
 
 </details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-## Screenshots
-1. Before publish release  
-   ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
-1. Publish release (Create tag)  
-   ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
-1. Running `GitHub Actions`  
-   ![Running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
-1. After running `GitHub Actions`  
-   ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
 ## Installation
 1. Setup workflow  
@@ -85,6 +76,16 @@ Once you create a new tag, this action will automatically
    #           CLEAN_TEST_TAG: true
    ```
 [More details of target event](#action-event-details)
+
+## Screenshots
+1. Before publish release  
+   ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
+1. Publish release (Create tag)  
+   ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
+1. Running `GitHub Actions`  
+   ![Running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
+1. After running `GitHub Actions`  
+   ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
 ## Options
 ### BUILD_COMMAND
@@ -159,6 +160,9 @@ e.g. `'true'`
 Prefix to add when leaving the original tag.  
 default: `''`  
 e.g. `'original/'`  
+
+## CLI Tool
+[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
 
 ## Execute commands
 ### Build
