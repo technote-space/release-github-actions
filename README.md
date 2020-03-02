@@ -39,6 +39,7 @@ Once you create a new tag, this action will automatically
   - [TEST_TAG_PREFIX](#test_tag_prefix)
   - [CLEAN_TEST_TAG](#clean_test_tag)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
+- [CLI Tool](#cli-tool)
 - [Execute commands](#execute-commands)
   - [Build](#build)
   - [Delete files](#delete-files)

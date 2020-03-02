@@ -39,6 +39,7 @@
   - [TEST_TAG_PREFIX](#test_tag_prefix)
   - [CLEAN_TEST_TAG](#clean_test_tag)
   - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
+- [CLI ツール](#cli-%E3%83%84%E3%83%BC%E3%83%AB)
 - [Execute commands](#execute-commands)
   - [ビルド](#%E3%83%93%E3%83%AB%E3%83%89)
   - [ファイル削除](#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%89%8A%E9%99%A4)
