@@ -21,8 +21,8 @@ Once you create a new tag, this action will automatically
 <details>
 <summary>Details</summary>
 
-- [Screenshots](#screenshots)
 - [Installation](#installation)
+- [Screenshots](#screenshots)
 - [Options](#options)
   - [BUILD_COMMAND](#build_command)
   - [CLEAN_TARGETS](#clean_targets)
