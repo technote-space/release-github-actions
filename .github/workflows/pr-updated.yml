@@ -64,6 +64,9 @@ jobs:
         uses: technote-space/get-next-version-action@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXCLUDE_MESSAGES: |
+            update package version
+            update packages
         if: env.RUNNING
       - name: Check package version
         uses: technote-space/package-version-check-action@v1
