@@ -21,24 +21,9 @@
 <details>
 <summary>Details</summary>
 
-- [インストール](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
+- [使用方法](#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95)
 - [スクリーンショット](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88)
 - [オプション](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3)
-  - [BUILD_COMMAND](#build_command)
-  - [CLEAN_TARGETS](#clean_targets)
-  - [PACKAGE_MANAGER](#package_manager)
-  - [COMMIT_MESSAGE](#commit_message)
-  - [COMMIT_NAME](#commit_name)
-  - [COMMIT_EMAIL](#commit_email)
-  - [BRANCH_NAME](#branch_name)
-  - [BUILD_COMMAND_TARGET](#build_command_target)
-  - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
-  - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
-  - [CREATE_PATCH_VERSION_TAG](#create_patch_version_tag)
-  - [FETCH_DEPTH](#fetch_depth)
-  - [TEST_TAG_PREFIX](#test_tag_prefix)
-  - [CLEAN_TEST_TAG](#clean_test_tag)
-  - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [CLI ツール](#cli-%E3%83%84%E3%83%BC%E3%83%AB)
 - [Execute commands](#execute-commands)
   - [ビルド](#%E3%83%93%E3%83%AB%E3%83%89)
@@ -55,21 +40,25 @@
 </details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## インストール
-1. workflow を設定  
-   例： `.github/workflows/release.yml`
-   ```yaml
-   # on: push
-   on: create
+## 使用方法
+例：`.github/workflows/release.yml`  
+```yaml
+#on:
+#  push:
+#    tags:
+#      - "v*"
 
-   name: Release
-   jobs:
-     release:
-       name: Release GitHub Actions
-       runs-on: ubuntu-latest
-       steps:
-         - uses: technote-space/release-github-actions@v3
-   ```
+on: create
+
+name: Release
+jobs:
+  release:
+    name: Release GitHub Actions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: technote-space/release-github-actions@v3
+```
+
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
 
 ## スクリーンショット
@@ -83,78 +72,24 @@
    ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
 ## オプション
-### BUILD_COMMAND
-ビルド用コマンド  
-default: `''`  
-[More details of execute command](#execute-commands)
-
-### CLEAN_TARGETS
-リリース前に掃除するファイルやディレクトリ (カンマ区切り)  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
-絶対パスや `..` は使用できません。  
-[More details of execute command](#execute-commands)
-
-### PACKAGE_MANAGER
-依存関係のインストールに使用するパッケージマネージャー  
-`yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます。  
-（`npm` または `yarn`）  
-default: `''`  
-
-### COMMIT_MESSAGE
-コミット時に設定するメッセージ  
-default: `'feat: Build for release'`
-
-### COMMIT_NAME
-コミット時に設定する名前  
-default: `'github-actions[bot]'`
-
-### COMMIT_EMAIL
-コミット時に設定するメールアドレス  
-default: `'41898282+github-actions[bot]@users.noreply.github.com'`
-
-### BRANCH_NAME
-GitHub Actions 用のブランチ名  
-default: `'gh-actions'`
-
-### BUILD_COMMAND_TARGET
-ビルド用コマンド検索ターゲット  
-default: `''`  
-例：`compile`  
-このオプションが設定されていない場合、`build`, `production`, `prod` と `package` が使用されます。  
-
-### CREATE_MAJOR_VERSION_TAG
-メジャーバージョンタグ(例：v1)を作成するかどうか  
-default: `true`  
-[タグの詳細](#tags)
-
-### CREATE_MINOR_VERSION_TAG
-マイナーバージョンタグ(例：v1.2)を作成するかどうか  
-default: `true`  
-[タグの詳細](#tags)
-
-### CREATE_PATCH_VERSION_TAG
-パッチバージョンタグ(例：v1.2.3)を作成するかどうか  
-default: `true`  
-[タグの詳細](#tags)
-
-### FETCH_DEPTH
-取得するコミット履歴の制限数  
-default: `3`  
-
-### TEST_TAG_PREFIX
-テスト用タグのプリフィックス  
-default: `''`  
-例：`'test/'`  
-
-### CLEAN_TEST_TAG
-テストタグを掃除するかどうか  
-default: `'false'`  
-例：`'true'`  
-
-### ORIGINAL_TAG_PREFIX
-元のタグを残す際に付与するプリフィックス  
-default: `''`  
-例：`'original/'`  
+| name | description | default | required | e.g. |
+|:---:|:---|:---:|:---:|:---:|
+|BUILD_COMMAND|ビルド用コマンド<br>[コマンドの詳細](#execute-commands)| | |`yarn build:all`|
+|CLEAN_TARGETS|リリース前に掃除するファイルやディレクトリ (カンマ区切り)<br>絶対パスや `..` は使用できません<br>[コマンドの詳細](#execute-commands)|`.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`|true|`.[!.]*,*.txt`|
+|PACKAGE_MANAGER|依存関係のインストールに使用するパッケージマネージャー<br>`yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます<br>（`npm` または `yarn`）| | |`yarn`|
+|COMMIT_MESSAGE|コミット時に設定するメッセージ|`feat: build for release`|true|`feat: release`|
+|COMMIT_NAME|コミット時に設定する名前|`github-actions[bot]`|true| |
+|COMMIT_EMAIL|コミット時に設定する名前|`41898282+github-actions[bot]@users.noreply.github.com`|true| |
+|BRANCH_NAME|GitHub Actions 用のブランチ名|`gh-actions`|true| |
+|BUILD_COMMAND_TARGET|ビルド用コマンド検索ターゲット|`build, production, prod, package`| |`compile`|
+|CREATE_MAJOR_VERSION_TAG|メジャーバージョンタグ(例：v1)を作成するかどうか<br>[タグの詳細](#tags)|`true`| |`false`|
+|CREATE_MINOR_VERSION_TAG|マイナーバージョンタグ(例：v1.2)を作成するかどうか<br>[タグの詳細](#tags)|`true`| |`false`|
+|CREATE_PATCH_VERSION_TAG|パッチバージョンタグ(例：v1.2.3)を作成するかどうか<br>[タグの詳細](#tags)|`true`| |`false`|
+|FETCH_DEPTH|取得するコミット履歴の制限数|`3`| |`5`|
+|TEST_TAG_PREFIX|テスト用タグのプリフィックス| | |`test/`|
+|CLEAN_TEST_TAG|テストタグを掃除するかどうか|`false`| |`true`|
+|ORIGINAL_TAG_PREFIX|元のタグを残す際に付与するプリフィックス| | |`original/`|
+|GITHUB_TOKEN|アクセストークン|`${{github.token}}`|true|`${{secrets.ACCESS_TOKEN}}`|
 
 ## CLI ツール
 [![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
@@ -209,7 +144,7 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
 ### condition
 - tags
   - semantic versioning tag (例：`v1.2.3`)
-  - [テストタグ](#test_tag_prefix) (例：`test/v1.2.3`)
+  - [テストタグ](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3) (例：`test/v1.2.3`)
 
 ## 動機
 `GitHub Actions`をリリースするには、すべてのビルドファイルと `node_modules` のような依存関係が必要ですが、通常はそれらをコミットしません。  

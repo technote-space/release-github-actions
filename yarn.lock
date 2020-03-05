@@ -641,11 +641,11 @@
     js-yaml "^3.13.1"
 
 "@technote-space/release-github-actions@^3.0.5":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-3.0.5.tgz#1af9ddccbbfe7f56d186736982d8dbff44ced703"
-  integrity sha512-XVM+v1GAcKDsAsRQ4lT7THr85eZEegA2UVuv6GHR2KtbgYpPIW4WchrMEzy6NbQ5dHw6lsxZTcTuU4pqSBTrFQ==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-3.1.0.tgz#e3c25b62a1bf7255d5a27e24c76a74ab50b0544c"
+  integrity sha512-SeGWMxASPUVZr/xCMD6S/u05T2vEw62VE/brhuBlzkFZqOqO0eb/9tIGoIHrWjzQ026nMS82cgOJvUwIOXE9sw==
   dependencies:
-    "@actions/core" "^1.2.2"
+    "@actions/core" "^1.2.3"
     "@actions/github" "^2.1.1"
     "@technote-space/filter-github-action" "^0.2.5"
     "@technote-space/github-action-helper" "^1.2.2"

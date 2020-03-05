@@ -1,7 +1,7 @@
 import { Context } from '@actions/github/lib/context';
 import { isValidContext } from './utils/misc';
 
-export const DEFAULT_COMMIT_MESSAGE               = 'feat: Build for release';
+export const DEFAULT_COMMIT_MESSAGE               = 'feat: build for release';
 export const DEFAULT_COMMIT_NAME                  = 'github-actions[bot]';
 export const DEFAULT_COMMIT_EMAIL                 = '41898282+github-actions[bot]@users.noreply.github.com';
 export const DEFAULT_BRANCH_NAME                  = 'gh-actions';
