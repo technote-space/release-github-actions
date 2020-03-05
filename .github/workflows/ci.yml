@@ -166,9 +166,11 @@ jobs:
           fi
         env:
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      - uses: actions/checkout@v2
+        if: env.RUNNING
       - name: Set running flag
         run: npx can-npm-publish || echo "::set-env name=RUNNING::"
-        if: matrix.target == 'npm'
+        if: env.RUNNING && matrix.target == 'npm'
       - name: Set running flag
         run: |
           LATEST=`npm view . version`
@@ -178,10 +180,8 @@ jobs:
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: matrix.target == 'gpr'
+        if: env.RUNNING && matrix.target == 'gpr'
 
-      - uses: actions/checkout@v2
-        if: env.RUNNING
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
