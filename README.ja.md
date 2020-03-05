@@ -87,78 +87,24 @@ jobs:
    ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
 
 ## オプション
-### BUILD_COMMAND
-ビルド用コマンド  
-default: `''`  
-[More details of execute command](#execute-commands)
-
-### CLEAN_TARGETS
-リリース前に掃除するファイルやディレクトリ (カンマ区切り)  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
-絶対パスや `..` は使用できません。  
-[More details of execute command](#execute-commands)
-
-### PACKAGE_MANAGER
-依存関係のインストールに使用するパッケージマネージャー  
-`yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます。  
-（`npm` または `yarn`）  
-default: `''`  
-
-### COMMIT_MESSAGE
-コミット時に設定するメッセージ  
-default: `'feat: Build for release'`
-
-### COMMIT_NAME
-コミット時に設定する名前  
-default: `'github-actions[bot]'`
-
-### COMMIT_EMAIL
-コミット時に設定するメールアドレス  
-default: `'41898282+github-actions[bot]@users.noreply.github.com'`
-
-### BRANCH_NAME
-GitHub Actions 用のブランチ名  
-default: `'gh-actions'`
-
-### BUILD_COMMAND_TARGET
-ビルド用コマンド検索ターゲット  
-default: `''`  
-例：`compile`  
-このオプションが設定されていない場合、`build`, `production`, `prod` と `package` が使用されます。  
-
-### CREATE_MAJOR_VERSION_TAG
-メジャーバージョンタグ(例：v1)を作成するかどうか  
-default: `true`  
-[タグの詳細](#tags)
-
-### CREATE_MINOR_VERSION_TAG
-マイナーバージョンタグ(例：v1.2)を作成するかどうか  
-default: `true`  
-[タグの詳細](#tags)
-
-### CREATE_PATCH_VERSION_TAG
-パッチバージョンタグ(例：v1.2.3)を作成するかどうか  
-default: `true`  
-[タグの詳細](#tags)
-
-### FETCH_DEPTH
-取得するコミット履歴の制限数  
-default: `3`  
-
-### TEST_TAG_PREFIX
-テスト用タグのプリフィックス  
-default: `''`  
-例：`'test/'`  
-
-### CLEAN_TEST_TAG
-テストタグを掃除するかどうか  
-default: `'false'`  
-例：`'true'`  
-
-### ORIGINAL_TAG_PREFIX
-元のタグを残す際に付与するプリフィックス  
-default: `''`  
-例：`'original/'`  
+| name | description | default | required | e.g. |
+|:---:|:---|:---:|:---:|:---:|
+|BUILD_COMMAND|ビルド用コマンド<br>[コマンドの詳細](#execute-commands)| | |`yarn build:all`|
+|CLEAN_TARGETS|リリース前に掃除するファイルやディレクトリ (カンマ区切り)<br>絶対パスや `..` は使用できません<br>[コマンドの詳細](#execute-commands)|`.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`|true|`.[!.]*,*.txt`|
+|PACKAGE_MANAGER|依存関係のインストールに使用するパッケージマネージャー<br>`yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます<br>（`npm` または `yarn`）| | |`yarn`|
+|COMMIT_MESSAGE|コミット時に設定するメッセージ|`feat: build for release`|true|`feat: release`|
+|COMMIT_NAME|コミット時に設定する名前|`github-actions[bot]`|true| |
+|COMMIT_EMAIL|コミット時に設定する名前|`41898282+github-actions[bot]@users.noreply.github.com`|true| |
+|BRANCH_NAME|GitHub Actions 用のブランチ名|`gh-actions`|true| |
+|BUILD_COMMAND_TARGET|ビルド用コマンド検索ターゲット|`build, production, prod, package`| |`compile`|
+|CREATE_MAJOR_VERSION_TAG|メジャーバージョンタグ(例：v1)を作成するかどうか<br>[タグの詳細](#tags)|`true`| |`false`|
+|CREATE_MINOR_VERSION_TAG|マイナーバージョンタグ(例：v1.2)を作成するかどうか<br>[タグの詳細](#tags)|`true`| |`false`|
+|CREATE_PATCH_VERSION_TAG|パッチバージョンタグ(例：v1.2.3)を作成するかどうか<br>[タグの詳細](#tags)|`true`| |`false`|
+|FETCH_DEPTH|取得するコミット履歴の制限数|`3`| |`5`|
+|TEST_TAG_PREFIX|テスト用タグのプリフィックス| | |`test/`|
+|CLEAN_TEST_TAG|テストタグを掃除するかどうか|`false`| |`true`|
+|ORIGINAL_TAG_PREFIX|元のタグを残す際に付与するプリフィックス| | |`original/`|
+|GITHUB_TOKEN|アクセストークン|`${{github.token}}`|true|`${{secrets.ACCESS_TOKEN}}`|
 
 ## CLI ツール
 [![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
