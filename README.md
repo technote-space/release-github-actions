@@ -211,7 +211,6 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
 |:---:|:---:|
 |push: *|[condition](#condition)|
 |release: published|[condition](#condition)|
-|release: rerequested|[condition](#condition)|
 |create: *|[condition](#condition)|
 ### condition
 - tags

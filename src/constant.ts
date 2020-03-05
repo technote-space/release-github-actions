@@ -24,10 +24,6 @@ export const TARGET_EVENTS                        = {
 			'published',
 			(context: Context): boolean => isValidContext(context),
 		],
-		[
-			'rerequested',
-			(context: Context): boolean => isValidContext(context),
-		],
 	],
 	'push': [
 		(context: Context): boolean => isValidContext(context),
