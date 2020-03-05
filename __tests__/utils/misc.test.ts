@@ -1,8 +1,9 @@
 /* eslint-disable no-magic-numbers */
-import path from 'path';
+import { resolve } from 'path';
 import { isTargetEvent } from '@technote-space/filter-github-action';
 import { testEnv, generateContext } from '@technote-space/github-action-test-helper';
 import {
+	getParams,
 	getSearchBuildCommandTargets,
 	getCommitMessage,
 	getCommitName,
@@ -27,7 +28,11 @@ import {
 } from '../../src/utils/misc';
 import { DEFAULT_FETCH_DEPTH, TARGET_EVENTS } from '../../src/constant';
 
-const rootDir = path.resolve(__dirname, '../..');
+const rootDir = resolve(__dirname, '../..');
+
+beforeEach(() => {
+	getParams.clear();
+});
 
 describe('isTargetEvent', () => {
 	it('should return true 1', () => {
@@ -264,19 +269,19 @@ describe('getClearFilesCommands', () => {
 
 describe('getBuildCommands', () => {
 	testEnv(rootDir);
-	const pushDir   = path.resolve(__dirname, '../fixtures/.push');
-	const buildDir1 = path.resolve(__dirname, '../fixtures/test1');
-	const buildDir4 = path.resolve(__dirname, '../fixtures/test4');
+	const pushDir   = resolve(__dirname, '../fixtures/.push');
+	const buildDir1 = resolve(__dirname, '../fixtures/test1');
+	const buildDir4 = resolve(__dirname, '../fixtures/test4');
 	const mv1       = (buildDir: string): Array<object> => [
 		{
 			command: 'mv',
-			args: ['-f', path.resolve(buildDir, 'action.yaml'), path.resolve(pushDir, 'action.yml')],
+			args: ['-f', resolve(buildDir, 'action.yaml'), resolve(pushDir, 'action.yml')],
 			suppressError: true,
 			quiet: true,
 		},
 		{
 			command: 'mv',
-			args: ['-f', path.resolve(buildDir, 'action.yml'), path.resolve(pushDir, 'action.yml')],
+			args: ['-f', resolve(buildDir, 'action.yml'), resolve(pushDir, 'action.yml')],
 			suppressError: true,
 			quiet: true,
 		},
@@ -284,7 +289,7 @@ describe('getBuildCommands', () => {
 	const mv2       = (buildDir: string): Array<object> => [
 		{
 			command: 'mv',
-			args: ['-f', path.resolve(pushDir, 'action.yml'), path.resolve(buildDir, 'action.yml')],
+			args: ['-f', resolve(pushDir, 'action.yml'), resolve(buildDir, 'action.yml')],
 			suppressError: true,
 			quiet: true,
 		},
@@ -433,31 +438,31 @@ describe('detectBuildCommand', () => {
 	testEnv(rootDir);
 
 	it('should return false 1', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '../fixtures/test1'))).toBe(false);
+		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test1'))).toBe(false);
 	});
 
 	it('should return false 2', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '../fixtures/test2'))).toBe(false);
+		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test2'))).toBe(false);
 	});
 
 	it('should return false 3', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '../fixtures/test3'))).toBe(false);
+		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test3'))).toBe(false);
 	});
 
 	it('should detect build command 1', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '../fixtures/test4'))).toBe('build');
+		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test4'))).toBe('build');
 	});
 
 	it('should detect build command 2', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '../fixtures/test5'))).toBe('production');
+		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test5'))).toBe('production');
 	});
 
 	it('should detect build command 3', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '../fixtures/test6'))).toBe('prod');
+		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test6'))).toBe('prod');
 	});
 
 	it('should detect build command 4', () => {
-		expect(detectBuildCommand(path.resolve(__dirname, '../fixtures/test7'))).toBe('package');
+		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test7'))).toBe('package');
 	});
 });
 

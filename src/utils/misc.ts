@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
+import memize from 'memize';
 import { Context } from '@actions/github/lib/context';
 import { Utils, ContextHelper } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
@@ -193,13 +194,15 @@ export const getCreateTags = (tagName: string): Array<string> => {
 	return uniqueArray(settings.filter(setting => setting.condition()).map(setting => createTag(setting.createTag)).concat(tagName)).sort().reverse();
 };
 
-export const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
+const params = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
 	const workDir    = resolve(getWorkspace(), '.work');
 	const buildDir   = resolve(workDir, 'build');
 	const pushDir    = resolve(workDir, 'push');
 	const branchName = getBranchName();
 	return {workDir, buildDir, pushDir, branchName};
 };
+
+export const getParams = memize(params);
 
 export const getReplaceDirectory = (): object => {
 	const {workDir, buildDir, pushDir} = getParams();

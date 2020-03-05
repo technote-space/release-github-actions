@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import path from 'path';
+import { resolve } from 'path';
 import { Logger, GitHelper } from '@technote-space/github-action-helper';
 import {
 	getContext,
@@ -12,6 +12,7 @@ import {
 	spyOnStdout,
 	stdoutCalledWith,
 } from '@technote-space/github-action-test-helper';
+import { getParams } from '../../src/utils/misc';
 import {
 	replaceDirectory,
 	clone,
@@ -26,16 +27,20 @@ import {
 } from '../../src/utils/command';
 
 const setExists = testFs();
-const rootDir   = path.resolve(__dirname, '..', '..');
+const rootDir   = resolve(__dirname, '..', '..');
 const logger    = new Logger();
 const helper    = new GitHelper(logger, {token: 'test-token'});
+
+beforeEach(() => {
+	getParams.clear();
+});
 
 describe('replaceDirectory', () => {
 	testEnv(rootDir);
 
-	const workDir  = path.resolve('test-dir/.work');
-	const buildDir = path.resolve('test-dir/.work/build');
-	const pushDir  = path.resolve('test-dir/.work/push');
+	const workDir  = resolve('test-dir/.work');
+	const buildDir = resolve('test-dir/.work/build');
+	const pushDir  = resolve('test-dir/.work/push');
 
 	it('should replace build directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
@@ -119,15 +124,15 @@ describe('checkBranch', () => {
 describe('prepareFiles', () => {
 	testEnv(rootDir);
 
-	const buildDir = path.resolve('test-dir/.work/build');
-	const pushDir  = path.resolve('test-dir/.work/push');
+	const buildDir = resolve('test-dir/.work/build');
+	const pushDir  = resolve('test-dir/.work/push');
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const commonCheck = (): (string | any[])[] => {
 		return [
 			['yarn install --production', {cwd: buildDir}],
-			[`mv -f '${path.resolve(buildDir, 'action.yaml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
-			[`mv -f '${path.resolve(buildDir, 'action.yml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
 			['rm -rdf .[!.]*', {cwd: buildDir}],
 			['rm -rdf *.js', {cwd: buildDir}],
 			['rm -rdf *.ts', {cwd: buildDir}],
@@ -136,7 +141,7 @@ describe('prepareFiles', () => {
 			['rm -rdf *.yml', {cwd: buildDir}],
 			['rm -rdf *.yaml', {cwd: buildDir}],
 			['rm -rdf __tests__ src', {cwd: buildDir}],
-			[`mv -f '${path.resolve(pushDir, 'action.yml')}' '${path.resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
 		];
 	};
 
@@ -208,14 +213,14 @@ describe('prepareFiles', () => {
 			'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
 			'git checkout -qf test-sha',
 			['yarn install --production', {cwd: buildDir}],
-			[`mv -f '${path.resolve(buildDir, 'action.yaml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
-			[`mv -f '${path.resolve(buildDir, 'action.yml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
 			['rm -rdf -- -test2', {cwd: buildDir}],
 			['rm -rdf -- -test5', {cwd: buildDir}],
 			['rm -rdf test8/*.txt', {cwd: buildDir}],
 			['rm -rdf *.test9', {cwd: buildDir}],
 			['rm -rdf test1 \'test3 test4\' \'test6;test7\'', {cwd: buildDir}],
-			[`mv -f '${path.resolve(pushDir, 'action.yml')}' '${path.resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
 		]));
 	});
 
@@ -241,13 +246,13 @@ describe('prepareFiles', () => {
 			'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
 			'git checkout -qf test-sha',
 			['yarn install --production', {cwd: buildDir}],
-			[`mv -f '${path.resolve(buildDir, 'action.yaml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
-			[`mv -f '${path.resolve(buildDir, 'action.yml')}' '${path.resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
 			['rm -rdf -- -test1', {cwd: buildDir}],
 			['rm -rdf -- -test2/\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;.*.test3', {cwd: buildDir}],
 			['rm -rdf ?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;/test4 test5/*.txt', {cwd: buildDir}],
 			['rm -rdf \';?<>:|"\'\\\'\'@#$%^& ;.txt\' \'rm -rf /\'', {cwd: buildDir}],
-			[`mv -f '${path.resolve(pushDir, 'action.yml')}' '${path.resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
 		]));
 	});
 });
@@ -317,8 +322,8 @@ describe('copyFiles', () => {
 
 		await copyFiles();
 
-		const buildDir = path.resolve('test-dir/.work/build');
-		const pushDir  = path.resolve('test-dir/.work/push');
+		const buildDir = resolve('test-dir/.work/build');
+		const pushDir  = resolve('test-dir/.work/push');
 		execCalledWith(mockExec, [
 			`rsync -rl --exclude '.git' --delete '${buildDir}/' '${pushDir}'`,
 		]);
