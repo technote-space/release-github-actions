@@ -197,11 +197,12 @@ const params = (context: Context): { workDir: string; buildDir: string; pushDir:
 	const buildDir   = resolve(workDir, 'build');
 	const pushDir    = resolve(workDir, 'push');
 	const tagName    = ContextHelper.getTagName(context);
+	const normalized = isTestTag(tagName) ? getTestTag(tagName) : tagName;
 	const branchName = [
 		{key: 'MAJOR', func: getMajorTag},
 		{key: 'MINOR', func: getMinorTag},
 		{key: 'PATCH', func: getPatchTag},
-	].reduce((acc, item) => Utils.replaceAll(acc, `\${${item.key}}`, item.func(tagName)), getBranchName());
+	].reduce((acc, item) => Utils.replaceAll(acc, `\${${item.key}}`, item.func(normalized)), getBranchName());
 	return {workDir, buildDir, pushDir, branchName, tagName};
 };
 
