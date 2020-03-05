@@ -21,24 +21,9 @@
 <details>
 <summary>Details</summary>
 
-- [インストール](#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)
+- [使用方法](#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95)
 - [スクリーンショット](#%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88)
 - [オプション](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3)
-  - [BUILD_COMMAND](#build_command)
-  - [CLEAN_TARGETS](#clean_targets)
-  - [PACKAGE_MANAGER](#package_manager)
-  - [COMMIT_MESSAGE](#commit_message)
-  - [COMMIT_NAME](#commit_name)
-  - [COMMIT_EMAIL](#commit_email)
-  - [BRANCH_NAME](#branch_name)
-  - [BUILD_COMMAND_TARGET](#build_command_target)
-  - [CREATE_MAJOR_VERSION_TAG](#create_major_version_tag)
-  - [CREATE_MINOR_VERSION_TAG](#create_minor_version_tag)
-  - [CREATE_PATCH_VERSION_TAG](#create_patch_version_tag)
-  - [FETCH_DEPTH](#fetch_depth)
-  - [TEST_TAG_PREFIX](#test_tag_prefix)
-  - [CLEAN_TEST_TAG](#clean_test_tag)
-  - [ORIGINAL_TAG_PREFIX](#original_tag_prefix)
 - [CLI ツール](#cli-%E3%83%84%E3%83%BC%E3%83%AB)
 - [Execute commands](#execute-commands)
   - [ビルド](#%E3%83%93%E3%83%AB%E3%83%89)
@@ -159,7 +144,7 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
 ### condition
 - tags
   - semantic versioning tag (例：`v1.2.3`)
-  - [テストタグ](#test_tag_prefix) (例：`test/v1.2.3`)
+  - [テストタグ](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3) (例：`test/v1.2.3`)
 
 ## 動機
 `GitHub Actions`をリリースするには、すべてのビルドファイルと `node_modules` のような依存関係が必要ですが、通常はそれらをコミットしません。  
