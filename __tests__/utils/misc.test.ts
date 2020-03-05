@@ -129,6 +129,21 @@ describe('isTargetEvent', () => {
 	});
 });
 
+describe('getParams', () => {
+	testEnv(rootDir);
+
+	it('should get params', () => {
+		const params = getParams(generateContext({ref: 'refs/tags/v1.2.3'}));
+		expect(params).toHaveProperty('workDir');
+		expect(params).toHaveProperty('buildDir');
+		expect(params).toHaveProperty('pushDir');
+		expect(params).toHaveProperty('tagName');
+		expect(params).toHaveProperty('branchName');
+		expect(params.tagName).toBe('v1.2.3');
+		expect(params.branchName).toBe('releases/v1');
+	});
+});
+
 describe('getSearchBuildCommandTargets', () => {
 	testEnv(rootDir);
 
