@@ -68,12 +68,7 @@ Once you create a new tag, this action will automatically
        name: Release GitHub Actions
        runs-on: ubuntu-latest
        steps:
-         - name: Release GitHub Actions
-           uses: technote-space/release-github-actions@v3
-           with:
-             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-   #           TEST_TAG_PREFIX: test/
-   #           CLEAN_TEST_TAG: true
+         - uses: technote-space/release-github-actions@v3
    ```
 [More details of target event](#action-event-details)
 
@@ -211,7 +206,6 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
 |:---:|:---:|
 |push: *|[condition](#condition)|
 |release: published|[condition](#condition)|
-|release: rerequested|[condition](#condition)|
 |create: *|[condition](#condition)|
 ### condition
 - tags
