@@ -55,21 +55,25 @@
 </details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## インストール
-1. workflow を設定  
-   例： `.github/workflows/release.yml`
-   ```yaml
-   # on: push
-   on: create
+## 使用方法
+例：`.github/workflows/release.yml`  
+```yaml
+#on:
+#  push:
+#    tags:
+#      - "v*"
 
-   name: Release
-   jobs:
-     release:
-       name: Release GitHub Actions
-       runs-on: ubuntu-latest
-       steps:
-         - uses: technote-space/release-github-actions@v3
-   ```
+on: create
+
+name: Release
+jobs:
+  release:
+    name: Release GitHub Actions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: technote-space/release-github-actions@v3
+```
+
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
 
 ## スクリーンショット

@@ -19,7 +19,7 @@ inputs:
     required: false
   COMMIT_MESSAGE:
     description: Commit message of build commit.
-    default: 'feat: Build for release'
+    default: 'feat: build for release'
     required: true
   COMMIT_NAME:
     description: Git commit name.

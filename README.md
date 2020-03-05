@@ -55,21 +55,25 @@ Once you create a new tag, this action will automatically
 </details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Installation
-1. Setup workflow  
-   e.g. `.github/workflows/release.yml`
-   ```yaml
-   # on: push
-   on: create
+## Usage
+e.g. `.github/workflows/release.yml`  
+```yaml
+#on:
+#  push:
+#    tags:
+#      - "v*"
 
-   name: Release
-   jobs:
-     release:
-       name: Release GitHub Actions
-       runs-on: ubuntu-latest
-       steps:
-         - uses: technote-space/release-github-actions@v3
-   ```
+on: create
+
+name: Release
+jobs:
+  release:
+    name: Release GitHub Actions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: technote-space/release-github-actions@v3
+```
+
 [More details of target event](#action-event-details)
 
 ## Screenshots
