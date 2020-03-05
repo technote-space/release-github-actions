@@ -60,19 +60,6 @@ describe('isTargetEvent', () => {
 
 	it('should return true 3', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
-			event: 'release',
-			action: 'rerequested',
-		}, {
-			payload: {
-				release: {
-					'tag_name': 'v1.2.3',
-				},
-			},
-		}))).toBe(true);
-	});
-
-	it('should return true 4', () => {
-		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'create',
 			ref: 'refs/tags/v1.2.3',
 		}))).toBe(true);
