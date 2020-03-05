@@ -3,17 +3,7 @@ import path from 'path';
 import { Context } from '@actions/github/lib/context';
 import { Utils, ContextHelper } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
-import {
-	DEFAULT_COMMIT_MESSAGE,
-	DEFAULT_COMMIT_NAME,
-	DEFAULT_COMMIT_EMAIL,
-	DEFAULT_SEARCH_BUILD_COMMAND_TARGETS,
-	DEFAULT_BRANCH_NAME,
-	DEFAULT_OUTPUT_BUILD_INFO_FILENAME,
-	DEFAULT_FETCH_DEPTH,
-	DEFAULT_TEST_TAG_PREFIX,
-	DEFAULT_ORIGINAL_TAG_PREFIX,
-} from '../constant';
+import { DEFAULT_FETCH_DEPTH } from '../constant';
 
 type CommandType = string | {
 	command: string;
@@ -31,14 +21,7 @@ const getCleanTargets = (): Array<string> => getArrayInput('CLEAN_TARGETS')
 	.map(target => target.replace(/[\x00-\x1f\x80-\x9f]/, '').trim()) // eslint-disable-line no-control-regex
 	.filter(target => target && !target.startsWith('/') && !target.includes('..'));
 
-export const getSearchBuildCommandTargets = (): Array<string> => {
-	const command = getArrayInput('BUILD_COMMAND_TARGET');
-	if (command.length) {
-		return command;
-	}
-
-	return DEFAULT_SEARCH_BUILD_COMMAND_TARGETS;
-};
+export const getSearchBuildCommandTargets = (): Array<string> => getArrayInput('BUILD_COMMAND_TARGET', true);
 
 export const detectBuildCommand = (dir: string): boolean | string => {
 	const packageFile = path.resolve(dir, 'package.json');
@@ -140,13 +123,13 @@ export const getBuildCommands = (buildDir: string, pushDir: string): Array<Comma
 	return commands;
 };
 
-export const getCommitMessage = (): string => getInput('COMMIT_MESSAGE') || DEFAULT_COMMIT_MESSAGE;
+export const getCommitMessage = (): string => getInput('COMMIT_MESSAGE', {required: true});
 
-export const getCommitName = (): string => getInput('COMMIT_NAME') || DEFAULT_COMMIT_NAME;
+export const getCommitName = (): string => getInput('COMMIT_NAME', {required: true});
 
-export const getCommitEmail = (): string => getInput('COMMIT_EMAIL') || DEFAULT_COMMIT_EMAIL;
+export const getCommitEmail = (): string => getInput('COMMIT_EMAIL', {required: true});
 
-export const getBranchName = (): string => getInput('BRANCH_NAME') || DEFAULT_BRANCH_NAME;
+export const getBranchName = (): string => getInput('BRANCH_NAME', {required: true});
 
 export const getFetchDepth = (): number => {
 	const depth = getInput('FETCH_DEPTH');
@@ -157,7 +140,7 @@ export const getFetchDepth = (): number => {
 	return DEFAULT_FETCH_DEPTH;
 };
 
-export const getTestTagPrefix = (): string => getInput('TEST_TAG_PREFIX') || DEFAULT_TEST_TAG_PREFIX;
+export const getTestTagPrefix = (): string => getInput('TEST_TAG_PREFIX');
 
 const getTestTagPrefixRegExp = (): RegExp => getPrefixRegExp(getTestTagPrefix());
 
@@ -165,7 +148,7 @@ export const isTestTag = (tagName: string): boolean => !!getTestTagPrefix() && g
 
 export const getTestTag = (tagName: string): string => tagName.replace(getTestTagPrefixRegExp(), '');
 
-export const getOriginalTagPrefix = (): string => getInput('ORIGINAL_TAG_PREFIX') || DEFAULT_ORIGINAL_TAG_PREFIX;
+export const getOriginalTagPrefix = (): string => getInput('ORIGINAL_TAG_PREFIX');
 
 export const isCreateMajorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG') || 'true');
 
@@ -176,7 +159,7 @@ export const isCreatePatchVersionTag = (): boolean => getBoolValue(getInput('CRE
 export const isEnabledCleanTestTag = (): boolean => getBoolValue(getInput('CLEAN_TEST_TAG'));
 
 export const getOutputBuildInfoFilename = (): string => {
-	const filename = (getInput('OUTPUT_BUILD_INFO_FILENAME') || DEFAULT_OUTPUT_BUILD_INFO_FILENAME).trim();
+	const filename = getInput('OUTPUT_BUILD_INFO_FILENAME');
 	if (filename.startsWith('/') || filename.includes('..')) {
 		return '';
 	}

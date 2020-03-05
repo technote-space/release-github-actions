@@ -39,8 +39,8 @@ inputs:
     required: true
   BUILD_COMMAND_TARGET:
     description: Command for search build command.
-    default: ''
-    required: false
+    default: 'build,production,prod,package'
+    required: true
   CREATE_MAJOR_VERSION_TAG:
     description: Whether to create major version tag.
     default: 'true'

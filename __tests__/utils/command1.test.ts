@@ -309,6 +309,8 @@ describe('createBuildInfoFile', () => {
 });
 
 describe('copyFiles', () => {
+	testEnv(rootDir);
+
 	it('should run rsync command', async() => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const mockExec               = spyOnExec();
@@ -324,6 +326,8 @@ describe('copyFiles', () => {
 });
 
 describe('config', () => {
+	testEnv(rootDir);
+
 	it('should run git config command', async() => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const mockExec               = spyOnExec();
@@ -338,6 +342,7 @@ describe('config', () => {
 });
 
 describe('getDeleteTestTag', () => {
+	testEnv(rootDir);
 	testChildProcess();
 
 	it('should return empty', async() => {
