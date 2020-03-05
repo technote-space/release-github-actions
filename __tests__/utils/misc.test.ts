@@ -25,15 +25,7 @@ import {
 	getOutputBuildInfoFilename,
 	getCreateTags,
 } from '../../src/utils/misc';
-import {
-	DEFAULT_SEARCH_BUILD_COMMAND_TARGETS,
-	DEFAULT_COMMIT_MESSAGE,
-	DEFAULT_COMMIT_NAME,
-	DEFAULT_COMMIT_EMAIL,
-	DEFAULT_BRANCH_NAME,
-	DEFAULT_FETCH_DEPTH,
-	TARGET_EVENTS,
-} from '../../src/constant';
+import { DEFAULT_FETCH_DEPTH, TARGET_EVENTS } from '../../src/constant';
 
 const rootDir = path.resolve(__dirname, '../..');
 
@@ -138,8 +130,9 @@ describe('getSearchBuildCommandTargets', () => {
 		expect(getSearchBuildCommandTargets()).toEqual(['test1', 'test2', 'test3']);
 	});
 
-	it('should get default targets', () => {
-		expect(getSearchBuildCommandTargets()).toEqual(DEFAULT_SEARCH_BUILD_COMMAND_TARGETS);
+	it('should throw error', () => {
+		process.env.INPUT_BUILD_COMMAND_TARGET = '';
+		expect(() => getSearchBuildCommandTargets()).toThrow();
 	});
 });
 
@@ -151,9 +144,9 @@ describe('getCommitMessage', () => {
 		expect(getCommitMessage()).toBe('test');
 	});
 
-	it('should get default commit message', () => {
+	it('should throw error', () => {
 		process.env.INPUT_COMMIT_MESSAGE = '';
-		expect(getCommitMessage()).toBe(DEFAULT_COMMIT_MESSAGE);
+		expect(() => getCommitMessage()).toThrow();
 	});
 });
 
@@ -165,9 +158,9 @@ describe('getCommitName', () => {
 		expect(getCommitName()).toBe('test');
 	});
 
-	it('should get default commit name', () => {
+	it('should throw error', () => {
 		process.env.INPUT_COMMIT_NAME = '';
-		expect(getCommitName()).toBe(DEFAULT_COMMIT_NAME);
+		expect(() => getCommitName()).toThrow();
 	});
 });
 
@@ -179,9 +172,9 @@ describe('getCommitEmail', () => {
 		expect(getCommitEmail()).toBe('test');
 	});
 
-	it('should get default commit email', () => {
+	it('should throw error', () => {
 		process.env.INPUT_COMMIT_EMAIL = '';
-		expect(getCommitEmail()).toBe(DEFAULT_COMMIT_EMAIL);
+		expect(() => getCommitEmail()).toThrow();
 	});
 });
 
@@ -193,9 +186,9 @@ describe('getBranchName', () => {
 		expect(getBranchName()).toBe('test');
 	});
 
-	it('should get default branch name', () => {
+	it('should throw error', () => {
 		process.env.INPUT_BRANCH_NAME = '';
-		expect(getBranchName()).toBe(DEFAULT_BRANCH_NAME);
+		expect(() => getBranchName()).toThrow();
 	});
 });
 
@@ -437,6 +430,8 @@ describe('getBuildCommands', () => {
 });
 
 describe('detectBuildCommand', () => {
+	testEnv(rootDir);
+
 	it('should return false 1', () => {
 		expect(detectBuildCommand(path.resolve(__dirname, '../fixtures/test1'))).toBe(false);
 	});

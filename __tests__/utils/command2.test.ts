@@ -53,6 +53,7 @@ const common  = async(callback: Function, method: (GitHub, Context) => Promise<v
 };
 
 describe('updateRelease', () => {
+	testEnv(rootDir);
 	disableNetConnect(nock);
 
 	const getReleaseItem = (override: object): Octokit.ReposListReleasesResponseItem => Object.assign({
