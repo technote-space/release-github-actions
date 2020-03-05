@@ -74,22 +74,22 @@ jobs:
 ## Options
 | name | description | default | required | e.g. |
 |:---:|:---|:---:|:---:|:---:|
-|BUILD_COMMAND|Build command<br>[More details of execute command](#execute-commands)| | |`yarn build:all`|
-|CLEAN_TARGETS|Files or directories to clean before release (Comma separated)<br>Absolute path and `..` are not permitted to use.<br>[More details of execute command](#execute-commands)|`.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`|true|`.[!.]*,*.txt`|
-|PACKAGE_MANAGER|Package manager to use to install dependencies<br>If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used to specify it explicitly.<br>（`npm` or `yarn`）| | |`yarn`|
-|COMMIT_MESSAGE|Commit message|`feat: build for release`|true|`feat: release`|
-|COMMIT_NAME|Commit name|`github-actions[bot]`|true| |
-|COMMIT_EMAIL|Commit email|`41898282+github-actions[bot]@users.noreply.github.com`|true| |
-|BRANCH_NAME|Branch name for `GitHub Actions` release|`gh-actions`|true| |
-|BUILD_COMMAND_TARGET|Command for search build command|`build, production, prod, package`| |`compile`|
-|CREATE_MAJOR_VERSION_TAG|Whether to create major version tag (e.g. v1)<br>[Detail of tags](#tags)|`true`| |`false`|
-|CREATE_MINOR_VERSION_TAG|Whether to create minor version tag (e.g. v1.2)<br>[Detail of tags](#tags)|`true`| |`false`|
-|CREATE_PATCH_VERSION_TAG|Whether to create patch version tag (e.g. v1.2.3)<br>[Detail of tags](#tags)|`true`| |`false`|
-|FETCH_DEPTH|Limit fetching to the specified number of commits from the tip of each remote branch history|`3`| |`5`|
-|TEST_TAG_PREFIX|Prefix for test tag| | |`test/`|
-|CLEAN_TEST_TAG|Whether to clean test tag|`false`| |`true`|
-|ORIGINAL_TAG_PREFIX|Prefix to add when leaving the original tag| | |`original/`|
-|GITHUB_TOKEN|Access token|`${{github.token}}`|true|`${{secrets.ACCESS_TOKEN}}`|
+| BUILD_COMMAND | Build command<br>[More details of execute command](#execute-commands) | | | `yarn build:all` |
+| CLEAN_TARGETS | Files or directories to clean before release (Comma separated)<br>Absolute path and `..` are not permitted to use.<br>[More details of execute command](#execute-commands) | `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
+| PACKAGE_MANAGER | Package manager to use to install dependencies<br>If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used to specify it explicitly.<br>（`npm` or `yarn`） | | | `yarn` |
+| COMMIT_MESSAGE | Commit message | `feat: build for release` | true | `feat: release` |
+| COMMIT_NAME | Commit name | `github-actions[bot]` | true | |
+| COMMIT_EMAIL | Commit email | `41898282+github-actions[bot]@users.noreply.github.com` | true | |
+| BRANCH_NAME | Branch name for `GitHub Actions` release | `gh-actions` | true | |
+| BUILD_COMMAND_TARGET | Command for search build command | `build, production, prod, package` | | `compile` |
+| CREATE_MAJOR_VERSION_TAG | Whether to create major version tag (e.g. v1)<br>[Detail of tags](#tags) | `true` | | `false` |
+| CREATE_MINOR_VERSION_TAG | Whether to create minor version tag (e.g. v1.2)<br>[Detail of tags](#tags) | `true` | | `false` |
+| CREATE_PATCH_VERSION_TAG | Whether to create patch version tag (e.g. v1.2.3)<br>[Detail of tags](#tags) | `true` | | `false` |
+| FETCH_DEPTH | Limit fetching to the specified number of commits from the tip of each remote branch history | `3` | | `5` |
+| TEST_TAG_PREFIX | Prefix for test tag | | | `test/` |
+| CLEAN_TEST_TAG | Whether to clean test tag | `false` | | `true` |
+| ORIGINAL_TAG_PREFIX | Prefix to add when leaving the original tag | | | `original/` |
+| GITHUB_TOKEN | Access token | `${{github.token}}` | true | `${{secrets.ACCESS_TOKEN}}` |
 
 ## CLI Tool
 [![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
