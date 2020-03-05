@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import nock from 'nock';
 import { Context } from '@actions/github/lib/context';
 import { Octokit } from '@octokit/rest';
+import { Logger } from '@technote-space/github-action-helper';
 import {
 	getContext,
 	testEnv,
@@ -52,9 +53,11 @@ const common  = async(callback: Function, method: (GitHub, Context) => Promise<v
 
 	callback(fn1, fn2, mockExec);
 };
+const logger  = new Logger();
 
 beforeEach(() => {
 	getParams.clear();
+	Logger.resetForTesting();
 });
 
 describe('updateRelease', () => {
@@ -106,7 +109,7 @@ describe('updateRelease', () => {
 			expect(fn1).not.toBeCalled();
 			expect(fn2).not.toBeCalled();
 		}, async(octokit: Octokit, context: Context) => {
-			await updateRelease(undefined, octokit, context);
+			await updateRelease(undefined, logger, octokit, context);
 		});
 	});
 
@@ -115,7 +118,7 @@ describe('updateRelease', () => {
 			expect(fn1).not.toBeCalled();
 			expect(fn2).not.toBeCalled();
 		}, async(octokit: Octokit, context: Context) => {
-			await updateRelease(getReleaseItem({draft: true}), octokit, context);
+			await updateRelease(getReleaseItem({draft: true}), logger, octokit, context);
 		});
 	});
 
@@ -124,7 +127,7 @@ describe('updateRelease', () => {
 			expect(fn1).not.toBeCalled();
 			expect(fn2).toBeCalledTimes(1);
 		}, async(octokit: Octokit, context: Context) => {
-			await updateRelease(getReleaseItem({}), octokit, context);
+			await updateRelease(getReleaseItem({}), logger, octokit, context);
 		});
 	});
 });

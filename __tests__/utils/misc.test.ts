@@ -35,6 +35,8 @@ beforeEach(() => {
 });
 
 describe('isTargetEvent', () => {
+	testEnv(rootDir);
+
 	it('should return true 1', () => {
 		expect(isTargetEvent(TARGET_EVENTS, generateContext({
 			event: 'push',

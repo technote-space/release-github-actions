@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { resolve } from 'path';
-import { Logger, GitHelper } from '@technote-space/github-action-helper';
+import { Logger, GitHelper, Command } from '@technote-space/github-action-helper';
 import {
 	getContext,
 	testEnv,
@@ -33,6 +33,7 @@ const helper    = new GitHelper(logger, {token: 'test-token'});
 
 beforeEach(() => {
 	getParams.clear();
+	Logger.resetForTesting();
 });
 
 describe('replaceDirectory', () => {
@@ -45,25 +46,25 @@ describe('replaceDirectory', () => {
 	it('should replace build directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 
-		expect(replaceDirectory(`git -C ${buildDir} fetch`)).toBe('git fetch');
+		expect(replaceDirectory(getContext({}))(`git -C ${buildDir} fetch`)).toBe('git fetch');
 	});
 
 	it('should replace build directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 
-		expect(replaceDirectory(`git -C ${pushDir} fetch`)).toBe('git fetch');
+		expect(replaceDirectory(getContext({}))(`git -C ${pushDir} fetch`)).toBe('git fetch');
 	});
 
 	it('should replace working directory', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 
-		expect(replaceDirectory(`git -C ${workDir} fetch`)).toBe('git fetch');
+		expect(replaceDirectory(getContext({}))(`git -C ${workDir} fetch`)).toBe('git fetch');
 	});
 
 	it('should replace directories', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 
-		expect(replaceDirectory(`abc ${buildDir} && pqr ${workDir}/xyz ${pushDir}/123`)).toBe('abc <Build Directory> && pqr <Working Directory>/xyz <Push Directory>/123');
+		expect(replaceDirectory(getContext({}))(`abc ${buildDir} && pqr ${workDir}/xyz ${pushDir}/123`)).toBe('abc <Build Directory> && pqr <Working Directory>/xyz <Push Directory>/123');
 	});
 });
 
@@ -76,7 +77,7 @@ describe('clone', () => {
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
 		const mockExec                 = spyOnExec();
 
-		await clone(helper, getContext({
+		await clone(logger, helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -101,7 +102,7 @@ describe('checkBranch', () => {
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
 		const mockExec                 = spyOnExec();
 
-		await checkBranch('test-branch', helper);
+		await checkBranch('test-branch', logger, helper, getContext({}));
 
 		expect(mockExec).not.toBeCalled();
 	});
@@ -112,7 +113,7 @@ describe('checkBranch', () => {
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
 		const mockExec                 = spyOnExec();
 
-		await checkBranch('test-branch2', helper);
+		await checkBranch('test-branch2', logger, helper, getContext({}));
 
 		execCalledWith(mockExec, [
 			'git init \'.\'',
@@ -151,7 +152,7 @@ describe('prepareFiles', () => {
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
 		const mockExec                    = spyOnExec();
 
-		await prepareFiles(helper, getContext({
+		await prepareFiles(logger, helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -174,7 +175,7 @@ describe('prepareFiles', () => {
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
 		const mockExec                    = spyOnExec();
 
-		await prepareFiles(helper, getContext({
+		await prepareFiles(logger, helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -198,7 +199,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_CLEAN_TARGETS   = 'test1,-test2,test3 test4,-test5 , test6;test7, test8/*.txt, *.test9';
 		const mockExec                    = spyOnExec();
 
-		await prepareFiles(helper, getContext({
+		await prepareFiles(logger, helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -231,7 +232,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_CLEAN_TARGETS   = '-test1, -test2/?<>:|"\'@#$%^& ;.*.test3 , ?<>:|"\'@#$%^& ;/test4 test5/*.txt,;?<>:|"\'@#$%^& ;.txt,rm -rf /';
 		const mockExec                    = spyOnExec();
 
-		await prepareFiles(helper, getContext({
+		await prepareFiles(logger, helper, getContext({
 			repo: {
 				owner: 'Hello',
 				repo: 'World',
@@ -267,7 +268,7 @@ describe('createBuildInfoFile', () => {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const writeMock                              = jest.spyOn(require('fs'), 'writeFileSync');
 
-		await createBuildInfoFile(getContext({
+		await createBuildInfoFile(logger, getContext({
 			eventName: 'push',
 			ref: 'refs/tags/v1.2.3',
 		}));
@@ -284,7 +285,7 @@ describe('createBuildInfoFile', () => {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const writeMock                              = jest.spyOn(require('fs'), 'writeFileSync');
 
-		await createBuildInfoFile(getContext({
+		await createBuildInfoFile(logger, getContext({
 			eventName: 'push',
 			ref: 'refs/tags/v1.2.3',
 		}));
@@ -303,7 +304,7 @@ describe('createBuildInfoFile', () => {
 		const writeMock                              = jest.spyOn(require('fs'), 'writeFileSync');
 		setExists(true);
 
-		await createBuildInfoFile(getContext({
+		await createBuildInfoFile(logger, getContext({
 			eventName: 'push',
 			ref: 'refs/tags/v1.2.3',
 		}));
@@ -320,7 +321,7 @@ describe('copyFiles', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const mockExec               = spyOnExec();
 
-		await copyFiles();
+		await copyFiles(logger, new Command(logger), getContext({}));
 
 		const buildDir = resolve('test-dir/.work/build');
 		const pushDir  = resolve('test-dir/.work/push');
@@ -337,7 +338,7 @@ describe('config', () => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
 		const mockExec               = spyOnExec();
 
-		await config(helper);
+		await config(logger, helper, getContext({}));
 
 		execCalledWith(mockExec, [
 			'git config \'user.name\' \'github-actions[bot]\'',
@@ -360,7 +361,7 @@ describe('getDeleteTestTag', () => {
 			},
 		});
 
-		expect(await getDeleteTestTag('v1.2.3', 'test/', helper)).toEqual([]);
+		expect(await getDeleteTestTag('v1.2.3', 'test/', helper, getContext({}))).toEqual([]);
 	});
 
 	it('should get delete test tag', async() => {
@@ -373,7 +374,7 @@ describe('getDeleteTestTag', () => {
 			},
 		});
 
-		expect(await getDeleteTestTag('v1.2.3', 'test/', helper)).toEqual([
+		expect(await getDeleteTestTag('v1.2.3', 'test/', helper, getContext({}))).toEqual([
 			'test/v0',
 			'test/v1.1',
 			'test/v1.2.2',
@@ -390,7 +391,7 @@ describe('getDeleteTestTag', () => {
 			},
 		});
 
-		expect(await getDeleteTestTag('v1.2.3', 'original/test/', helper)).toEqual([
+		expect(await getDeleteTestTag('v1.2.3', 'original/test/', helper, getContext({}))).toEqual([
 			'original/test/v1.2.2',
 		]);
 	});
@@ -494,7 +495,7 @@ describe('push', () => {
 		const mockExec                   = spyOnExec();
 		const mockStdout                 = spyOnStdout();
 
-		await push(helper, getContext({
+		await push(logger, helper, getContext({
 			eventName: 'push',
 			ref: 'refs/tags/v1.2.3',
 			repo: {
@@ -519,7 +520,6 @@ describe('push', () => {
 			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1 || :',
 		]);
 		stdoutCalledWith(mockStdout, [
-			'::endgroup::',
 			'::group::Pushing to Hello/World@test-branch (tag: v1.2.3)...',
 			'[command]git fetch origin --tags',
 			'[command]git push origin --delete tags/v1.2.3',
@@ -551,7 +551,7 @@ describe('push', () => {
 		const mockExec                        = spyOnExec();
 		const mockStdout                      = spyOnStdout();
 
-		await push(helper, getContext({
+		await push(logger, helper, getContext({
 			eventName: 'push',
 			ref: 'refs/tags/test/v1.2.3',
 			repo: {
@@ -583,7 +583,6 @@ describe('push', () => {
 			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1 || :',
 		]);
 		stdoutCalledWith(mockStdout, [
-			'::endgroup::',
 			'::group::Pushing to Hello/World@test-branch (tag: test/v1.2.3)...',
 			'[command]git fetch origin --tags',
 			'[command]git push origin --delete tags/original/test/v1.2.3',
