@@ -145,7 +145,7 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
 ### condition
 - tags
   - semantic versioning tag (e.g. `v1.2.3`)
-  - [test tag](#test_tag_prefix) (e.g. `test/v1.2.3`)
+  - [test tag](#options) (e.g. `test/v1.2.3`)
 
 ## Motivation
 Releasing `GitHub Actions` needs all build files and dependencies like `node_modules`, but are not usually committed.  

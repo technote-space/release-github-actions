@@ -144,7 +144,7 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
 ### condition
 - tags
   - semantic versioning tag (例：`v1.2.3`)
-  - [テストタグ](#test_tag_prefix) (例：`test/v1.2.3`)
+  - [テストタグ](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3) (例：`test/v1.2.3`)
 
 ## 動機
 `GitHub Actions`をリリースするには、すべてのビルドファイルと `node_modules` のような依存関係が必要ですが、通常はそれらをコミットしません。  
