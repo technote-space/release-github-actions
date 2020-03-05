@@ -31,7 +31,7 @@ inputs:
     required: true
   BRANCH_NAME:
     description: Branch name.
-    default: 'gh-actions'
+    default: 'releases/${MAJOR}'
     required: true
   CLEAN_TARGETS:
     description: Files or directories to clean before release. (Comma separated)

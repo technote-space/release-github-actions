@@ -129,6 +129,45 @@ describe('isTargetEvent', () => {
 	});
 });
 
+describe('getParams', () => {
+	testEnv(rootDir);
+
+	it('should get params 1', () => {
+		const params = getParams(generateContext({ref: 'refs/tags/v1.2.3'}));
+		expect(params).toHaveProperty('workDir');
+		expect(params).toHaveProperty('buildDir');
+		expect(params).toHaveProperty('pushDir');
+		expect(params).toHaveProperty('tagName');
+		expect(params).toHaveProperty('branchName');
+		expect(params.tagName).toBe('v1.2.3');
+		expect(params.branchName).toBe('releases/v1');
+	});
+
+	it('should get params 2', () => {
+		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
+
+		const params = getParams(generateContext({ref: 'refs/tags/test/v2.3.4'}));
+		expect(params.tagName).toBe('test/v2.3.4');
+		expect(params.branchName).toBe('releases/v2');
+	});
+
+	it('should get params 3', () => {
+		process.env.INPUT_BRANCH_NAME = 'gh-actions';
+
+		const params = getParams(generateContext({ref: 'refs/tags/v1.2.3'}));
+		expect(params.tagName).toBe('v1.2.3');
+		expect(params.branchName).toBe('gh-actions');
+	});
+
+	it('should get params 4', () => {
+		process.env.INPUT_BRANCH_NAME = 'releases/${MAJOR}/${MINOR}/${PATCH}';
+
+		const params = getParams(generateContext({ref: 'refs/tags/v2.3.4'}));
+		expect(params.tagName).toBe('v2.3.4');
+		expect(params.branchName).toBe('releases/v2/v2.3/v2.3.4');
+	});
+});
+
 describe('getSearchBuildCommandTargets', () => {
 	testEnv(rootDir);
 
