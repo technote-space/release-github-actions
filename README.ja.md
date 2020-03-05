@@ -68,12 +68,7 @@
        name: Release GitHub Actions
        runs-on: ubuntu-latest
        steps:
-         - name: Release GitHub Actions
-           uses: technote-space/release-github-actions@v3
-           with:
-             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-   #           TEST_TAG_PREFIX: test/
-   #           CLEAN_TEST_TAG: true
+         - uses: technote-space/release-github-actions@v3
    ```
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
 
