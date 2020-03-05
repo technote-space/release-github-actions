@@ -1,6 +1,5 @@
-import fs from 'fs';
-import moment from 'moment';
-import path from 'path';
+import { mkdirSync, existsSync, writeFileSync } from 'fs';
+import { resolve, dirname } from 'path';
 import { Logger, Command, ContextHelper, GitHelper, Utils } from '@technote-space/github-action-helper';
 import { Context } from '@actions/github/lib/context';
 import { Octokit } from '@octokit/rest';
@@ -34,7 +33,7 @@ const {startProcess, info} = logger;
 
 export const prepareFiles = async(helper: GitHelper, context: Context): Promise<void> => {
 	const {buildDir, pushDir} = getParams();
-	fs.mkdirSync(buildDir, {recursive: true});
+	mkdirSync(buildDir, {recursive: true});
 
 	startProcess('Cloning the remote repo for build...');
 	await helper.checkout(buildDir, context);
@@ -53,13 +52,13 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 	const tagName                = getTagName(context);
 
 	startProcess('Creating build info file...');
-	const filepath = path.resolve(buildDir, filename);
-	const dir      = path.dirname(filepath);
-	if (!fs.existsSync(dir)) {
-		fs.mkdirSync(dir, {recursive: true});
+	const filepath = resolve(buildDir, filename);
+	const dir      = dirname(filepath);
+	if (!existsSync(dir)) {
+		mkdirSync(dir, {recursive: true});
 	}
 
-	fs.writeFileSync(filepath, JSON.stringify({
+	writeFileSync(filepath, JSON.stringify({
 		owner: context.repo.owner,
 		repo: context.repo.repo,
 		sha: context.sha,
@@ -67,7 +66,7 @@ export const createBuildInfoFile = async(context: Context): Promise<void> => {
 		tagName: tagName,
 		branch: branchName,
 		tags: getCreateTags(tagName),
-		'updated_at': moment().toISOString(),
+		'updated_at': (new Date).toISOString(),
 	}));
 };
 

@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import { existsSync, readFileSync } from 'fs';
+import { resolve } from 'path';
 import { Context } from '@actions/github/lib/context';
 import { Utils, ContextHelper } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
@@ -24,12 +24,12 @@ const getCleanTargets = (): Array<string> => getArrayInput('CLEAN_TARGETS')
 export const getSearchBuildCommandTargets = (): Array<string> => getArrayInput('BUILD_COMMAND_TARGET', true);
 
 export const detectBuildCommand = (dir: string): boolean | string => {
-	const packageFile = path.resolve(dir, 'package.json');
-	if (!fs.existsSync(packageFile)) {
+	const packageFile = resolve(dir, 'package.json');
+	if (!existsSync(packageFile)) {
 		return false;
 	}
 
-	const parsed = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
+	const parsed = JSON.parse(readFileSync(packageFile, 'utf8'));
 	if (!('scripts' in parsed)) {
 		return false;
 	}
@@ -47,13 +47,13 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 export const getBackupCommands = (buildDir: string, pushDir: string): Array<CommandType> => [
 	{
 		command: 'mv',
-		args: ['-f', path.resolve(buildDir, 'action.yaml'), path.resolve(pushDir, 'action.yml')],
+		args: ['-f', resolve(buildDir, 'action.yaml'), resolve(pushDir, 'action.yml')],
 		suppressError: true,
 		quiet: true,
 	},
 	{
 		command: 'mv',
-		args: ['-f', path.resolve(buildDir, 'action.yml'), path.resolve(pushDir, 'action.yml')],
+		args: ['-f', resolve(buildDir, 'action.yml'), resolve(pushDir, 'action.yml')],
 		suppressError: true,
 		quiet: true,
 	},
@@ -62,7 +62,7 @@ export const getBackupCommands = (buildDir: string, pushDir: string): Array<Comm
 export const getRestoreBackupCommands = (buildDir: string, pushDir: string): Array<CommandType> => [
 	{
 		command: 'mv',
-		args: ['-f', path.resolve(pushDir, 'action.yml'), path.resolve(buildDir, 'action.yml')],
+		args: ['-f', resolve(pushDir, 'action.yml'), resolve(buildDir, 'action.yml')],
 		suppressError: true,
 		quiet: true,
 	},
@@ -194,9 +194,9 @@ export const getCreateTags = (tagName: string): Array<string> => {
 };
 
 export const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
-	const workDir    = path.resolve(getWorkspace(), '.work');
-	const buildDir   = path.resolve(workDir, 'build');
-	const pushDir    = path.resolve(workDir, 'push');
+	const workDir    = resolve(getWorkspace(), '.work');
+	const buildDir   = resolve(workDir, 'build');
+	const pushDir    = resolve(workDir, 'push');
 	const branchName = getBranchName();
 	return {workDir, buildDir, pushDir, branchName};
 };
