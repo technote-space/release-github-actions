@@ -56,7 +56,7 @@ jobs:
     name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: technote-space/release-github-actions@v3
+      - uses: technote-space/release-github-actions@v4
 ```
 
 [More details of target event](#action-event-details)
@@ -80,7 +80,7 @@ jobs:
 | COMMIT_MESSAGE | Commit message | `feat: build for release` | true | `feat: release` |
 | COMMIT_NAME | Commit name | `github-actions[bot]` | true | |
 | COMMIT_EMAIL | Commit email | `41898282+github-actions[bot]@users.noreply.github.com` | true | |
-| BRANCH_NAME | Branch name for `GitHub Actions` release | `gh-actions` | true | |
+| BRANCH_NAME | Branch name for `GitHub Actions` release | `releases/${MAJOR}` | true | `releases/${MINOR}`, `releases/${PATCH}` |
 | BUILD_COMMAND_TARGET | Command for search build command | `build, production, prod, package` | | `compile` |
 | CREATE_MAJOR_VERSION_TAG | Whether to create major version tag (e.g. v1)<br>[Detail of tags](#tags) | `true` | | `false` |
 | CREATE_MINOR_VERSION_TAG | Whether to create minor version tag (e.g. v1.2)<br>[Detail of tags](#tags) | `true` | | `false` |

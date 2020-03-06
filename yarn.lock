@@ -641,9 +641,9 @@
     js-yaml "^3.13.1"
 
 "@technote-space/release-github-actions@^3.0.5":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-3.1.2.tgz#006765a2e715027ac679ab50d98b304def97ebe2"
-  integrity sha512-24k9RAdO/FJ1EMl3TdvJmSzWIUiYEWZsyMqzB6YCRo56Az3KRLwdqCZQkkWoum6pwE4EjdCCxD7/0WGrv5H3FQ==
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-3.1.3.tgz#a486ba77fffd8c99fd95550f2ecd8b82b6db0df7"
+  integrity sha512-5E2vJHzovKN0d44UHSFO6cl/0+XxTPGfDz8L5OPUfqFGmqBW0Jv9sapnTc5tfWxxRpIIDEfFy2oFqztBeDD5cA==
   dependencies:
     "@actions/core" "^1.2.3"
     "@actions/github" "^2.1.1"
@@ -3467,6 +3467,11 @@ map-visit@^1.0.0:
   integrity sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
   dependencies:
     object-visit "^1.0.0"
+
+memize@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/memize/-/memize-1.0.5.tgz#51d89e8407643dbc8cab98c6d56b889f9a3954e3"
+  integrity sha512-Dm8Jhb5kiC4+ynYsVR4QDXKt+o2dfqGuY4hE2x+XlXZkdndlT80bJxfcMv5QGp/FCy6MhG7f5ElpmKPFKOSEpg==
 
 meow@5.0.0, meow@^5.0.0:
   version "5.0.0"

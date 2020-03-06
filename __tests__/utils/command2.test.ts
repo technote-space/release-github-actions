@@ -1,8 +1,9 @@
 /* eslint-disable no-magic-numbers */
-import path from 'path';
+import { resolve } from 'path';
 import nock from 'nock';
 import { Context } from '@actions/github/lib/context';
 import { Octokit } from '@octokit/rest';
+import { Logger } from '@technote-space/github-action-helper';
 import {
 	getContext,
 	testEnv,
@@ -14,12 +15,13 @@ import {
 	setChildProcessParams,
 	getOctokit,
 } from '@technote-space/github-action-test-helper';
+import { getParams } from '../../src/utils/misc';
 import {
 	updateRelease,
 	deploy,
 } from '../../src/utils/command';
 
-const rootDir = path.resolve(__dirname, '../..');
+const rootDir = resolve(__dirname, '../..');
 const common  = async(callback: Function, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
 	const mockExec = spyOnExec();
 	const fn1      = jest.fn();
@@ -28,7 +30,7 @@ const common  = async(callback: Function, method: (GitHub, Context) => Promise<v
 		.get('/repos/Hello/World/releases')
 		.reply(200, () => {
 			fn1();
-			return getApiFixture(path.resolve(__dirname, '..', 'fixtures'), 'repos.listReleases');
+			return getApiFixture(resolve(__dirname, '..', 'fixtures'), 'repos.listReleases');
 		})
 		.patch('/repos/Hello/World/releases/1', body => {
 			expect(body).toEqual({draft: false});
@@ -36,7 +38,7 @@ const common  = async(callback: Function, method: (GitHub, Context) => Promise<v
 		})
 		.reply(200, () => {
 			fn2();
-			return getApiFixture(path.resolve(__dirname, '..', 'fixtures'), 'repos.updateRelease');
+			return getApiFixture(resolve(__dirname, '..', 'fixtures'), 'repos.updateRelease');
 		});
 
 	await method(getOctokit(), getContext({
@@ -51,6 +53,12 @@ const common  = async(callback: Function, method: (GitHub, Context) => Promise<v
 
 	callback(fn1, fn2, mockExec);
 };
+const logger  = new Logger();
+
+beforeEach(() => {
+	getParams.clear();
+	Logger.resetForTesting();
+});
 
 describe('updateRelease', () => {
 	testEnv(rootDir);
@@ -101,7 +109,7 @@ describe('updateRelease', () => {
 			expect(fn1).not.toBeCalled();
 			expect(fn2).not.toBeCalled();
 		}, async(octokit: Octokit, context: Context) => {
-			await updateRelease(undefined, octokit, context);
+			await updateRelease(undefined, logger, octokit, context);
 		});
 	});
 
@@ -110,7 +118,7 @@ describe('updateRelease', () => {
 			expect(fn1).not.toBeCalled();
 			expect(fn2).not.toBeCalled();
 		}, async(octokit: Octokit, context: Context) => {
-			await updateRelease(getReleaseItem({draft: true}), octokit, context);
+			await updateRelease(getReleaseItem({draft: true}), logger, octokit, context);
 		});
 	});
 
@@ -119,7 +127,7 @@ describe('updateRelease', () => {
 			expect(fn1).not.toBeCalled();
 			expect(fn2).toBeCalledTimes(1);
 		}, async(octokit: Octokit, context: Context) => {
-			await updateRelease(getReleaseItem({}), octokit, context);
+			await updateRelease(getReleaseItem({}), logger, octokit, context);
 		});
 	});
 });

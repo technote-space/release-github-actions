@@ -56,7 +56,7 @@ jobs:
     name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: technote-space/release-github-actions@v3
+      - uses: technote-space/release-github-actions@v4
 ```
 
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
@@ -80,7 +80,7 @@ jobs:
 | COMMIT_MESSAGE | コミット時に設定するメッセージ | `feat: build for release` | true | `feat: release` |
 | COMMIT_NAME | コミット時に設定する名前 | `github-actions[bot]` | true | |
 | COMMIT_EMAIL | コミット時に設定する名前 | `41898282+github-actions[bot]@users.noreply.github.com` | true | |
-| BRANCH_NAME | GitHub Actions 用のブランチ名 | `gh-actions` | true | |
+| BRANCH_NAME | GitHub Actions 用のブランチ名 | `releases/${MAJOR}` | true | `releases/${MINOR}`, `releases/${PATCH}` |
 | BUILD_COMMAND_TARGET | ビルド用コマンド検索ターゲット | `build, production, prod, package` | | `compile` |
 | CREATE_MAJOR_VERSION_TAG | メジャーバージョンタグ(例：v1)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
 | CREATE_MINOR_VERSION_TAG | マイナーバージョンタグ(例：v1.2)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |

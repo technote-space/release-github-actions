@@ -1,5 +1,6 @@
-import fs from 'fs';
-import path from 'path';
+import { existsSync, readFileSync } from 'fs';
+import { resolve } from 'path';
+import memize from 'memize';
 import { Context } from '@actions/github/lib/context';
 import { Utils, ContextHelper } from '@technote-space/github-action-helper';
 import { getInput } from '@actions/core' ;
@@ -15,21 +16,19 @@ type CommandType = string | {
 	stderrToStdout?: boolean | undefined;
 };
 
-const {getWorkspace, getPrefixRegExp, getBoolValue, getArrayInput, uniqueArray, isSemanticVersioningTagName, useNpm, escapeRegExp} = Utils;
-
-const getCleanTargets = (): Array<string> => getArrayInput('CLEAN_TARGETS')
+const getCleanTargets = (): Array<string> => Utils.getArrayInput('CLEAN_TARGETS')
 	.map(target => target.replace(/[\x00-\x1f\x80-\x9f]/, '').trim()) // eslint-disable-line no-control-regex
 	.filter(target => target && !target.startsWith('/') && !target.includes('..'));
 
-export const getSearchBuildCommandTargets = (): Array<string> => getArrayInput('BUILD_COMMAND_TARGET', true);
+export const getSearchBuildCommandTargets = (): Array<string> => Utils.getArrayInput('BUILD_COMMAND_TARGET', true);
 
 export const detectBuildCommand = (dir: string): boolean | string => {
-	const packageFile = path.resolve(dir, 'package.json');
-	if (!fs.existsSync(packageFile)) {
+	const packageFile = resolve(dir, 'package.json');
+	if (!existsSync(packageFile)) {
 		return false;
 	}
 
-	const parsed = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
+	const parsed = JSON.parse(readFileSync(packageFile, 'utf8'));
 	if (!('scripts' in parsed)) {
 		return false;
 	}
@@ -47,13 +46,13 @@ export const detectBuildCommand = (dir: string): boolean | string => {
 export const getBackupCommands = (buildDir: string, pushDir: string): Array<CommandType> => [
 	{
 		command: 'mv',
-		args: ['-f', path.resolve(buildDir, 'action.yaml'), path.resolve(pushDir, 'action.yml')],
+		args: ['-f', resolve(buildDir, 'action.yaml'), resolve(pushDir, 'action.yml')],
 		suppressError: true,
 		quiet: true,
 	},
 	{
 		command: 'mv',
-		args: ['-f', path.resolve(buildDir, 'action.yml'), path.resolve(pushDir, 'action.yml')],
+		args: ['-f', resolve(buildDir, 'action.yml'), resolve(pushDir, 'action.yml')],
 		suppressError: true,
 		quiet: true,
 	},
@@ -62,7 +61,7 @@ export const getBackupCommands = (buildDir: string, pushDir: string): Array<Comm
 export const getRestoreBackupCommands = (buildDir: string, pushDir: string): Array<CommandType> => [
 	{
 		command: 'mv',
-		args: ['-f', path.resolve(pushDir, 'action.yml'), path.resolve(buildDir, 'action.yml')],
+		args: ['-f', resolve(pushDir, 'action.yml'), resolve(buildDir, 'action.yml')],
 		suppressError: true,
 		quiet: true,
 	},
@@ -72,7 +71,7 @@ export const getClearFilesCommands = (targets: Array<string>): Array<CommandType
 	const commands: Array<CommandType> = [];
 	const searchValues                 = '?<>:|"\'@#$%^& ;';
 	const replaceValue                 = '$1\\$2';
-	const escapeFunc                   = (item: string): string => searchValues.split('').reduce((acc, val) => acc.replace(new RegExp('([^\\\\])(' + escapeRegExp(val) + ')'), replaceValue), item);
+	const escapeFunc                   = (item: string): string => searchValues.split('').reduce((acc, val) => acc.replace(new RegExp('([^\\\\])(' + Utils.escapeRegExp(val) + ')'), replaceValue), item);
 	const beginWithDash                = targets.filter(item => item.startsWith('-')).map(escapeFunc);
 	const withWildcard                 = targets.filter(item => !item.startsWith('-') && item.includes('*')).map(escapeFunc);
 	const withoutWildcard              = targets.filter(item => !item.startsWith('-') && !item.includes('*'));
@@ -93,9 +92,9 @@ export const getClearFilesCommands = (targets: Array<string>): Array<CommandType
 };
 
 export const getBuildCommands = (buildDir: string, pushDir: string): Array<CommandType> => {
-	let commands: Array<CommandType> = getArrayInput('BUILD_COMMAND', false, '&&');
+	let commands: Array<CommandType> = Utils.getArrayInput('BUILD_COMMAND', false, '&&');
 
-	const pkgManager        = useNpm(buildDir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
+	const pkgManager        = Utils.useNpm(buildDir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
 	const buildCommand      = detectBuildCommand(buildDir);
 	const runSubCommand     = pkgManager === 'npm' ? ' run ' : ' ';
 	const hasInstallCommand = !!commands.filter(command => typeof command === 'string' && (command.includes('npm run install') || command.includes(`${pkgManager} install`))).length;
@@ -129,7 +128,7 @@ export const getCommitName = (): string => getInput('COMMIT_NAME', {required: tr
 
 export const getCommitEmail = (): string => getInput('COMMIT_EMAIL', {required: true});
 
-export const getBranchName = (): string => getInput('BRANCH_NAME', {required: true});
+export const getBranchNames = (): Array<string> => Utils.getArrayInput('BRANCH_NAME', true);
 
 export const getFetchDepth = (): number => {
 	const depth = getInput('FETCH_DEPTH');
@@ -142,7 +141,7 @@ export const getFetchDepth = (): number => {
 
 export const getTestTagPrefix = (): string => getInput('TEST_TAG_PREFIX');
 
-const getTestTagPrefixRegExp = (): RegExp => getPrefixRegExp(getTestTagPrefix());
+const getTestTagPrefixRegExp = (): RegExp => Utils.getPrefixRegExp(getTestTagPrefix());
 
 export const isTestTag = (tagName: string): boolean => !!getTestTagPrefix() && getTestTagPrefixRegExp().test(tagName);
 
@@ -150,13 +149,13 @@ export const getTestTag = (tagName: string): string => tagName.replace(getTestTa
 
 export const getOriginalTagPrefix = (): string => getInput('ORIGINAL_TAG_PREFIX');
 
-export const isCreateMajorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG') || 'true');
+export const isCreateMajorVersionTag = (): boolean => Utils.getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG') || 'true');
 
-export const isCreateMinorVersionTag = (): boolean => getBoolValue(getInput('CREATE_MINOR_VERSION_TAG') || 'true');
+export const isCreateMinorVersionTag = (): boolean => Utils.getBoolValue(getInput('CREATE_MINOR_VERSION_TAG') || 'true');
 
-export const isCreatePatchVersionTag = (): boolean => getBoolValue(getInput('CREATE_PATCH_VERSION_TAG') || 'true');
+export const isCreatePatchVersionTag = (): boolean => Utils.getBoolValue(getInput('CREATE_PATCH_VERSION_TAG') || 'true');
 
-export const isEnabledCleanTestTag = (): boolean => getBoolValue(getInput('CLEAN_TEST_TAG'));
+export const isEnabledCleanTestTag = (): boolean => Utils.getBoolValue(getInput('CLEAN_TEST_TAG'));
 
 export const getOutputBuildInfoFilename = (): string => {
 	const filename = getInput('OUTPUT_BUILD_INFO_FILENAME');
@@ -172,7 +171,7 @@ const getVersionFragments = (tagName: string): Array<string> => tagName.trim().r
 type createTagType = (tagName: string) => string;
 
 // eslint-disable-next-line no-magic-numbers
-export const getMajorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).slice(0, 1).join('.');
+export const getMajorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).slice(0, 1);
 
 // eslint-disable-next-line no-magic-numbers
 export const getMinorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0']).slice(0, 2).join('.');
@@ -180,7 +179,7 @@ export const getMinorTag = (tagName: string): string => 'v' + getVersionFragment
 // eslint-disable-next-line no-magic-numbers
 export const getPatchTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0', '0']).slice(0, 3).join('.');
 
-export const isValidTagName = (tagName: string): boolean => isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && isSemanticVersioningTagName(getTestTag(tagName)));
+export const isValidTagName = (tagName: string): boolean => Utils.isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && Utils.isSemanticVersioningTagName(getTestTag(tagName)));
 
 export const getCreateTags = (tagName: string): Array<string> => {
 	const settings  = [
@@ -190,19 +189,31 @@ export const getCreateTags = (tagName: string): Array<string> => {
 	];
 	const createTag = isTestTag(tagName) ? (create: createTagType): string => getTestTagPrefix() + create(getTestTag(tagName)) : (create: createTagType): string => create(tagName);
 
-	return uniqueArray(settings.filter(setting => setting.condition()).map(setting => createTag(setting.createTag)).concat(tagName)).sort().reverse();
+	return Utils.uniqueArray(settings.filter(setting => setting.condition()).map(setting => createTag(setting.createTag)).concat(tagName)).sort().reverse();
 };
 
-export const getParams = (): { workDir: string; buildDir: string; pushDir: string; branchName: string } => {
-	const workDir    = path.resolve(getWorkspace(), '.work');
-	const buildDir   = path.resolve(workDir, 'build');
-	const pushDir    = path.resolve(workDir, 'push');
-	const branchName = getBranchName();
-	return {workDir, buildDir, pushDir, branchName};
+const params = (context: Context): { workDir: string; buildDir: string; pushDir: string; branchName: string; branchNames: Array<string>; tagName: string } => {
+	const workDir        = resolve(Utils.getWorkspace(), '.work');
+	const buildDir       = resolve(workDir, 'build');
+	const pushDir        = resolve(workDir, 'push');
+	const tagName        = ContextHelper.getTagName(context);
+	const normalized     = isTestTag(tagName) ? getTestTag(tagName) : tagName;
+	const rawBranchNames = getBranchNames();
+	const getBranch      = (branch: string): string => [
+		{key: 'MAJOR', func: getMajorTag},
+		{key: 'MINOR', func: getMinorTag},
+		{key: 'PATCH', func: getPatchTag},
+	].reduce((acc, item) => Utils.replaceAll(acc, `\${${item.key}}`, item.func(normalized)), branch);
+	const branchNames    = rawBranchNames.map(getBranch);
+	const branchName     = branchNames[0];
+	// eslint-disable-next-line no-magic-numbers
+	return {workDir, buildDir, pushDir, branchName, branchNames: branchNames.slice(1), tagName};
 };
 
-export const getReplaceDirectory = (): object => {
-	const {workDir, buildDir, pushDir} = getParams();
+export const getParams = memize(params);
+
+export const getReplaceDirectory = (context: Context): object => {
+	const {workDir, buildDir, pushDir} = getParams(context);
 	return {
 		[buildDir]: '<Build Directory>',
 		[pushDir]: '<Push Directory>',
@@ -210,4 +221,4 @@ export const getReplaceDirectory = (): object => {
 	};
 };
 
-export const isValidContext = (context: Context): boolean => isValidTagName(ContextHelper.getTagName(context));
+export const isValidContext = (context: Context): boolean => isValidTagName(getParams(context).tagName);
