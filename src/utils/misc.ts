@@ -128,7 +128,7 @@ export const getCommitName = (): string => getInput('COMMIT_NAME', {required: tr
 
 export const getCommitEmail = (): string => getInput('COMMIT_EMAIL', {required: true});
 
-export const getBranchName = (): string => getInput('BRANCH_NAME', {required: true});
+export const getBranchNames = (): Array<string> => Utils.getArrayInput('BRANCH_NAME', true);
 
 export const getFetchDepth = (): number => {
 	const depth = getInput('FETCH_DEPTH');
@@ -192,18 +192,22 @@ export const getCreateTags = (tagName: string): Array<string> => {
 	return Utils.uniqueArray(settings.filter(setting => setting.condition()).map(setting => createTag(setting.createTag)).concat(tagName)).sort().reverse();
 };
 
-const params = (context: Context): { workDir: string; buildDir: string; pushDir: string; branchName: string; tagName: string } => {
-	const workDir    = resolve(Utils.getWorkspace(), '.work');
-	const buildDir   = resolve(workDir, 'build');
-	const pushDir    = resolve(workDir, 'push');
-	const tagName    = ContextHelper.getTagName(context);
-	const normalized = isTestTag(tagName) ? getTestTag(tagName) : tagName;
-	const branchName = [
+const params = (context: Context): { workDir: string; buildDir: string; pushDir: string; branchName: string; branchNames: Array<string>; tagName: string } => {
+	const workDir        = resolve(Utils.getWorkspace(), '.work');
+	const buildDir       = resolve(workDir, 'build');
+	const pushDir        = resolve(workDir, 'push');
+	const tagName        = ContextHelper.getTagName(context);
+	const normalized     = isTestTag(tagName) ? getTestTag(tagName) : tagName;
+	const rawBranchNames = getBranchNames();
+	const getBranch      = (branch: string): string => [
 		{key: 'MAJOR', func: getMajorTag},
 		{key: 'MINOR', func: getMinorTag},
 		{key: 'PATCH', func: getPatchTag},
-	].reduce((acc, item) => Utils.replaceAll(acc, `\${${item.key}}`, item.func(normalized)), getBranchName());
-	return {workDir, buildDir, pushDir, branchName, tagName};
+	].reduce((acc, item) => Utils.replaceAll(acc, `\${${item.key}}`, item.func(normalized)), branch);
+	const branchNames    = rawBranchNames.map(getBranch);
+	const branchName     = branchNames[0];
+	// eslint-disable-next-line no-magic-numbers
+	return {workDir, buildDir, pushDir, branchName, branchNames: branchNames.slice(1), tagName};
 };
 
 export const getParams = memize(params);

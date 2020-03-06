@@ -544,7 +544,7 @@ describe('push', () => {
 	it('should run git push command with pushing original tag', async() => {
 		process.env.INPUT_GITHUB_TOKEN        = 'test-token';
 		process.env.GITHUB_WORKSPACE          = 'test-dir';
-		process.env.INPUT_BRANCH_NAME         = 'test-branch';
+		process.env.INPUT_BRANCH_NAME         = 'releases/${MAJOR},test-branch1,test-branch2';
 		process.env.INPUT_TEST_TAG_PREFIX     = 'test/';
 		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
 		process.env.INPUT_CLEAN_TEST_TAG      = '1';
@@ -580,10 +580,14 @@ describe('push', () => {
 			'git tag \'test/v1.2.3\'',
 			'git tag \'test/v1.2\'',
 			'git tag test/v1',
-			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1 || :',
+			'git push --tags \'https://octocat:test-token@github.com/Hello/World.git\' \'releases/v1:refs/heads/releases/v1\' > /dev/null 2>&1 || :',
+			'git checkout -b test-branch1',
+			'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch1:refs/heads/test-branch1\' > /dev/null 2>&1 || :',
+			'git checkout -b test-branch2',
+			'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch2:refs/heads/test-branch2\' > /dev/null 2>&1 || :',
 		]);
 		stdoutCalledWith(mockStdout, [
-			'::group::Pushing to Hello/World@test-branch (tag: test/v1.2.3)...',
+			'::group::Pushing to Hello/World@releases/v1 (tag: test/v1.2.3)...',
 			'[command]git fetch origin --tags',
 			'[command]git push origin --delete tags/original/test/v1.2.3',
 			'[command]git tag -d \'original/test/v1.2.3\'',
@@ -607,7 +611,13 @@ describe('push', () => {
 			'  >> stdout',
 			'[command]git tag test/v1',
 			'  >> stdout',
-			'[command]git push --tags origin test-branch:refs/heads/test-branch',
+			'[command]git push --tags origin releases/v1:refs/heads/releases/v1',
+			'[command]git checkout -b test-branch1',
+			'  >> stdout',
+			'[command]git push --force origin test-branch1:refs/heads/test-branch1',
+			'[command]git checkout -b test-branch2',
+			'  >> stdout',
+			'[command]git push --force origin test-branch2:refs/heads/test-branch2',
 		]);
 	});
 });

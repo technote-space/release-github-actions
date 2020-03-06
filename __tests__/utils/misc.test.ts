@@ -8,7 +8,7 @@ import {
 	getCommitMessage,
 	getCommitName,
 	getCommitEmail,
-	getBranchName,
+	getBranchNames,
 	getFetchDepth,
 	isTestTag,
 	getTestTag,
@@ -224,17 +224,17 @@ describe('getCommitEmail', () => {
 	});
 });
 
-describe('getBranchName', () => {
+describe('getBranchNames', () => {
 	testEnv(rootDir);
 
 	it('should get branch name', () => {
 		process.env.INPUT_BRANCH_NAME = 'test';
-		expect(getBranchName()).toBe('test');
+		expect(getBranchNames()).toEqual(['test']);
 	});
 
 	it('should throw error', () => {
 		process.env.INPUT_BRANCH_NAME = '';
-		expect(() => getBranchName()).toThrow();
+		expect(() => getBranchNames()).toThrow();
 	});
 });
 
