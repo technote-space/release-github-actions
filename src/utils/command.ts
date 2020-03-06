@@ -115,7 +115,7 @@ export const deleteTestTags = async(helper: GitHelper, context: Context): Promis
 };
 
 export const push = async(logger: Logger, helper: GitHelper, context: Context): Promise<void> => {
-	const {pushDir, branchName, tagName} = getParams(context);
+	const {pushDir, branchName, tagName, branchNames} = getParams(context);
 	logger.startProcess('Pushing to %s@%s (tag: %s)...', ContextHelper.getRepository(context), branchName, tagName);
 
 	const prefixForOriginalTag = getOriginalTagPrefix();
@@ -132,6 +132,11 @@ export const push = async(logger: Logger, helper: GitHelper, context: Context): 
 	await helper.deleteTag(pushDir, tagNames, context, 1);
 	await helper.addLocalTag(pushDir, tagNames);
 	await helper.push(pushDir, branchName, context, {withTag: true});
+	await branchNames.reduce(async(prev, branch) => {
+		await prev;
+		await helper.createBranch(pushDir, branch);
+		await helper.forcePush(pushDir, branch, context);
+	}, Promise.resolve());
 };
 
 const findRelease = async(octokit: Octokit, context: Context): Promise<Octokit.ReposListReleasesResponseItem | undefined> => {
