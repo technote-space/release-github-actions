@@ -61,6 +61,9 @@ jobs:
 
 [More details of target event](#action-event-details)
 
+## CLI Tool
+[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
+
 ## Screenshots
 1. Before publish release  
    ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
@@ -90,9 +93,6 @@ jobs:
 | CLEAN_TEST_TAG | Whether to clean test tag | `false` | | `true` |
 | ORIGINAL_TAG_PREFIX | Prefix to add when leaving the original tag | | | `original/` |
 | GITHUB_TOKEN | Access token | `${{github.token}}` | true | `${{secrets.ACCESS_TOKEN}}` |
-
-## CLI Tool
-[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
 
 ## Execute commands
 ### Build

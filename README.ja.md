@@ -61,6 +61,9 @@ jobs:
 
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
 
+## CLI ツール
+[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
+
 ## スクリーンショット
 1. リリース作成前  
    ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
@@ -90,9 +93,6 @@ jobs:
 | CLEAN_TEST_TAG | テストタグを掃除するかどうか | `false` | | `true` |
 | ORIGINAL_TAG_PREFIX | 元のタグを残す際に付与するプリフィックス | | | `original/` |
 | GITHUB_TOKEN | アクセストークン | `${{github.token}}` | true | `${{secrets.ACCESS_TOKEN}}` |
-
-## CLI ツール
-[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
 
 ## Execute commands
 ### ビルド
