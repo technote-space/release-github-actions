@@ -64,15 +64,8 @@ jobs:
 ## CLI Tool
 [![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
 
-## Screenshots
-1. Before publish release  
-   ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
-1. Publish release (Create tag)  
-   ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
-1. Running `GitHub Actions`  
-   ![Running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
-1. After running `GitHub Actions`  
-   ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
+## Screenshot
+![Release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-7.gif)
 
 ## Options
 | name | description | default | required | e.g. |
