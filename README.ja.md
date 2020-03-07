@@ -61,6 +61,9 @@ jobs:
 
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
 
+## CLI ツール
+[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
+
 ## スクリーンショット
 1. リリース作成前  
    ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
@@ -90,9 +93,6 @@ jobs:
 | CLEAN_TEST_TAG | テストタグを掃除するかどうか | `false` | | `true` |
 | ORIGINAL_TAG_PREFIX | 元のタグを残す際に付与するプリフィックス | | | `original/` |
 | GITHUB_TOKEN | アクセストークン | `${{github.token}}` | true | `${{secrets.ACCESS_TOKEN}}` |
-
-## CLI ツール
-[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
 
 ## Execute commands
 ### ビルド
@@ -131,7 +131,74 @@ rm -rdf __tests__ src
 https://github.com/actions/typescript-action  
 https://github.com/actions/javascript-action  
 
-不要なファイルが削除された`GitHub Actions`の例を以下で確認できます。  
+ただし上記テンプレートにはセキュリティ上の問題などがあるため、以下の対応が必要です。
+
+#### JavaScriptのActionテンプレート
+
+プルリクエストにビルドしたファイルが含まれる場合、悪意のあるコードが埋め込まれていてもレビューで見逃す可能性が高いため、`.gitignore` を次のように修正する必要があります。
+
+`.gitignore`
+```diff
++ /dist
+```
+
+#### TypeScriptのActionテンプレート
+
+`ncc` による処理は不要なため、コマンド及びパッケージを削除し `tsc` でビルドされたスクリプトを使用するように修正します。
+
+`action.yml`  
+```diff
+ name: 'Your name here'
+ description: 'Provide a description here'
+ author: 'Your name or organization here'
+ inputs:
+   myInput:              # change this
+     description: 'input description here'
+     default: 'default value if applicable'
+ runs:
+   using: 'node12'
+-  main: 'dist/index.js'
++  main: 'lib/main.js'
+``` 
+
+`package.json`
+```diff
+   "scripts": {
+     "build": "tsc",
+     "format": "prettier --write **/*.ts",
+     "format-check": "prettier --check **/*.ts",
+     "lint": "eslint src/**/*.ts",
+-    "pack": "ncc build",
+-    "test": "jest",
+-    "all": "npm run build && npm run format && npm run lint && npm run pack && npm test"
++    "test": "jest"
+   },
+``` 
+
+```diff
+  "devDependencies": {
+     "@types/jest": "^24.0.23",
+     "@types/node": "^12.7.12",
+     "@typescript-eslint/parser": "^2.8.0",
+-    "@zeit/ncc": "^0.20.5",
+     "eslint": "^5.16.0",
+     "eslint-plugin-github": "^2.0.0",
+     "eslint-plugin-jest": "^22.21.0",
+     "jest": "^24.9.0",
+     "jest-circus": "^24.9.0",
+     "js-yaml": "^3.13.1",
+     "prettier": "^1.19.1",
+     "ts-jest": "^24.2.0",
+     "typescript": "^3.6.4"
+   }
+``` 
+
+または、私が作成したテンプレートを使用してください。
+
+[![technote-space/gh-actions-template - GitHub](https://gh-card.dev/repos/technote-space/gh-actions-template.svg)](https://github.com/technote-space/gh-actions-template)
+
+
+不要なファイルが削除された`GitHub Actions`の例は以下で確認できます。  
 https://github.com/technote-space/release-github-actions/tree/gh-actions
 
 ## Action イベント詳細

@@ -61,6 +61,9 @@ jobs:
 
 [More details of target event](#action-event-details)
 
+## CLI Tool
+[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
+
 ## Screenshots
 1. Before publish release  
    ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
@@ -90,9 +93,6 @@ jobs:
 | CLEAN_TEST_TAG | Whether to clean test tag | `false` | | `true` |
 | ORIGINAL_TAG_PREFIX | Prefix to add when leaving the original tag | | | `original/` |
 | GITHUB_TOKEN | Access token | `${{github.token}}` | true | `${{secrets.ACCESS_TOKEN}}` |
-
-## CLI Tool
-[![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
 
 ## Execute commands
 ### Build
@@ -131,6 +131,73 @@ rm -rdf __tests__ src
 The default setting assumes the use of `Action template for TypeScript` or `Action template for JavaScript`.  
 https://github.com/actions/typescript-action  
 https://github.com/actions/javascript-action  
+
+However, these templates have security issues etc, you must do the following.
+
+#### Action template for JavaScript
+
+If a pull request includes a built file, it is highly likely that even malicious code will be missed in a review, so you need to fix `.gitignore` as follows:
+
+`.gitignore`
+```diff
++ /dist
+```
+
+#### Action template for TypeScript
+
+Since processing by `ncc` is unnecessary, delete the related commands and packages and modify `action.yml` to use script built with `tsc`.
+
+`action.yml`  
+```diff
+ name: 'Your name here'
+ description: 'Provide a description here'
+ author: 'Your name or organization here'
+ inputs:
+   myInput:              # change this
+     description: 'input description here'
+     default: 'default value if applicable'
+ runs:
+   using: 'node12'
+-  main: 'dist/index.js'
++  main: 'lib/main.js'
+``` 
+
+`package.json`
+```diff
+   "scripts": {
+     "build": "tsc",
+     "format": "prettier --write **/*.ts",
+     "format-check": "prettier --check **/*.ts",
+     "lint": "eslint src/**/*.ts",
+-    "pack": "ncc build",
+-    "test": "jest",
+-    "all": "npm run build && npm run format && npm run lint && npm run pack && npm test"
++    "test": "jest"
+   },
+``` 
+
+```diff
+  "devDependencies": {
+     "@types/jest": "^24.0.23",
+     "@types/node": "^12.7.12",
+     "@typescript-eslint/parser": "^2.8.0",
+-    "@zeit/ncc": "^0.20.5",
+     "eslint": "^5.16.0",
+     "eslint-plugin-github": "^2.0.0",
+     "eslint-plugin-jest": "^22.21.0",
+     "jest": "^24.9.0",
+     "jest-circus": "^24.9.0",
+     "js-yaml": "^3.13.1",
+     "prettier": "^1.19.1",
+     "ts-jest": "^24.2.0",
+     "typescript": "^3.6.4"
+   }
+``` 
+
+Or use the template I created.
+
+[![technote-space/gh-actions-template - GitHub](https://gh-card.dev/repos/technote-space/gh-actions-template.svg)](https://github.com/technote-space/gh-actions-template)
+
 
 You can see an example of `GitHub Actions` with unnecessary files deleted below.  
 https://github.com/technote-space/release-github-actions/tree/gh-actions
