@@ -133,18 +133,18 @@ https://github.com/actions/javascript-action
 
 ただし上記テンプレートにはセキュリティ上の問題などがあるため、以下の対応が必要です。
 
-#### dist ディレクトリの除外
+#### JavaScriptのActionテンプレート
 
 プルリクエストにビルドしたファイルが含まれる場合、悪意のあるコードが埋め込まれていてもレビューで見逃す可能性が高いため、`.gitignore` を次のように修正する必要があります。
 
 `.gitignore`
 ```diff
-+ /lib
++ /dist
 ```
 
 #### TypeScriptのActionテンプレート
 
-`ncc` による処理は不要なため、コマンド及びパッケージを削除します。  
+`ncc` による処理は不要なため、コマンド及びパッケージを削除し `tsc` でビルドされたスクリプトを使用するように修正します。
 
 `action.yml`  
 ```diff
@@ -192,6 +192,10 @@ https://github.com/actions/javascript-action
      "typescript": "^3.6.4"
    }
 ``` 
+
+または、私が作成したテンプレートを使用してください。
+
+[![technote-space/gh-actions-template - GitHub](https://gh-card.dev/repos/technote-space/gh-actions-template.svg)](https://github.com/technote-space/gh-actions-template)
 
 
 不要なファイルが削除された`GitHub Actions`の例は以下で確認できます。  

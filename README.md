@@ -134,18 +134,18 @@ https://github.com/actions/javascript-action
 
 However, these templates have security issues etc, you must do the following.
 
-#### Exclude dist directory
+#### Action template for JavaScript
 
 If a pull request includes a built file, it is highly likely that even malicious code will be missed in a review, so you need to fix `.gitignore` as follows:
 
 `.gitignore`
 ```diff
-+ /lib
++ /dist
 ```
 
 #### Action template for TypeScript
 
-Since processing by `ncc` is unnecessary, delete the related commands and packages.
+Since processing by `ncc` is unnecessary, delete the related commands and packages and modify `action.yml` to use script built with `tsc`.
 
 `action.yml`  
 ```diff
@@ -193,6 +193,10 @@ Since processing by `ncc` is unnecessary, delete the related commands and packag
      "typescript": "^3.6.4"
    }
 ``` 
+
+Or use the template I created.
+
+[![technote-space/gh-actions-template - GitHub](https://gh-card.dev/repos/technote-space/gh-actions-template.svg)](https://github.com/technote-space/gh-actions-template)
 
 
 You can see an example of `GitHub Actions` with unnecessary files deleted below.  
