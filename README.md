@@ -23,7 +23,7 @@ Once you create a new tag, this action will automatically
 
 - [Usage](#usage)
 - [CLI Tool](#cli-tool)
-- [Screenshots](#screenshots)
+- [Screenshot](#screenshot)
 - [Options](#options)
 - [Execute commands](#execute-commands)
   - [Build](#build)
