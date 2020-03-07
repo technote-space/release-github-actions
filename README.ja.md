@@ -65,14 +65,7 @@ jobs:
 [![technote-space/release-github-actions-cli - GitHub](https://gh-card.dev/repos/technote-space/release-github-actions-cli.svg)](https://github.com/technote-space/release-github-actions-cli)
 
 ## スクリーンショット
-1. リリース作成前  
-   ![Before publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-1.png)
-1. リリースを作成 (タグを作成)  
-   ![Publish release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-2.png)
-1. GitHub Actions 実行中  
-   ![Running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-3.png)
-1. GitHub Actions 実行後  
-   ![After running GitHub Actions](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-4.png)
+![Release](https://raw.githubusercontent.com/technote-space/release-github-actions/images/screenshot-7.gif)
 
 ## オプション
 | name | description | default | required | e.g. |
