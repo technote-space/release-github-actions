@@ -22,9 +22,9 @@ Once you create a new tag, this action will automatically
 <summary>Details</summary>
 
 - [Usage](#usage)
+- [CLI Tool](#cli-tool)
 - [Screenshots](#screenshots)
 - [Options](#options)
-- [CLI Tool](#cli-tool)
 - [Execute commands](#execute-commands)
   - [Build](#build)
   - [Delete files](#delete-files)
