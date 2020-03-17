@@ -5,7 +5,7 @@ import {
 	getContext,
 	testEnv,
 	testFs,
-	spyOnExec,
+	spyOnSpawn,
 	execCalledWith,
 	testChildProcess,
 	setChildProcessParams,
@@ -75,7 +75,7 @@ describe('clone', () => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
 		process.env.INPUT_BRANCH_NAME  = 'test-branch';
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
-		const mockExec                 = spyOnExec();
+		const mockExec                 = spyOnSpawn();
 
 		await clone(logger, helper, getContext({
 			repo: {
@@ -100,7 +100,7 @@ describe('checkBranch', () => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
 		process.env.INPUT_BRANCH_NAME  = 'test-branch';
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
-		const mockExec                 = spyOnExec();
+		const mockExec                 = spyOnSpawn();
 
 		await checkBranch('test-branch', logger, helper, getContext({}));
 
@@ -111,7 +111,7 @@ describe('checkBranch', () => {
 		process.env.INPUT_GITHUB_TOKEN = 'test-token';
 		process.env.INPUT_BRANCH_NAME  = 'test-branch';
 		process.env.GITHUB_WORKSPACE   = 'test-dir';
-		const mockExec                 = spyOnExec();
+		const mockExec                 = spyOnSpawn();
 
 		await checkBranch('test-branch2', logger, helper, getContext({}));
 
@@ -131,18 +131,18 @@ describe('prepareFiles', () => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const commonCheck = (): (string | any[])[] => {
 		return [
-			['yarn install --production', {cwd: buildDir}],
-			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
-			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
-			['rm -rdf .[!.]*', {cwd: buildDir}],
-			['rm -rdf *.js', {cwd: buildDir}],
-			['rm -rdf *.ts', {cwd: buildDir}],
-			['rm -rdf *.json', {cwd: buildDir}],
-			['rm -rdf *.lock', {cwd: buildDir}],
-			['rm -rdf *.yml', {cwd: buildDir}],
-			['rm -rdf *.yaml', {cwd: buildDir}],
-			['rm -rdf __tests__ src', {cwd: buildDir}],
-			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			['yarn install --production', [], {cwd: buildDir, shell: true}],
+			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
+			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
+			['rm -rdf .[!.]*', [], {cwd: buildDir, shell: true}],
+			['rm -rdf *.js', [], {cwd: buildDir, shell: true}],
+			['rm -rdf *.ts', [], {cwd: buildDir, shell: true}],
+			['rm -rdf *.json', [], {cwd: buildDir, shell: true}],
+			['rm -rdf *.lock', [], {cwd: buildDir, shell: true}],
+			['rm -rdf *.yml', [], {cwd: buildDir, shell: true}],
+			['rm -rdf *.yaml', [], {cwd: buildDir, shell: true}],
+			['rm -rdf __tests__ src', [], {cwd: buildDir, shell: true}],
+			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
 		];
 	};
 
@@ -150,7 +150,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
-		const mockExec                    = spyOnExec();
+		const mockExec                    = spyOnSpawn();
 
 		await prepareFiles(logger, helper, getContext({
 			repo: {
@@ -173,7 +173,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
-		const mockExec                    = spyOnExec();
+		const mockExec                    = spyOnSpawn();
 
 		await prepareFiles(logger, helper, getContext({
 			repo: {
@@ -197,7 +197,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
 		process.env.INPUT_CLEAN_TARGETS   = 'test1,-test2,test3 test4,-test5 , test6;test7, test8/*.txt, *.test9';
-		const mockExec                    = spyOnExec();
+		const mockExec                    = spyOnSpawn();
 
 		await prepareFiles(logger, helper, getContext({
 			repo: {
@@ -213,15 +213,15 @@ describe('prepareFiles', () => {
 			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
 			'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
 			'git checkout -qf test-sha',
-			['yarn install --production', {cwd: buildDir}],
-			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
-			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
-			['rm -rdf -- -test2', {cwd: buildDir}],
-			['rm -rdf -- -test5', {cwd: buildDir}],
-			['rm -rdf test8/*.txt', {cwd: buildDir}],
-			['rm -rdf *.test9', {cwd: buildDir}],
-			['rm -rdf test1 \'test3 test4\' \'test6;test7\'', {cwd: buildDir}],
-			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			['yarn install --production', [], {cwd: buildDir, shell: true}],
+			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
+			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
+			['rm -rdf -- -test2', [], {cwd: buildDir, shell: true}],
+			['rm -rdf -- -test5', [], {cwd: buildDir, shell: true}],
+			['rm -rdf test8/*.txt', [], {cwd: buildDir, shell: true}],
+			['rm -rdf *.test9', [], {cwd: buildDir, shell: true}],
+			['rm -rdf test1 \'test3 test4\' \'test6;test7\'', [], {cwd: buildDir, shell: true}],
+			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
 		]));
 	});
 
@@ -230,7 +230,7 @@ describe('prepareFiles', () => {
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.GITHUB_WORKSPACE      = 'test-dir';
 		process.env.INPUT_CLEAN_TARGETS   = '-test1, -test2/?<>:|"\'@#$%^& ;.*.test3 , ?<>:|"\'@#$%^& ;/test4 test5/*.txt,;?<>:|"\'@#$%^& ;.txt,rm -rf /';
-		const mockExec                    = spyOnExec();
+		const mockExec                    = spyOnSpawn();
 
 		await prepareFiles(logger, helper, getContext({
 			repo: {
@@ -246,14 +246,14 @@ describe('prepareFiles', () => {
 			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
 			'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
 			'git checkout -qf test-sha',
-			['yarn install --production', {cwd: buildDir}],
-			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
-			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
-			['rm -rdf -- -test1', {cwd: buildDir}],
-			['rm -rdf -- -test2/\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;.*.test3', {cwd: buildDir}],
-			['rm -rdf ?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;/test4 test5/*.txt', {cwd: buildDir}],
-			['rm -rdf \';?<>:|"\'\\\'\'@#$%^& ;.txt\' \'rm -rf /\'', {cwd: buildDir}],
-			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, {cwd: buildDir}],
+			['yarn install --production', [], {cwd: buildDir, shell: true}],
+			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
+			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
+			['rm -rdf -- -test1', [], {cwd: buildDir, shell: true}],
+			['rm -rdf -- -test2/\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;.*.test3', [], {cwd: buildDir, shell: true}],
+			['rm -rdf ?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;/test4 test5/*.txt', [], {cwd: buildDir, shell: true}],
+			['rm -rdf \';?<>:|"\'\\\'\'@#$%^& ;.txt\' \'rm -rf /\'', [], {cwd: buildDir, shell: true}],
+			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
 		]));
 	});
 });
@@ -319,7 +319,7 @@ describe('copyFiles', () => {
 
 	it('should run rsync command', async() => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec               = spyOnExec();
+		const mockExec               = spyOnSpawn();
 
 		await copyFiles(logger, new Command(logger), getContext({}));
 
@@ -336,7 +336,7 @@ describe('config', () => {
 
 	it('should run git config command', async() => {
 		process.env.GITHUB_WORKSPACE = 'test-dir';
-		const mockExec               = spyOnExec();
+		const mockExec               = spyOnSpawn();
 
 		await config(logger, helper, getContext({}));
 
@@ -414,7 +414,7 @@ describe('deleteTestTags', () => {
 		process.env.INPUT_GITHUB_TOKEN        = 'test-token';
 		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
 		process.env.INPUT_CLEAN_TEST_TAG      = '1';
-		const mockExec                        = spyOnExec();
+		const mockExec                        = spyOnSpawn();
 
 		await deleteTestTags(helper, context);
 
@@ -425,7 +425,7 @@ describe('deleteTestTags', () => {
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
 		process.env.INPUT_CLEAN_TEST_TAG  = '';
-		const mockExec                    = spyOnExec();
+		const mockExec                    = spyOnSpawn();
 
 		await deleteTestTags(helper, context);
 
@@ -436,7 +436,7 @@ describe('deleteTestTags', () => {
 		process.env.INPUT_GITHUB_TOKEN    = 'test-token';
 		process.env.INPUT_TEST_TAG_PREFIX = 'test/';
 		process.env.INPUT_CLEAN_TEST_TAG  = '1';
-		const mockExec                    = spyOnExec();
+		const mockExec                    = spyOnSpawn();
 		setChildProcessParams({
 			stdout: (command: string): string => {
 				if (command.endsWith('git tag')) {
@@ -460,7 +460,7 @@ describe('deleteTestTags', () => {
 		process.env.INPUT_TEST_TAG_PREFIX     = 'test/';
 		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
 		process.env.INPUT_CLEAN_TEST_TAG      = '1';
-		const mockExec                        = spyOnExec();
+		const mockExec                        = spyOnSpawn();
 		setChildProcessParams({
 			stdout: (command: string): string => {
 				if (command.endsWith('git tag')) {
@@ -492,7 +492,7 @@ describe('push', () => {
 		process.env.GITHUB_WORKSPACE     = 'test-dir';
 		process.env.INPUT_BRANCH_NAME    = 'test-branch';
 		process.env.INPUT_CLEAN_TEST_TAG = '1';
-		const mockExec                   = spyOnExec();
+		const mockExec                   = spyOnSpawn();
 		const mockStdout                 = spyOnStdout();
 
 		await push(logger, helper, getContext({
@@ -548,7 +548,7 @@ describe('push', () => {
 		process.env.INPUT_TEST_TAG_PREFIX     = 'test/';
 		process.env.INPUT_ORIGINAL_TAG_PREFIX = 'original/';
 		process.env.INPUT_CLEAN_TEST_TAG      = '1';
-		const mockExec                        = spyOnExec();
+		const mockExec                        = spyOnSpawn();
 		const mockStdout                      = spyOnStdout();
 
 		await push(logger, helper, getContext({
