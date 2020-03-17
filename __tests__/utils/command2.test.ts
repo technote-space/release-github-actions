@@ -9,7 +9,7 @@ import {
 	testEnv,
 	disableNetConnect,
 	getApiFixture,
-	spyOnExec,
+	spyOnSpawn,
 	testChildProcess,
 	testFs,
 	setChildProcessParams,
@@ -23,7 +23,7 @@ import {
 
 const rootDir = resolve(__dirname, '../..');
 const common  = async(callback: Function, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
-	const mockExec = spyOnExec();
+	const mockExec = spyOnSpawn();
 	const fn1      = jest.fn();
 	const fn2      = jest.fn();
 	nock('https://api.github.com')
