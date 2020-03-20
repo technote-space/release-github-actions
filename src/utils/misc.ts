@@ -22,25 +22,26 @@ const getCleanTargets = (): Array<string> => Utils.getArrayInput('CLEAN_TARGETS'
 
 export const getSearchBuildCommandTargets = (): Array<string> => Utils.getArrayInput('BUILD_COMMAND_TARGET', true);
 
-export const detectBuildCommand = (dir: string): boolean | string => {
+export const detectBuildCommands = (dir: string, runCommand: string, commands: Array<string>): Array<string> => {
 	const packageFile = resolve(dir, 'package.json');
 	if (!existsSync(packageFile)) {
-		return false;
+		return [];
 	}
 
 	const parsed = JSON.parse(readFileSync(packageFile, 'utf8'));
 	if (!('scripts' in parsed)) {
-		return false;
+		return [];
 	}
 
 	const scripts = parsed['scripts'];
+	const targets = Array<string>();
 	for (const target of getSearchBuildCommandTargets()) {
-		if (target in scripts) {
-			return target;
+		if (target in scripts && !commands.includes(`${runCommand}${target}`)) {
+			targets.push(target);
 		}
 	}
 
-	return false;
+	return targets;
 };
 
 export const getBackupCommands = (buildDir: string, pushDir: string): Array<CommandType> => [
@@ -92,16 +93,15 @@ export const getClearFilesCommands = (targets: Array<string>): Array<CommandType
 };
 
 export const getBuildCommands = (buildDir: string, pushDir: string): Array<CommandType> => {
-	let commands: Array<CommandType> = Utils.getArrayInput('BUILD_COMMAND', false, '&&');
+	const commands: Array<string> = Utils.getArrayInput('BUILD_COMMAND', false, '&&').map(command => command.replace(/\s{2,}/g, ' '));
+	const pkgManager              = Utils.useNpm(buildDir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
+	const runSubCommand           = pkgManager === 'npm' ? ' run ' : ' ';
+	const runCommand              = [pkgManager, runSubCommand].join('');
+	const hasInstallCommand       = !!commands.filter(command => command.includes(`${runCommand}install`)).length;
+	const buildCommands           = detectBuildCommands(buildDir, runCommand, commands);
 
-	const pkgManager        = Utils.useNpm(buildDir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
-	const buildCommand      = detectBuildCommand(buildDir);
-	const runSubCommand     = pkgManager === 'npm' ? ' run ' : ' ';
-	const hasInstallCommand = !!commands.filter(command => typeof command === 'string' && (command.includes('npm run install') || command.includes(`${pkgManager} install`))).length;
-
-	if (typeof buildCommand === 'string') {
-		commands = commands.filter(command => typeof command !== 'string' || !command.startsWith(`npm run ${buildCommand}`) && !command.startsWith(`yarn ${buildCommand}`));
-		commands.push([pkgManager, runSubCommand, buildCommand].join(''));
+	if (buildCommands.length) {
+		commands.push(...buildCommands.map(command => `${runCommand}${command}`));
 	}
 
 	if (!hasInstallCommand && commands.length) {
@@ -115,11 +115,12 @@ export const getBuildCommands = (buildDir: string, pushDir: string): Array<Comma
 		commands.push(`${pkgManager} install --production`);
 	}
 
-	commands.push(...getBackupCommands(buildDir, pushDir));
-	commands.push(...getClearFilesCommands(getCleanTargets()));
-	commands.push(...getRestoreBackupCommands(buildDir, pushDir));
-
-	return commands;
+	return [
+		...commands,
+		...getBackupCommands(buildDir, pushDir),
+		...getClearFilesCommands(getCleanTargets()),
+		...getRestoreBackupCommands(buildDir, pushDir),
+	];
 };
 
 export const getCommitMessage = (): string => getInput('COMMIT_MESSAGE', {required: true});

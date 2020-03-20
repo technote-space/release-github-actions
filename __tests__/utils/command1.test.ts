@@ -141,7 +141,7 @@ describe('prepareFiles', () => {
 			['rm -rdf *.lock', [], {cwd: buildDir, shell: true}],
 			['rm -rdf *.yml', [], {cwd: buildDir, shell: true}],
 			['rm -rdf *.yaml', [], {cwd: buildDir, shell: true}],
-			['rm -rdf __tests__ src', [], {cwd: buildDir, shell: true}],
+			['rm -rdf __tests__ docs src', [], {cwd: buildDir, shell: true}],
 			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
 		];
 	};

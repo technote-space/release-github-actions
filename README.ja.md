@@ -56,7 +56,7 @@ jobs:
     name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: technote-space/release-github-actions@v4
+      - uses: technote-space/release-github-actions@v5
 ```
 
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
@@ -71,13 +71,13 @@ jobs:
 | name | description | default | required | e.g. |
 |:---:|:---|:---:|:---:|:---:|
 | BUILD_COMMAND | ビルド用コマンド<br>[コマンドの詳細](#execute-commands) | | | `yarn build:all` |
-| CLEAN_TARGETS | リリース前に掃除するファイルやディレクトリ (カンマ区切り)<br>絶対パスや `..` は使用できません<br>[コマンドの詳細](#execute-commands) |`.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
+| CLEAN_TARGETS | リリース前に掃除するファイルやディレクトリ (カンマ区切り)<br>絶対パスや `..` は使用できません<br>[コマンドの詳細](#execute-commands) |`.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
 | PACKAGE_MANAGER | 依存関係のインストールに使用するパッケージマネージャー<br>`yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます<br>（`npm` または `yarn`） | | | `yarn` |
 | COMMIT_MESSAGE | コミット時に設定するメッセージ | `feat: build for release` | true | `feat: release` |
 | COMMIT_NAME | コミット時に設定する名前 | `github-actions[bot]` | true | |
 | COMMIT_EMAIL | コミット時に設定する名前 | `41898282+github-actions[bot]@users.noreply.github.com` | true | |
 | BRANCH_NAME | GitHub Actions 用のブランチ名 | `releases/${MAJOR}` | true | `releases/${MINOR}`, `releases/${PATCH}` |
-| BUILD_COMMAND_TARGET | ビルド用コマンド検索ターゲット | `build, production, prod, package` | | `compile` |
+| BUILD_COMMAND_TARGET | ビルド用コマンド検索ターゲット | `build, production, prod, package, pack` | | `compile` |
 | CREATE_MAJOR_VERSION_TAG | メジャーバージョンタグ(例：v1)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
 | CREATE_MINOR_VERSION_TAG | マイナーバージョンタグ(例：v1.2)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
 | CREATE_PATCH_VERSION_TAG | パッチバージョンタグ(例：v1.2.3)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
@@ -89,7 +89,7 @@ jobs:
 
 ## Execute commands
 ### ビルド
-- `build`、 `production`、 `prod` または `package` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。([BUILD_COMMAND_TARGET](#build_command_target) で変更可能です)  
+- `build`、 `production`、 `prod`、 `package` または `pack` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれらを使用します。([BUILD_COMMAND_TARGET](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3) で変更可能です)  
 - `npm run install` や `yarn install` のようなインストール用コマンドが存在しない場合、インストール用コマンドが追加されます。  
 
 したがって、`BUILD_COMMAND` が設定されていない かつ package.json に `build` が存在する場合、以下のコマンドが実行されます。
@@ -100,12 +100,21 @@ yarn build
 yarn install --production
 ```
 
+`build` と `pack` が含まれる場合は、以下のコマンドになります。
+                            
+```shell
+yarn install
+yarn build
+yarn pack
+yarn install --production
+```
+
 ### ファイル削除
 `GitHub Actions` の実行には「ビルドに使用するソース」や「テストファイル」、「テストの設定」などを必要としません。  
 そして `GitHub Actions` は使用されるたびにダウンロードされるため、ファイルは少ないほうが良いです。  
 
 `CLEAN_TARGETS` オプションはこの目的のために使用されます。  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
+default: `.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
 
 ```shell
 rm -rdf .[!.]*
@@ -115,7 +124,7 @@ rm -rdf *.json
 rm -rdf *.lock
 rm -rdf *.yml
 rm -rdf *.yaml
-rm -rdf __tests__ src
+rm -rdf __tests__ docs src
 ```
 
 (action.yml は削除の対象ではありません)

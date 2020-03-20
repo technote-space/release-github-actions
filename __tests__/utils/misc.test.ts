@@ -14,7 +14,7 @@ import {
 	getTestTag,
 	getClearFilesCommands,
 	getBuildCommands,
-	detectBuildCommand,
+	detectBuildCommands,
 	isValidTagName,
 	getMajorTag,
 	getMinorTag,
@@ -312,7 +312,7 @@ describe('getBuildCommands', () => {
 	testEnv(rootDir);
 	const pushDir   = resolve(__dirname, '../fixtures/.push');
 	const buildDir1 = resolve(__dirname, '../fixtures/test1');
-	const buildDir4 = resolve(__dirname, '../fixtures/test4');
+	const buildDir7 = resolve(__dirname, '../fixtures/test7');
 	const mv1       = (buildDir: string): Array<object> => [
 		{
 			command: 'mv',
@@ -343,7 +343,7 @@ describe('getBuildCommands', () => {
 		'rm -rdf *.lock',
 		'rm -rdf *.yml',
 		'rm -rdf *.yaml',
-		{command: 'rm', args: ['-rdf', '__tests__', 'src']},
+		{command: 'rm', args: ['-rdf', '__tests__', 'docs', 'src']},
 	];
 	const clean     = (buildDir: string): Array<string | object> => [
 		...mv1(buildDir),
@@ -354,43 +354,43 @@ describe('getBuildCommands', () => {
 	it('should get build commands 1', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_BUILD_COMMAND   = 'test';
-		expect(getBuildCommands(buildDir4, pushDir)).toEqual([
+		expect(getBuildCommands(buildDir7, pushDir)).toEqual([
 			'yarn install',
 			'test',
-			'yarn build',
+			'yarn package',
 			'yarn install --production',
-			...clean(buildDir4),
+			...clean(buildDir7),
 		]);
 	});
 
 	it('should get build commands 2', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
-		expect(getBuildCommands(buildDir4, pushDir)).toEqual([
+		expect(getBuildCommands(buildDir7, pushDir)).toEqual([
 			'yarn install',
-			'yarn build',
+			'yarn package',
 			'yarn install --production',
-			...clean(buildDir4),
+			...clean(buildDir7),
 		]);
 	});
 
 	it('should get build commands 3', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
-		process.env.INPUT_BUILD_COMMAND   = 'yarn build';
-		expect(getBuildCommands(buildDir4, pushDir)).toEqual([
+		process.env.INPUT_BUILD_COMMAND   = 'yarn package';
+		expect(getBuildCommands(buildDir7, pushDir)).toEqual([
 			'yarn install',
-			'yarn build',
+			'yarn package',
 			'yarn install --production',
-			...clean(buildDir4),
+			...clean(buildDir7),
 		]);
 	});
 
 	it('should get build commands 4', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
-		process.env.INPUT_BUILD_COMMAND   = 'yarn install && yarn build';
-		expect(getBuildCommands(buildDir4, pushDir)).toEqual([
+		process.env.INPUT_BUILD_COMMAND   = 'yarn   install && yarn package';
+		expect(getBuildCommands(buildDir7, pushDir)).toEqual([
 			'yarn install',
-			'yarn build',
-			...clean(buildDir4),
+			'yarn package',
+			...clean(buildDir7),
 		]);
 	});
 
@@ -429,81 +429,81 @@ describe('getBuildCommands', () => {
 	it('should get build commands 8', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'invalid-pkg-mgr';
 		process.env.INPUT_BUILD_COMMAND   = 'test';
-		expect(getBuildCommands(buildDir4, pushDir)).toEqual([
+		expect(getBuildCommands(buildDir7, pushDir)).toEqual([
 			'npm install',
 			'test',
-			'npm run build',
+			'npm run package',
 			'rm -rdf node_modules',
 			'npm install --production',
-			...clean(buildDir4),
+			...clean(buildDir7),
 		]);
 	});
 
 	it('should get build commands 9', () => {
 		process.env.INPUT_BUILD_COMMAND = 'test';
-		expect(getBuildCommands(buildDir4, pushDir)).toEqual([
+		expect(getBuildCommands(buildDir7, pushDir)).toEqual([
 			'npm install',
 			'test',
-			'npm run build',
+			'npm run package',
 			'rm -rdf node_modules',
 			'npm install --production',
-			...clean(buildDir4),
+			...clean(buildDir7),
 		]);
 	});
 
 	it('should get build commands 10', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'npm';
-		expect(getBuildCommands(buildDir4, pushDir)).toEqual([
+		expect(getBuildCommands(buildDir7, pushDir)).toEqual([
 			'npm install',
-			'npm run build',
+			'npm run package',
 			'rm -rdf node_modules',
 			'npm install --production',
-			...clean(buildDir4),
+			...clean(buildDir7),
 		]);
 	});
 
 	it('should get build commands 11', () => {
 		process.env.INPUT_PACKAGE_MANAGER = 'yarn';
 		process.env.INPUT_CLEAN_TARGETS   = '';
-		expect(getBuildCommands(buildDir4, pushDir)).toEqual([
+		expect(getBuildCommands(buildDir7, pushDir)).toEqual([
 			'yarn install',
-			'yarn build',
+			'yarn package',
 			'yarn install --production',
-			...mv1(buildDir4),
-			...mv2(buildDir4),
+			...mv1(buildDir7),
+			...mv2(buildDir7),
 		]);
 	});
 });
 
-describe('detectBuildCommand', () => {
+describe('detectBuildCommands', () => {
 	testEnv(rootDir);
 
 	it('should return false 1', () => {
-		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test1'))).toBe(false);
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test1'), 'yarn ', [])).toEqual([]);
 	});
 
 	it('should return false 2', () => {
-		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test2'))).toBe(false);
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test2'), 'yarn ', [])).toEqual([]);
 	});
 
 	it('should return false 3', () => {
-		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test3'))).toBe(false);
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test3'), 'yarn ', [])).toEqual([]);
 	});
 
 	it('should detect build command 1', () => {
-		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test4'))).toBe('build');
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test4'), 'yarn ', [])).toEqual(['build', 'production', 'prod', 'package']);
 	});
 
 	it('should detect build command 2', () => {
-		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test5'))).toBe('production');
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test5'), 'yarn ', ['yarn prod'])).toEqual(['production', 'package']);
 	});
 
 	it('should detect build command 3', () => {
-		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test6'))).toBe('prod');
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test6'), 'npm run ', ['npm run prod', 'yarn package'])).toEqual(['package']);
 	});
 
 	it('should detect build command 4', () => {
-		expect(detectBuildCommand(resolve(__dirname, '../fixtures/test7'))).toBe('package');
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test7'), 'yarn ', ['yarn prod'])).toEqual(['package']);
 	});
 });
 

@@ -56,7 +56,7 @@ jobs:
     name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: technote-space/release-github-actions@v4
+      - uses: technote-space/release-github-actions@v5
 ```
 
 [More details of target event](#action-event-details)
@@ -71,13 +71,13 @@ jobs:
 | name | description | default | required | e.g. |
 |:---:|:---|:---:|:---:|:---:|
 | BUILD_COMMAND | Build command<br>[More details of execute command](#execute-commands) | | | `yarn build:all` |
-| CLEAN_TARGETS | Files or directories to clean before release (Comma separated)<br>Absolute path and `..` are not permitted to use.<br>[More details of execute command](#execute-commands) | `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
+| CLEAN_TARGETS | Files or directories to clean before release (Comma separated)<br>Absolute path and `..` are not permitted to use.<br>[More details of execute command](#execute-commands) | `.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
 | PACKAGE_MANAGER | Package manager to use to install dependencies<br>If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used to specify it explicitly.<br>（`npm` or `yarn`） | | | `yarn` |
 | COMMIT_MESSAGE | Commit message | `feat: build for release` | true | `feat: release` |
 | COMMIT_NAME | Commit name | `github-actions[bot]` | true | |
 | COMMIT_EMAIL | Commit email | `41898282+github-actions[bot]@users.noreply.github.com` | true | |
 | BRANCH_NAME | Branch name for `GitHub Actions` release | `releases/${MAJOR}` | true | `releases/${MINOR}`, `releases/${PATCH}` |
-| BUILD_COMMAND_TARGET | Command for search build command | `build, production, prod, package` | | `compile` |
+| BUILD_COMMAND_TARGET | Command for search build command | `build, production, prod, package, pack` | | `compile` |
 | CREATE_MAJOR_VERSION_TAG | Whether to create major version tag (e.g. v1)<br>[Detail of tags](#tags) | `true` | | `false` |
 | CREATE_MINOR_VERSION_TAG | Whether to create minor version tag (e.g. v1.2)<br>[Detail of tags](#tags) | `true` | | `false` |
 | CREATE_PATCH_VERSION_TAG | Whether to create patch version tag (e.g. v1.2.3)<br>[Detail of tags](#tags) | `true` | | `false` |
@@ -89,7 +89,7 @@ jobs:
 
 ## Execute commands
 ### Build
-- If package.json includes `build`, `production`, `prod` or `package` in scripts, the command is used for build. (You can change this with [BUILD_COMMAND_TARGET](#build_command_target))  
+- If package.json includes `build`, `production`, `prod`, `package` or `pack` in scripts, the commands are used for build. (You can change this with [BUILD_COMMAND_TARGET](#options))  
 - If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
 
 so if `BUILD_COMMAND` is not provided and package.json has `build` script,
@@ -101,12 +101,21 @@ yarn build
 yarn install --production
 ```
 
+If `build` and `pack` are included, the commands are:
+                            
+```shell
+yarn install
+yarn build
+yarn pack
+yarn install --production
+```
+
 ### Delete files
 To execute `GitHub Actions`, `src files used for build`, `test files`, `test settings`, etc. are not required.  
 And `GitHub Actions` is downloaded every time when it is used, so fewer files are better.  
 
 `CLEAN_TARGETS` option is used for this purpose.  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
+default: `.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
 
 ```shell
 rm -rdf .[!.]*
@@ -116,7 +125,7 @@ rm -rdf *.json
 rm -rdf *.lock
 rm -rdf *.yml
 rm -rdf *.yaml
-rm -rdf __tests__ src
+rm -rdf __tests__ docs src
 ```
 
 (action.yml is not subject to deletion.)
