@@ -56,7 +56,7 @@ jobs:
     name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: technote-space/release-github-actions@v4
+      - uses: technote-space/release-github-actions@v5
 ```
 
 [More details of target event](#action-event-details)
@@ -71,7 +71,7 @@ jobs:
 | name | description | default | required | e.g. |
 |:---:|:---|:---:|:---:|:---:|
 | BUILD_COMMAND | Build command<br>[More details of execute command](#execute-commands) | | | `yarn build:all` |
-| CLEAN_TARGETS | Files or directories to clean before release (Comma separated)<br>Absolute path and `..` are not permitted to use.<br>[More details of execute command](#execute-commands) | `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
+| CLEAN_TARGETS | Files or directories to clean before release (Comma separated)<br>Absolute path and `..` are not permitted to use.<br>[More details of execute command](#execute-commands) | `.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
 | PACKAGE_MANAGER | Package manager to use to install dependencies<br>If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used to specify it explicitly.<br>（`npm` or `yarn`） | | | `yarn` |
 | COMMIT_MESSAGE | Commit message | `feat: build for release` | true | `feat: release` |
 | COMMIT_NAME | Commit name | `github-actions[bot]` | true | |

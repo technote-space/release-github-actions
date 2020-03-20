@@ -56,7 +56,7 @@ jobs:
     name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: technote-space/release-github-actions@v4
+      - uses: technote-space/release-github-actions@v5
 ```
 
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
@@ -71,7 +71,7 @@ jobs:
 | name | description | default | required | e.g. |
 |:---:|:---|:---:|:---:|:---:|
 | BUILD_COMMAND | ビルド用コマンド<br>[コマンドの詳細](#execute-commands) | | | `yarn build:all` |
-| CLEAN_TARGETS | リリース前に掃除するファイルやディレクトリ (カンマ区切り)<br>絶対パスや `..` は使用できません<br>[コマンドの詳細](#execute-commands) |`.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
+| CLEAN_TARGETS | リリース前に掃除するファイルやディレクトリ (カンマ区切り)<br>絶対パスや `..` は使用できません<br>[コマンドの詳細](#execute-commands) |`.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
 | PACKAGE_MANAGER | 依存関係のインストールに使用するパッケージマネージャー<br>`yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます<br>（`npm` または `yarn`） | | | `yarn` |
 | COMMIT_MESSAGE | コミット時に設定するメッセージ | `feat: build for release` | true | `feat: release` |
 | COMMIT_NAME | コミット時に設定する名前 | `github-actions[bot]` | true | |
