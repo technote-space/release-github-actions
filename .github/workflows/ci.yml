@@ -259,7 +259,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: success()
+        if: success() && env.SLACK_WEBHOOK_URL
 
   slack:
     name: Slack
@@ -274,4 +274,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: env.WORKFLOW_CONCLUSION == 'failure'
+        if: env.WORKFLOW_CONCLUSION == 'failure' && env.SLACK_WEBHOOK_URL
