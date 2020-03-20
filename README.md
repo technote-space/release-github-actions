@@ -115,7 +115,7 @@ To execute `GitHub Actions`, `src files used for build`, `test files`, `test set
 And `GitHub Actions` is downloaded every time when it is used, so fewer files are better.  
 
 `CLEAN_TARGETS` option is used for this purpose.  
-default: `.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
+default: `.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
 
 ```shell
 rm -rdf .[!.]*
@@ -125,7 +125,7 @@ rm -rdf *.json
 rm -rdf *.lock
 rm -rdf *.yml
 rm -rdf *.yaml
-rm -rdf __tests__ src
+rm -rdf __tests__ docs src
 ```
 
 (action.yml is not subject to deletion.)
