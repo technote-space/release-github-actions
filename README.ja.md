@@ -77,7 +77,7 @@ jobs:
 | COMMIT_NAME | コミット時に設定する名前 | `github-actions[bot]` | true | |
 | COMMIT_EMAIL | コミット時に設定する名前 | `41898282+github-actions[bot]@users.noreply.github.com` | true | |
 | BRANCH_NAME | GitHub Actions 用のブランチ名 | `releases/${MAJOR}` | true | `releases/${MINOR}`, `releases/${PATCH}` |
-| BUILD_COMMAND_TARGET | ビルド用コマンド検索ターゲット | `build, production, prod, package` | | `compile` |
+| BUILD_COMMAND_TARGET | ビルド用コマンド検索ターゲット | `build, production, prod, package, pack` | | `compile` |
 | CREATE_MAJOR_VERSION_TAG | メジャーバージョンタグ(例：v1)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
 | CREATE_MINOR_VERSION_TAG | マイナーバージョンタグ(例：v1.2)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
 | CREATE_PATCH_VERSION_TAG | パッチバージョンタグ(例：v1.2.3)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
@@ -89,7 +89,7 @@ jobs:
 
 ## Execute commands
 ### ビルド
-- `build`、 `production`、 `prod` または `package` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれを使用します。([BUILD_COMMAND_TARGET](#build_command_target) で変更可能です)  
+- `build`、 `production`、 `prod`、 `package` または `pack` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれらを使用します。([BUILD_COMMAND_TARGET](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3) で変更可能です)  
 - `npm run install` や `yarn install` のようなインストール用コマンドが存在しない場合、インストール用コマンドが追加されます。  
 
 したがって、`BUILD_COMMAND` が設定されていない かつ package.json に `build` が存在する場合、以下のコマンドが実行されます。
@@ -97,6 +97,15 @@ jobs:
 ```shell
 yarn install
 yarn build
+yarn install --production
+```
+
+`build` と `pack` が含まれる場合は、以下のコマンドになります。
+                            
+```shell
+yarn install
+yarn build
+yarn pack
 yarn install --production
 ```
 

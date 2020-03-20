@@ -77,7 +77,7 @@ jobs:
 | COMMIT_NAME | Commit name | `github-actions[bot]` | true | |
 | COMMIT_EMAIL | Commit email | `41898282+github-actions[bot]@users.noreply.github.com` | true | |
 | BRANCH_NAME | Branch name for `GitHub Actions` release | `releases/${MAJOR}` | true | `releases/${MINOR}`, `releases/${PATCH}` |
-| BUILD_COMMAND_TARGET | Command for search build command | `build, production, prod, package` | | `compile` |
+| BUILD_COMMAND_TARGET | Command for search build command | `build, production, prod, package, pack` | | `compile` |
 | CREATE_MAJOR_VERSION_TAG | Whether to create major version tag (e.g. v1)<br>[Detail of tags](#tags) | `true` | | `false` |
 | CREATE_MINOR_VERSION_TAG | Whether to create minor version tag (e.g. v1.2)<br>[Detail of tags](#tags) | `true` | | `false` |
 | CREATE_PATCH_VERSION_TAG | Whether to create patch version tag (e.g. v1.2.3)<br>[Detail of tags](#tags) | `true` | | `false` |
@@ -89,7 +89,7 @@ jobs:
 
 ## Execute commands
 ### Build
-- If package.json includes `build`, `production`, `prod` or `package` in scripts, the command is used for build. (You can change this with [BUILD_COMMAND_TARGET](#build_command_target))  
+- If package.json includes `build`, `production`, `prod`, `package` or `pack` in scripts, the commands are used for build. (You can change this with [BUILD_COMMAND_TARGET](#options))  
 - If command does not have install command like `npm run install` or `yarn install`, install commands are added.  
 
 so if `BUILD_COMMAND` is not provided and package.json has `build` script,
@@ -98,6 +98,15 @@ the following commands are executed for build.
 ```shell
 yarn install
 yarn build
+yarn install --production
+```
+
+If `build` and `pack` are included, the commands are:
+                            
+```shell
+yarn install
+yarn build
+yarn pack
 yarn install --production
 ```
 
