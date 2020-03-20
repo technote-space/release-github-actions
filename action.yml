@@ -35,7 +35,7 @@ inputs:
     required: true
   CLEAN_TARGETS:
     description: Files or directories to clean before release. (Comma separated)
-    default: '.[!.]*,__tests__,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml'
+    default: '.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml'
     required: true
   BUILD_COMMAND_TARGET:
     description: Command for search build command.

@@ -343,7 +343,7 @@ describe('getBuildCommands', () => {
 		'rm -rdf *.lock',
 		'rm -rdf *.yml',
 		'rm -rdf *.yaml',
-		{command: 'rm', args: ['-rdf', '__tests__', 'src']},
+		{command: 'rm', args: ['-rdf', '__tests__', 'docs', 'src']},
 	];
 	const clean     = (buildDir: string): Array<string | object> => [
 		...mv1(buildDir),
