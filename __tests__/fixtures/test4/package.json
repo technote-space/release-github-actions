@@ -2,9 +2,9 @@
   "name": "test",
   "version": "0.0.1",
   "scripts": {
-    "build": "test1",
     "production": "test2",
     "prod": "test3",
-    "package": "test4"
+    "package": "test4",
+    "build": "test1"
   }
 }
