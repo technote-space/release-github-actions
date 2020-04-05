@@ -2,7 +2,7 @@
 import { resolve } from 'path';
 import nock from 'nock';
 import { Context } from '@actions/github/lib/context';
-import { Octokit } from '@octokit/rest';
+import type { Octokit } from '@octokit/rest';
 import { Logger } from '@technote-space/github-action-helper';
 import {
 	getContext,
@@ -20,6 +20,7 @@ import {
 	updateRelease,
 	deploy,
 } from '../../src/utils/command';
+import { ReposListReleasesResponseItem } from '../../src/types';
 
 const rootDir = resolve(__dirname, '../..');
 const common  = async(callback: Function, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
@@ -64,7 +65,7 @@ describe('updateRelease', () => {
 	testEnv(rootDir);
 	disableNetConnect(nock);
 
-	const getReleaseItem = (override: object): Octokit.ReposListReleasesResponseItem => Object.assign({
+	const getReleaseItem = (override: object): ReposListReleasesResponseItem => Object.assign({
 		url: '',
 		'html_url': '',
 		'assets_url': '',

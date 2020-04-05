@@ -129,20 +129,20 @@ describe('prepareFiles', () => {
 	const pushDir  = resolve('test-dir/.work/push');
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const commonCheck = (): (string | any[])[] => {
+	const commonCheck = (): string[] => {
 		return [
-			['yarn install --production', [], {cwd: buildDir, shell: true}],
-			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
-			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
-			['rm -rdf .[!.]*', [], {cwd: buildDir, shell: true}],
-			['rm -rdf *.js', [], {cwd: buildDir, shell: true}],
-			['rm -rdf *.ts', [], {cwd: buildDir, shell: true}],
-			['rm -rdf *.json', [], {cwd: buildDir, shell: true}],
-			['rm -rdf *.lock', [], {cwd: buildDir, shell: true}],
-			['rm -rdf *.yml', [], {cwd: buildDir, shell: true}],
-			['rm -rdf *.yaml', [], {cwd: buildDir, shell: true}],
-			['rm -rdf __tests__ docs src', [], {cwd: buildDir, shell: true}],
-			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
+			'yarn install --production',
+			`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
+			`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
+			'rm -rdf .[!.]*',
+			'rm -rdf *.js',
+			'rm -rdf *.ts',
+			'rm -rdf *.json',
+			'rm -rdf *.lock',
+			'rm -rdf *.yml',
+			'rm -rdf *.yaml',
+			'rm -rdf __tests__ docs src',
+			`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`,
 		];
 	};
 
@@ -213,15 +213,15 @@ describe('prepareFiles', () => {
 			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
 			'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
 			'git checkout -qf test-sha',
-			['yarn install --production', [], {cwd: buildDir, shell: true}],
-			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
-			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
-			['rm -rdf -- -test2', [], {cwd: buildDir, shell: true}],
-			['rm -rdf -- -test5', [], {cwd: buildDir, shell: true}],
-			['rm -rdf test8/*.txt', [], {cwd: buildDir, shell: true}],
-			['rm -rdf *.test9', [], {cwd: buildDir, shell: true}],
-			['rm -rdf test1 \'test3 test4\' \'test6;test7\'', [], {cwd: buildDir, shell: true}],
-			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
+			'yarn install --production',
+			`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
+			`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
+			'rm -rdf -- -test2',
+			'rm -rdf -- -test5',
+			'rm -rdf test8/*.txt',
+			'rm -rdf *.test9',
+			'rm -rdf test1 \'test3 test4\' \'test6;test7\'',
+			`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`,
 		]));
 	});
 
@@ -246,14 +246,14 @@ describe('prepareFiles', () => {
 			'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
 			'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
 			'git checkout -qf test-sha',
-			['yarn install --production', [], {cwd: buildDir, shell: true}],
-			[`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
-			[`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
-			['rm -rdf -- -test1', [], {cwd: buildDir, shell: true}],
-			['rm -rdf -- -test2/\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;.*.test3', [], {cwd: buildDir, shell: true}],
-			['rm -rdf ?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;/test4 test5/*.txt', [], {cwd: buildDir, shell: true}],
-			['rm -rdf \';?<>:|"\'\\\'\'@#$%^& ;.txt\' \'rm -rf /\'', [], {cwd: buildDir, shell: true}],
-			[`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`, [], {cwd: buildDir, shell: true}],
+			'yarn install --production',
+			`mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
+			`mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
+			'rm -rdf -- -test1',
+			'rm -rdf -- -test2/\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;.*.test3',
+			'rm -rdf ?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;/test4 test5/*.txt',
+			'rm -rdf \';?<>:|"\'\\\'\'@#$%^& ;.txt\' \'rm -rf /\'',
+			`mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`,
 		]));
 	});
 });
