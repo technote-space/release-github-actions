@@ -39,8 +39,12 @@ inputs:
     required: true
   BUILD_COMMAND_TARGET:
     description: Command for search build command.
-    default: 'build,production,prod,package,pack'
+    default: 'prepare,build,production,prod,package,pack'
     required: true
+  ALLOW_MULTIPLE_BUILD_COMMANDS:
+    description: Whether to allow run multiple build commands.
+    default: 'true'
+    required: false
   CREATE_MAJOR_VERSION_TAG:
     description: Whether to create major version tag.
     default: 'true'
