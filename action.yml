@@ -1,0 +1,83 @@
+name: Release GitHub Actions
+
+description: This is a GitHub Actions that automates the release of GitHub Actions.
+
+author: technote-space
+
+inputs:
+  GITHUB_TOKEN:
+    description: Secret GitHub API token to use for making API requests.
+    default: ${{ github.token }}
+    required: true
+  PACKAGE_MANAGER:
+    description: Package manager to use to install dependencies.
+    default: ''
+    required: false
+  BUILD_COMMAND:
+    description: Commands to build.
+    default: ''
+    required: false
+  COMMIT_MESSAGE:
+    description: Commit message of build commit.
+    default: 'feat: build for release'
+    required: true
+  COMMIT_NAME:
+    description: Git commit name.
+    default: 'github-actions[bot]'
+    required: true
+  COMMIT_EMAIL:
+    description: Git commit email.
+    default: '41898282+github-actions[bot]@users.noreply.github.com'
+    required: true
+  BRANCH_NAME:
+    description: Branch name.
+    default: 'gh-actions'
+    required: true
+  CLEAN_TARGETS:
+    description: Files or directories to clean before release. (Comma separated)
+    default: '.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml'
+    required: true
+  BUILD_COMMAND_TARGET:
+    description: Command for search build command.
+    default: 'build,production,prod,package,pack'
+    required: true
+  CREATE_MAJOR_VERSION_TAG:
+    description: Whether to create major version tag.
+    default: 'true'
+    required: false
+  CREATE_MINOR_VERSION_TAG:
+    description: Whether to create minor version tag.
+    default: 'true'
+    required: false
+  CREATE_PATCH_VERSION_TAG:
+    description: Whether to create patch version tag.
+    default: 'true'
+    required: false
+  OUTPUT_BUILD_INFO_FILENAME:
+    description: Filename of build information.
+    default: ''
+    required: false
+  FETCH_DEPTH:
+    description: Limit fetching to the specified number of commits from the tip of each remote branch history.
+    default: '3'
+    required: false
+  TEST_TAG_PREFIX:
+    description: Tag name prefix for test.
+    default: ''
+    required: false
+  CLEAN_TEST_TAG:
+    description: Whether to clean test tag.
+    default: 'false'
+    required: false
+  ORIGINAL_TAG_PREFIX:
+    description: Tag name prefix for original tag.
+    default: ''
+    required: false
+
+branding:
+  icon: 'tag'
+  color: 'green'
+
+runs:
+  using: node12
+  main: lib/main.js
