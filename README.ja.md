@@ -56,7 +56,7 @@ jobs:
     name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: technote-space/release-github-actions@v5
+      - uses: technote-space/release-github-actions@v6
 ```
 
 [対象イベントの詳細](#action-%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E8%A9%B3%E7%B4%B0)
@@ -76,8 +76,9 @@ jobs:
 | COMMIT_MESSAGE | コミット時に設定するメッセージ | `feat: build for release` | true | `feat: release` |
 | COMMIT_NAME | コミット時に設定する名前 | `github-actions[bot]` | true | |
 | COMMIT_EMAIL | コミット時に設定する名前 | `41898282+github-actions[bot]@users.noreply.github.com` | true | |
-| BRANCH_NAME | GitHub Actions 用のブランチ名 | `releases/${MAJOR}` | true | `releases/${MINOR}`, `releases/${PATCH}` |
-| BUILD_COMMAND_TARGET | ビルド用コマンド検索ターゲット | `build, production, prod, package, pack` | | `compile` |
+| BRANCH_NAME | GitHub Actions 用のブランチ名 | `gh-actions` | true | `gh-actions/${MAJOR}/${MINOR}/${PATCH}` |
+| BUILD_COMMAND_TARGET | ビルド用コマンド検索ターゲット | `prepare, build, production, prod, package, pack` | | `compile` |
+| ALLOW_MULTIPLE_BUILD_COMMANDS | 複数のビルドコマンド実行を許可するかどうか | `true` | | `false` |
 | CREATE_MAJOR_VERSION_TAG | メジャーバージョンタグ(例：v1)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
 | CREATE_MINOR_VERSION_TAG | マイナーバージョンタグ(例：v1.2)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
 | CREATE_PATCH_VERSION_TAG | パッチバージョンタグ(例：v1.2.3)を作成するかどうか<br>[タグの詳細](#tags) | `true` | | `false` |
@@ -89,7 +90,7 @@ jobs:
 
 ## Execute commands
 ### ビルド
-- `build`、 `production`、 `prod`、 `package` または `pack` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれらを使用します。([BUILD_COMMAND_TARGET](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3) で変更可能です)  
+- `prepare`、 `build`、 `production`、 `prod`、 `package` または `pack` が package.json の scripts に含まれる場合、ビルド用のコマンドとしてそれらを使用します。([BUILD_COMMAND_TARGET](#%E3%82%AA%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3) で変更可能です)  
 - `npm run install` や `yarn install` のようなインストール用コマンドが存在しない場合、インストール用コマンドが追加されます。  
 
 したがって、`BUILD_COMMAND` が設定されていない かつ package.json に `build` が存在する場合、以下のコマンドが実行されます。

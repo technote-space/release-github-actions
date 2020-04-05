@@ -140,7 +140,7 @@ describe('getParams', () => {
 		expect(params).toHaveProperty('tagName');
 		expect(params).toHaveProperty('branchName');
 		expect(params.tagName).toBe('v1.2.3');
-		expect(params.branchName).toBe('releases/v1');
+		expect(params.branchName).toBe('gh-actions');
 	});
 
 	it('should get params 2', () => {
@@ -148,7 +148,7 @@ describe('getParams', () => {
 
 		const params = getParams(generateContext({ref: 'refs/tags/test/v2.3.4'}));
 		expect(params.tagName).toBe('test/v2.3.4');
-		expect(params.branchName).toBe('releases/v2');
+		expect(params.branchName).toBe('gh-actions');
 	});
 
 	it('should get params 3', () => {
@@ -491,7 +491,7 @@ describe('detectBuildCommands', () => {
 	});
 
 	it('should detect build command 1', () => {
-		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test4'), 'yarn ', [])).toEqual(['build', 'production', 'prod', 'package']);
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test4'), 'yarn ', [])).toEqual(['prepare', 'build', 'production', 'prod', 'package']);
 	});
 
 	it('should detect build command 2', () => {
@@ -504,6 +504,11 @@ describe('detectBuildCommands', () => {
 
 	it('should detect build command 4', () => {
 		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test7'), 'yarn ', ['yarn prod'])).toEqual(['package']);
+	});
+
+	it('should detect build command 5', () => {
+		process.env.INPUT_ALLOW_MULTIPLE_BUILD_COMMANDS = 'false';
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test4'), 'yarn ', [])).toEqual(['prepare']);
 	});
 });
 
@@ -572,7 +577,6 @@ describe('isCreateMajorVersionTag', () => {
 	testEnv(rootDir);
 
 	it('should return true 1', () => {
-		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = '';
 		expect(isCreateMajorVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
@@ -599,7 +603,6 @@ describe('isCreateMinorVersionTag', () => {
 	testEnv(rootDir);
 
 	it('should return true 1', () => {
-		process.env.INPUT_CREATE_MINOR_VERSION_TAG = '';
 		expect(isCreateMinorVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
@@ -626,7 +629,6 @@ describe('isCreatePatchVersionTag', () => {
 	testEnv(rootDir);
 
 	it('should return true 1', () => {
-		process.env.INPUT_CREATE_PATCH_VERSION_TAG = '';
 		expect(isCreatePatchVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {

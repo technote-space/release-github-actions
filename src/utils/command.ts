@@ -18,6 +18,7 @@ import {
 	getParams,
 	getReplaceDirectory,
 } from './misc';
+import { ReposListReleasesResponseItem } from '../types';
 
 export const replaceDirectory = (context: Context) => (message: string): string => {
 	const directories = getReplaceDirectory(context);
@@ -139,7 +140,7 @@ export const push = async(logger: Logger, helper: GitHelper, context: Context): 
 	}, Promise.resolve());
 };
 
-const findRelease = async(octokit: Octokit, context: Context): Promise<Octokit.ReposListReleasesResponseItem | undefined> => {
+const findRelease = async(octokit: Octokit, context: Context): Promise<ReposListReleasesResponseItem | undefined> => {
 	const {tagName} = getParams(context);
 	const releases  = await octokit.repos.listReleases({
 		owner: context.repo.owner,
@@ -148,7 +149,7 @@ const findRelease = async(octokit: Octokit, context: Context): Promise<Octokit.R
 	return releases.data.find(release => release.tag_name === tagName);
 };
 
-export const updateRelease = async(release: Octokit.ReposListReleasesResponseItem | undefined, logger: Logger, octokit: Octokit, context: Context): Promise<void> => {
+export const updateRelease = async(release: ReposListReleasesResponseItem | undefined, logger: Logger, octokit: Octokit, context: Context): Promise<void> => {
 	if (!release || release.draft) {
 		return;
 	}
@@ -180,7 +181,7 @@ export const prepareCommit = async(logger: Logger, command: Command, helper: Git
 	await copyFiles(logger, command, context);
 };
 
-const executeCommit = async(release: Octokit.ReposListReleasesResponseItem | undefined, logger: Logger, helper: GitHelper, octokit: Octokit, context: Context): Promise<boolean> => {
+const executeCommit = async(release: ReposListReleasesResponseItem | undefined, logger: Logger, helper: GitHelper, octokit: Octokit, context: Context): Promise<boolean> => {
 	await config(logger, helper, context);
 	await commit(helper, context);
 	await push(logger, helper, context);
