@@ -491,7 +491,7 @@ describe('detectBuildCommands', () => {
 	});
 
 	it('should detect build command 1', () => {
-		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test4'), 'yarn ', [])).toEqual(['build', 'production', 'prod', 'package']);
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test4'), 'yarn ', [])).toEqual(['prepare', 'build', 'production', 'prod', 'package']);
 	});
 
 	it('should detect build command 2', () => {
@@ -504,6 +504,11 @@ describe('detectBuildCommands', () => {
 
 	it('should detect build command 4', () => {
 		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test7'), 'yarn ', ['yarn prod'])).toEqual(['package']);
+	});
+
+	it('should detect build command 5', () => {
+		process.env.INPUT_ALLOW_MULTIPLE_BUILD_COMMANDS = 'false';
+		expect(detectBuildCommands(resolve(__dirname, '../fixtures/test4'), 'yarn ', [])).toEqual(['prepare']);
 	});
 });
 

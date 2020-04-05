@@ -41,7 +41,8 @@ export const detectBuildCommands = (dir: string, runCommand: string, commands: A
 		}
 	}
 
-	return targets;
+	// eslint-disable-next-line no-magic-numbers
+	return Utils.getBoolValue(getInput('ALLOW_MULTIPLE_BUILD_COMMANDS')) ? targets : targets.slice(0, 1);
 };
 
 export const getBackupCommands = (buildDir: string, pushDir: string): Array<CommandType> => [
