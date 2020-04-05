@@ -150,11 +150,11 @@ export const getTestTag = (tagName: string): string => tagName.replace(getTestTa
 
 export const getOriginalTagPrefix = (): string => getInput('ORIGINAL_TAG_PREFIX');
 
-export const isCreateMajorVersionTag = (): boolean => Utils.getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG') || 'true');
+export const isCreateMajorVersionTag = (): boolean => Utils.getBoolValue(getInput('CREATE_MAJOR_VERSION_TAG'));
 
-export const isCreateMinorVersionTag = (): boolean => Utils.getBoolValue(getInput('CREATE_MINOR_VERSION_TAG') || 'true');
+export const isCreateMinorVersionTag = (): boolean => Utils.getBoolValue(getInput('CREATE_MINOR_VERSION_TAG'));
 
-export const isCreatePatchVersionTag = (): boolean => Utils.getBoolValue(getInput('CREATE_PATCH_VERSION_TAG') || 'true');
+export const isCreatePatchVersionTag = (): boolean => Utils.getBoolValue(getInput('CREATE_PATCH_VERSION_TAG'));
 
 export const isEnabledCleanTestTag = (): boolean => Utils.getBoolValue(getInput('CLEAN_TEST_TAG'));
 

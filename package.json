@@ -35,7 +35,6 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "@octokit/rest": "^17.1.4",
     "@technote-space/github-action-test-helper": "^0.3.4",
     "@technote-space/release-github-actions-cli": "^1.5.5",
     "@types/jest": "^25.2.1",

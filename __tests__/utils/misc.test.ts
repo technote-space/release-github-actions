@@ -572,7 +572,6 @@ describe('isCreateMajorVersionTag', () => {
 	testEnv(rootDir);
 
 	it('should return true 1', () => {
-		process.env.INPUT_CREATE_MAJOR_VERSION_TAG = '';
 		expect(isCreateMajorVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
@@ -599,7 +598,6 @@ describe('isCreateMinorVersionTag', () => {
 	testEnv(rootDir);
 
 	it('should return true 1', () => {
-		process.env.INPUT_CREATE_MINOR_VERSION_TAG = '';
 		expect(isCreateMinorVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
@@ -626,7 +624,6 @@ describe('isCreatePatchVersionTag', () => {
 	testEnv(rootDir);
 
 	it('should return true 1', () => {
-		process.env.INPUT_CREATE_PATCH_VERSION_TAG = '';
 		expect(isCreatePatchVersionTag()).toBe(true);
 	});
 	it('should return true 2', () => {
