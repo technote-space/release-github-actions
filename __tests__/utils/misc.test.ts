@@ -140,7 +140,7 @@ describe('getParams', () => {
 		expect(params).toHaveProperty('tagName');
 		expect(params).toHaveProperty('branchName');
 		expect(params.tagName).toBe('v1.2.3');
-		expect(params.branchName).toBe('releases/v1');
+		expect(params.branchName).toBe('gh-actions');
 	});
 
 	it('should get params 2', () => {
@@ -148,7 +148,7 @@ describe('getParams', () => {
 
 		const params = getParams(generateContext({ref: 'refs/tags/test/v2.3.4'}));
 		expect(params.tagName).toBe('test/v2.3.4');
-		expect(params.branchName).toBe('releases/v2');
+		expect(params.branchName).toBe('gh-actions');
 	});
 
 	it('should get params 3', () => {
