@@ -2,6 +2,7 @@
   "name": "test",
   "version": "0.0.1",
   "scripts": {
+    "prepare": "test5",
     "production": "test2",
     "prod": "test3",
     "package": "test4",
