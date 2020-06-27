@@ -1,6 +1,6 @@
 {
   "name": "@technote-space/release-github-actions",
-  "version": "6.0.7",
+  "version": "6.0.8",
   "description": "GitHub actions to auto release.",
   "author": {
     "name": "Technote",
