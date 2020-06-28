@@ -114,9 +114,9 @@
 		],
 		"indent": [
 			"error",
-			"tab",
+			2,
 			{
-				"MemberExpression": "off"
+				"SwitchCase": 1
 			}
 		],
 		"space-before-function-paren": [
