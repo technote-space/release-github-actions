@@ -729,14 +729,6 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@technote-space/filter-github-action@^0.2.21":
-  version "0.2.23"
-  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.2.23.tgz#472c26e99bab11b77115a3fd49fd10261f3add01"
-  integrity sha512-h2gQYNpGjuTKghrczC1KtjHg0EDmUjE4ZEQ/83a/ytBbmhzLLJlGscSKqhMh6hYLxbr5ZhhAsLVAYp2y0li9cA==
-  dependencies:
-    "@actions/core" "^1.2.4"
-    "@actions/github" "^4.0.0"
-
 "@technote-space/filter-github-action@^0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.5.1.tgz#97b4aecbfe40ee3ce7c7d388c0dd6249a261ef19"
@@ -745,7 +737,7 @@
     "@actions/core" "^1.2.4"
     "@actions/github" "^4.0.0"
 
-"@technote-space/github-action-helper@^3.1.1", "@technote-space/github-action-helper@^3.3.1":
+"@technote-space/github-action-helper@^3.3.1":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@technote-space/github-action-helper/-/github-action-helper-3.3.1.tgz#631cf66abe605d5cfccbe399a71d14bb75a244a0"
   integrity sha512-TTedQChTDjHGCMrB7hmlD6rB9t4f4fbALhmdY5O3okofVFU1QyFDSDTJP6iNzShfGnisxCpC4wvJc8WK/YcO2Q==
@@ -777,14 +769,14 @@
     js-yaml "^3.14.0"
 
 "@technote-space/release-github-actions@^6.0.11":
-  version "6.0.11"
-  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-6.0.11.tgz#a17a90896b2d9b782c0df7f9b1fc16bebe31285d"
-  integrity sha512-8DHL2KKtexFjq7MypmDTOMiDtNQ5oCkNrJMdbdXig/goGfpLv8el8DsHGEFdkRIVF6AUSS5oIt65Dfq9v04zUg==
+  version "6.0.12"
+  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-6.0.12.tgz#a7b78a4c2f4611d19baeb0532adb510c13f12b2b"
+  integrity sha512-L7IdA1f7KzApC6I7ATI5UU1Eo5gIryXMy+tgw/qJPeqf9HhthuyZHusdaCKv6IL+ZfgZRs+/ElxkJflPJZBdxA==
   dependencies:
     "@actions/core" "^1.2.4"
     "@actions/github" "^4.0.0"
-    "@technote-space/filter-github-action" "^0.2.21"
-    "@technote-space/github-action-helper" "^3.1.1"
+    "@technote-space/filter-github-action" "^0.5.1"
+    "@technote-space/github-action-helper" "^3.3.1"
     memize "^1.1.0"
 
 "@types/babel__core@^7.0.0", "@types/babel__core@^7.1.7":
