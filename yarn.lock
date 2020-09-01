@@ -708,7 +708,7 @@
   dependencies:
     "@octokit/types" "^5.3.0"
 
-"@octokit/plugin-rest-endpoint-methods@^4.0.0", "@octokit/plugin-rest-endpoint-methods@^4.1.2":
+"@octokit/plugin-rest-endpoint-methods@^4.0.0", "@octokit/plugin-rest-endpoint-methods@^4.1.2", "@octokit/plugin-rest-endpoint-methods@^4.1.3":
   version "4.1.3"
   resolved "https://registry.yarnpkg.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-4.1.3.tgz#44d9af35cd9fef63c7a4cf3b0e6b681886cc8d34"
   integrity sha512-az3seq9yuc0OXlNLrZ0fWTNbFuL4sN8GN1sLmovELg3+LnpWmOs3GAn2KGa6E7SKMgpCuFvJwvsHEfYasTHUxQ==
@@ -768,14 +768,14 @@
     "@actions/core" "^1.2.4"
     "@actions/github" "^4.0.0"
 
-"@technote-space/github-action-helper@^3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@technote-space/github-action-helper/-/github-action-helper-3.3.1.tgz#631cf66abe605d5cfccbe399a71d14bb75a244a0"
-  integrity sha512-TTedQChTDjHGCMrB7hmlD6rB9t4f4fbALhmdY5O3okofVFU1QyFDSDTJP6iNzShfGnisxCpC4wvJc8WK/YcO2Q==
+"@technote-space/github-action-helper@^3.3.1", "@technote-space/github-action-helper@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@technote-space/github-action-helper/-/github-action-helper-3.4.0.tgz#96774137c84005a6fce132b7c37ac3355280c255"
+  integrity sha512-wwIJqyxKQVPbHSUeHYEL6ekNKDx+I+02TCvVvWJzVsSpobdtM1wenRFIOIvSn+QizKwfmTHSa8bZTEN1ubzeig==
   dependencies:
-    "@actions/core" "^1.2.4"
+    "@actions/core" "^1.2.5"
     "@actions/github" "^4.0.0"
-    "@octokit/plugin-rest-endpoint-methods" "^4.1.2"
+    "@octokit/plugin-rest-endpoint-methods" "^4.1.3"
     shell-escape "^0.2.0"
     sprintf-js "^1.1.2"
 
