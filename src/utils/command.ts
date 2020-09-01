@@ -129,10 +129,9 @@ export const push = async(logger: Logger, helper: GitHelper, context: Context): 
   const tagNames = getCreateTags(tagName);
   await helper.fetchTags(pushDir, context);
   await deleteTestTags(helper, context);
-  // eslint-disable-next-line no-magic-numbers
-  await helper.deleteTag(pushDir, tagNames, context, 1);
+  await helper.deleteLocalTag(pushDir, tagNames);
   await helper.addLocalTag(pushDir, tagNames);
-  await helper.push(pushDir, branchName, context, {withTag: true});
+  await helper.push(pushDir, branchName, context, {withTag: true, force: true});
   await branchNames.reduce(async(prev, branch) => {
     await prev;
     await helper.createBranch(pushDir, branch);
