@@ -172,28 +172,28 @@ Since processing by `ncc` is unnecessary, delete the related commands and packag
      "format": "prettier --write **/*.ts",
      "format-check": "prettier --check **/*.ts",
      "lint": "eslint src/**/*.ts",
--    "pack": "ncc build",
+-    "package": "ncc build --source-map --license licenses.txt",
 -    "test": "jest",
--    "all": "npm run build && npm run format && npm run lint && npm run pack && npm test"
+-    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
 +    "test": "jest"
    },
 ``` 
 
 ```diff
   "devDependencies": {
-     "@types/jest": "^24.0.23",
-     "@types/node": "^12.7.12",
-     "@typescript-eslint/parser": "^2.8.0",
--    "@zeit/ncc": "^0.20.5",
-     "eslint": "^5.16.0",
-     "eslint-plugin-github": "^2.0.0",
-     "eslint-plugin-jest": "^22.21.0",
+     "@types/jest": "^26.0.10",
+     "@types/node": "^14.6.0",
+     "@typescript-eslint/parser": "^3.10.1",
+-    "@vercel/ncc": "^0.23.0",
+     "eslint": "^7.7.0",
+     "eslint-plugin-github": "^4.1.1",
+     "eslint-plugin-jest": "^23.20.0",
      "jest": "^24.9.0",
-     "jest-circus": "^24.9.0",
-     "js-yaml": "^3.13.1",
-     "prettier": "^1.19.1",
-     "ts-jest": "^24.2.0",
-     "typescript": "^3.6.4"
+     "jest-circus": "^26.4.2",
+     "js-yaml": "^3.14.0",
+     "prettier": "2.1.1",
+     "ts-jest": "^24.3.0",
+     "typescript": "^4.0.2"
    }
 ``` 
 
