@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import {resolve} from 'path';
-import {Logger, GitHelper, Command} from '@technote-space/github-action-helper';
+import {GitHelper, Command} from '@technote-space/github-action-helper';
+import {Logger} from '@technote-space/github-action-log-helper';
 import {
   getContext,
   testEnv,
