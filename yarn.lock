@@ -766,12 +766,12 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@technote-space/filter-github-action@^0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.5.3.tgz#d27c3149195e284649fef413a5e21311eb2741e3"
-  integrity sha512-vV/hQXpx12iiCEnXWfnEd0XfvRgcBHWPQV8z5Ac/sfRH+NS19nsF/CLZ4GwBcFmZeLFWev1g4jQQPxL5/ycl0w==
+"@technote-space/filter-github-action@^0.5.3", "@technote-space/filter-github-action@^0.5.4":
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.5.4.tgz#f331e416f33f962d71fd801fba34cd4827adcdb1"
+  integrity sha512-Vqt/tPO5MuXix7j3/9cPTMzi4mmWDyZxzVAf+kXpCQ/btVIea85AnN65NZyXFiiOx4iRH4o8SCByKwAy2fjfVw==
   dependencies:
-    "@actions/core" "^1.2.5"
+    "@actions/core" "^1.2.6"
     "@actions/github" "^4.0.0"
 
 "@technote-space/github-action-helper@^4.0.1", "@technote-space/github-action-helper@^4.0.2":
