@@ -33,7 +33,7 @@ Once you create a new tag, this action will automatically
   - [condition](#condition)
 - [Motivation](#motivation)
 - [Addition](#addition)
-  - [Tags](#tags)
+  - [Tags ](#tags)
 - [Sample GitHub Actions using this Action](#sample-github-actions-using-this-action)
 - [Author](#author)
 
