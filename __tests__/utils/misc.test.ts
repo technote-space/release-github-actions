@@ -522,7 +522,7 @@ describe('isValidTagName', () => {
     expect(isValidTagName('0')).toBe(true);
     expect(isValidTagName('v12')).toBe(true);
     expect(isValidTagName('1.2')).toBe(true);
-    expect(isValidTagName('v1.2.3')).toBe(true);
+    expect(isValidTagName('V1.2.3')).toBe(true);
     expect(isValidTagName('v12.23.34.45')).toBe(true);
     expect(isValidTagName('v1.0-beta+exp.sha.5114f85')).toBe(true);
   });
