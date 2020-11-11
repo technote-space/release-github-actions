@@ -495,7 +495,7 @@ describe('push', () => {
 
     await push(logger, helper, getContext({
       eventName: 'push',
-      ref: 'refs/tags/v1.2.3',
+      ref: 'refs/tags/v1.0-beta+exp.sha.5114f85',
       repo: {
         owner: 'Hello',
         repo: 'World',
@@ -506,22 +506,22 @@ describe('push', () => {
       'git tag',
       'git tag -d stdout > /dev/null 2>&1',
       'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
-      'git tag -d \'v1.2.3\' \'v1.2\' v1 || :',
-      'git tag \'v1.2.3\'',
-      'git tag \'v1.2\'',
-      'git tag v1',
+      'git tag -d \'v1.0.0-beta+exp.sha.5114f85\' \'v1.0-beta+exp.sha.5114f85\' \'v1-beta+exp.sha.5114f85\' || :',
+      'git tag \'v1.0.0-beta+exp.sha.5114f85\'',
+      'git tag \'v1.0-beta+exp.sha.5114f85\'',
+      'git tag \'v1-beta+exp.sha.5114f85\'',
       'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1 || :',
     ]);
     stdoutCalledWith(mockStdout, [
-      '::group::Pushing to Hello/World@test-branch (tag: v1.2.3)...',
+      '::group::Pushing to Hello/World@test-branch (tag: v1.0-beta+exp.sha.5114f85)...',
       '[command]git fetch origin --tags',
-      '[command]git tag -d \'v1.2.3\' \'v1.2\' v1',
+      '[command]git tag -d \'v1.0.0-beta+exp.sha.5114f85\' \'v1.0-beta+exp.sha.5114f85\' \'v1-beta+exp.sha.5114f85\'',
       '  >> stdout',
-      '[command]git tag \'v1.2.3\'',
+      '[command]git tag \'v1.0.0-beta+exp.sha.5114f85\'',
       '  >> stdout',
-      '[command]git tag \'v1.2\'',
+      '[command]git tag \'v1.0-beta+exp.sha.5114f85\'',
       '  >> stdout',
-      '[command]git tag v1',
+      '[command]git tag \'v1-beta+exp.sha.5114f85\'',
       '  >> stdout',
       '[command]git push --tags --force origin test-branch:refs/heads/test-branch',
     ]);
