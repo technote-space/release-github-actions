@@ -181,7 +181,7 @@ export const getMinorTag = (tagName: string): string => 'v' + getVersionFragment
 // eslint-disable-next-line no-magic-numbers
 export const getPatchTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0', '0']).slice(0, 3).join('.');
 
-export const isValidTagName = (tagName: string): boolean => Utils.isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && Utils.isSemanticVersioningTagName(getTestTag(tagName)));
+export const isValidTagName = (tagName: string): boolean => Utils.isValidSemanticVersioning(tagName) || (isTestTag(tagName) && Utils.isValidSemanticVersioning(getTestTag(tagName)));
 
 export const getCreateTags = (tagName: string): Array<string> => {
   const settings  = [
