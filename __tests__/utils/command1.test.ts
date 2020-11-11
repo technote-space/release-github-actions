@@ -181,14 +181,14 @@ describe('prepareFiles', () => {
         owner: 'Hello',
         repo: 'World',
       },
-      ref: 'refs/tags/test',
+      ref: 'refs/tags/v1.0-beta+exp.sha.5114f85',
       sha: 'test-sha',
     }));
 
     execCalledWith(mockExec, ([
       'git init \'.\'',
       'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
-      'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
+      'git fetch --no-tags origin \'refs/tags/v1.0-beta+exp.sha.5114f85:refs/tags/v1.0-beta+exp.sha.5114f85\' || :',
       'git checkout -qf test-sha',
     ] as any[]).concat(commonCheck())); // eslint-disable-line @typescript-eslint/no-explicit-any
   });
