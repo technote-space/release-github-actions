@@ -196,11 +196,6 @@ https://github.com/actions/javascript-action
    }
 ``` 
 
-または、私が作成したテンプレートを使用してください。
-
-[![technote-space/gh-actions-template - GitHub](https://gh-card.dev/repos/technote-space/gh-actions-template.svg)](https://github.com/technote-space/gh-actions-template)
-
-
 不要なファイルが削除された`GitHub Actions`の例は以下で確認できます。  
 https://github.com/technote-space/release-github-actions/tree/gh-actions
 

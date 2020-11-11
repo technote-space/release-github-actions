@@ -197,11 +197,6 @@ Since processing by `ncc` is unnecessary, delete the related commands and packag
    }
 ``` 
 
-Or use the template I created.
-
-[![technote-space/gh-actions-template - GitHub](https://gh-card.dev/repos/technote-space/gh-actions-template.svg)](https://github.com/technote-space/gh-actions-template)
-
-
 You can see an example of `GitHub Actions` with unnecessary files deleted below.  
 https://github.com/technote-space/release-github-actions/tree/gh-actions
 
