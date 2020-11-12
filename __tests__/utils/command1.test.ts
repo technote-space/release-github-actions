@@ -129,23 +129,20 @@ describe('prepareFiles', () => {
   const buildDir = resolve('test-dir/.work/build');
   const pushDir  = resolve('test-dir/.work/push');
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const commonCheck = (): string[] => {
-    return [
-      'yarn install --production',
-      `mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
-      `mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
-      'rm -rdf .[!.]*',
-      'rm -rdf *.js',
-      'rm -rdf *.ts',
-      'rm -rdf *.json',
-      'rm -rdf *.lock',
-      'rm -rdf *.yml',
-      'rm -rdf *.yaml',
-      'rm -rdf __tests__ docs src',
-      `mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`,
-    ];
-  };
+  const commonCheck: string[] = [
+    'yarn install --production',
+    `mv -f '${resolve(buildDir, 'action.yaml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
+    `mv -f '${resolve(buildDir, 'action.yml')}' '${resolve(pushDir, 'action.yml')}' > /dev/null 2>&1 || :`,
+    'rm -rdf .[!.]*',
+    'rm -rdf *.js',
+    'rm -rdf *.ts',
+    'rm -rdf *.json',
+    'rm -rdf *.lock',
+    'rm -rdf *.yml',
+    'rm -rdf *.yaml',
+    'rm -rdf __tests__ docs src',
+    `mv -f '${resolve(pushDir, 'action.yml')}' '${resolve(buildDir, 'action.yml')}' > /dev/null 2>&1 || :`,
+  ];
 
   it('should checkout branch', async() => {
     process.env.INPUT_PACKAGE_MANAGER = 'yarn';
@@ -167,7 +164,7 @@ describe('prepareFiles', () => {
       'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
       'git fetch --no-tags origin \'refs/heads/test:refs/remotes/origin/test\' || :',
       'git checkout -qf test-sha',
-    ] as any[]).concat(commonCheck())); // eslint-disable-line @typescript-eslint/no-explicit-any
+    ] as any[]).concat(commonCheck)); // eslint-disable-line @typescript-eslint/no-explicit-any
   });
 
   it('should checkout tag', async() => {
@@ -181,16 +178,16 @@ describe('prepareFiles', () => {
         owner: 'Hello',
         repo: 'World',
       },
-      ref: 'refs/tags/test',
+      ref: 'refs/tags/v1.0-beta+exp.sha.5114f85',
       sha: 'test-sha',
     }));
 
     execCalledWith(mockExec, ([
       'git init \'.\'',
       'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
-      'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
+      'git fetch --no-tags origin \'refs/tags/v1.0-beta+exp.sha.5114f85:refs/tags/v1.0-beta+exp.sha.5114f85\' || :',
       'git checkout -qf test-sha',
-    ] as any[]).concat(commonCheck())); // eslint-disable-line @typescript-eslint/no-explicit-any
+    ] as any[]).concat(commonCheck)); // eslint-disable-line @typescript-eslint/no-explicit-any
   });
 
   it('should clean specified targets 1', async() => {
@@ -498,7 +495,7 @@ describe('push', () => {
 
     await push(logger, helper, getContext({
       eventName: 'push',
-      ref: 'refs/tags/v1.2.3',
+      ref: 'refs/tags/v1.0-beta+exp.sha.5114f85',
       repo: {
         owner: 'Hello',
         repo: 'World',
@@ -509,22 +506,22 @@ describe('push', () => {
       'git tag',
       'git tag -d stdout > /dev/null 2>&1',
       'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
-      'git tag -d \'v1.2.3\' \'v1.2\' v1 || :',
-      'git tag \'v1.2.3\'',
-      'git tag \'v1.2\'',
-      'git tag v1',
+      'git tag -d \'v1.0.0-beta+exp.sha.5114f85\' \'v1.0-beta+exp.sha.5114f85\' \'v1-beta+exp.sha.5114f85\' || :',
+      'git tag \'v1.0.0-beta+exp.sha.5114f85\'',
+      'git tag \'v1.0-beta+exp.sha.5114f85\'',
+      'git tag \'v1-beta+exp.sha.5114f85\'',
       'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1 || :',
     ]);
     stdoutCalledWith(mockStdout, [
-      '::group::Pushing to Hello/World@test-branch (tag: v1.2.3)...',
+      '::group::Pushing to Hello/World@test-branch (tag: v1.0-beta+exp.sha.5114f85)...',
       '[command]git fetch origin --tags',
-      '[command]git tag -d \'v1.2.3\' \'v1.2\' v1',
+      '[command]git tag -d \'v1.0.0-beta+exp.sha.5114f85\' \'v1.0-beta+exp.sha.5114f85\' \'v1-beta+exp.sha.5114f85\'',
       '  >> stdout',
-      '[command]git tag \'v1.2.3\'',
+      '[command]git tag \'v1.0.0-beta+exp.sha.5114f85\'',
       '  >> stdout',
-      '[command]git tag \'v1.2\'',
+      '[command]git tag \'v1.0-beta+exp.sha.5114f85\'',
       '  >> stdout',
-      '[command]git tag v1',
+      '[command]git tag \'v1-beta+exp.sha.5114f85\'',
       '  >> stdout',
       '[command]git push --tags --force origin test-branch:refs/heads/test-branch',
     ]);

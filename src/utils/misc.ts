@@ -168,20 +168,18 @@ export const getOutputBuildInfoFilename = (): string => {
   return filename;
 };
 
-const getVersionFragments = (tagName: string): Array<string> => tagName.trim().replace(/^v?/gi, '').split('.');
-
 type createTagType = (tagName: string) => string;
 
 // eslint-disable-next-line no-magic-numbers
-export const getMajorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).slice(0, 1);
+export const getMajorTag = (tagName: string): string => 'v' + Utils.normalizeVersion(tagName, {slice: 1});
 
 // eslint-disable-next-line no-magic-numbers
-export const getMinorTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0']).slice(0, 2).join('.');
+export const getMinorTag = (tagName: string): string => 'v' + Utils.normalizeVersion(tagName, {slice: 2});
 
 // eslint-disable-next-line no-magic-numbers
-export const getPatchTag = (tagName: string): string => 'v' + getVersionFragments(tagName).concat(['0', '0']).slice(0, 3).join('.');
+export const getPatchTag = (tagName: string): string => 'v' + Utils.normalizeVersion(tagName, {slice: 3});
 
-export const isValidTagName = (tagName: string): boolean => Utils.isSemanticVersioningTagName(tagName) || (isTestTag(tagName) && Utils.isSemanticVersioningTagName(getTestTag(tagName)));
+export const isValidTagName = (tagName: string): boolean => Utils.isValidSemanticVersioning(tagName) || (isTestTag(tagName) && Utils.isValidSemanticVersioning(getTestTag(tagName)));
 
 export const getCreateTags = (tagName: string): Array<string> => {
   const settings  = [
