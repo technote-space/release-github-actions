@@ -87,9 +87,10 @@ describe('clone', () => {
 
     execCalledWith(mockExec, [
       'git init \'.\'',
-      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' || :',
       'git fetch --no-tags origin \'refs/heads/test-branch:refs/remotes/origin/test-branch\' || :',
       'git checkout -b test-branch origin/test-branch || :',
+      'git checkout test-branch || :',
     ]);
   });
 });
@@ -161,7 +162,7 @@ describe('prepareFiles', () => {
 
     execCalledWith(mockExec, ([
       'git init \'.\'',
-      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' || :',
       'git fetch --no-tags origin \'refs/heads/test:refs/remotes/origin/test\' || :',
       'git checkout -qf test-sha',
     ] as any[]).concat(commonCheck)); // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -184,7 +185,7 @@ describe('prepareFiles', () => {
 
     execCalledWith(mockExec, ([
       'git init \'.\'',
-      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' || :',
       'git fetch --no-tags origin \'refs/tags/v1.0-beta+exp.sha.5114f85:refs/tags/v1.0-beta+exp.sha.5114f85\' || :',
       'git checkout -qf test-sha',
     ] as any[]).concat(commonCheck)); // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -208,7 +209,7 @@ describe('prepareFiles', () => {
 
     execCalledWith(mockExec, ([
       'git init \'.\'',
-      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' || :',
       'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
       'git checkout -qf test-sha',
       'yarn install --production',
@@ -241,7 +242,7 @@ describe('prepareFiles', () => {
 
     execCalledWith(mockExec, ([
       'git init \'.\'',
-      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' > /dev/null 2>&1 || :',
+      'git remote add origin \'https://octocat:test-token@github.com/Hello/World.git\' || :',
       'git fetch --no-tags origin \'refs/tags/test:refs/tags/test\' || :',
       'git checkout -qf test-sha',
       'yarn install --production',
@@ -448,7 +449,7 @@ describe('deleteTestTags', () => {
 
     execCalledWith(mockExec, [
       'git tag',
-      'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' > /dev/null 2>&1 || :',
+      'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' || :',
       'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' || :',
     ]);
   });
@@ -472,10 +473,10 @@ describe('deleteTestTags', () => {
 
     execCalledWith(mockExec, [
       'git tag',
-      'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' > /dev/null 2>&1 || :',
+      'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/test/v0 \'tags/test/v1.1\' \'tags/test/v1.2.2\' || :',
       'git tag -d test/v0 \'test/v1.1\' \'test/v1.2.2\' || :',
       'git tag',
-      'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/original/test/v0 \'tags/original/test/v1.1\' \'tags/original/test/v1.2.2\' > /dev/null 2>&1 || :',
+      'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete tags/original/test/v0 \'tags/original/test/v1.1\' \'tags/original/test/v1.2.2\' || :',
       'git tag -d original/test/v0 \'original/test/v1.1\' \'original/test/v1.2.2\' || :',
     ]);
   });
@@ -510,7 +511,7 @@ describe('push', () => {
       'git tag \'v1.0.0-beta+exp.sha.5114f85\'',
       'git tag \'v1.0-beta+exp.sha.5114f85\'',
       'git tag \'v1-beta+exp.sha.5114f85\'',
-      'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' > /dev/null 2>&1 || :',
+      'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' || :',
     ]);
     stdoutCalledWith(mockStdout, [
       '::group::Pushing to Hello/World@test-branch (tag: v1.0-beta+exp.sha.5114f85)...',
@@ -524,6 +525,7 @@ describe('push', () => {
       '[command]git tag \'v1-beta+exp.sha.5114f85\'',
       '  >> stdout',
       '[command]git push --tags --force origin test-branch:refs/heads/test-branch',
+      '  >> stdout',
     ]);
   });
 
@@ -550,10 +552,10 @@ describe('push', () => {
       'git tag',
       'git tag -d stdout > /dev/null 2>&1',
       'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
-      'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/original/test/v1.2.3\' > /dev/null 2>&1 || :',
+      'git push \'https://octocat:test-token@github.com/Hello/World.git\' --delete \'tags/original/test/v1.2.3\' || :',
       'git tag -d \'original/test/v1.2.3\' || :',
       'git tag \'original/test/v1.2.3\' \'test/v1.2.3\'',
-      'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/test/v1.2.3\' > /dev/null 2>&1',
+      'git push \'https://octocat:test-token@github.com/Hello/World.git\' \'refs/tags/original/test/v1.2.3\'',
       'git tag',
       'git tag -d stdout > /dev/null 2>&1',
       'git fetch \'https://octocat:test-token@github.com/Hello/World.git\' --tags > /dev/null 2>&1',
@@ -561,21 +563,23 @@ describe('push', () => {
       'git tag \'test/v1.2.3\'',
       'git tag \'test/v1.2\'',
       'git tag test/v1',
-      'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'releases/v1:refs/heads/releases/v1\' > /dev/null 2>&1 || :',
+      'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'releases/v1:refs/heads/releases/v1\' || :',
       'git checkout -b test-branch1',
-      'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch1:refs/heads/test-branch1\' > /dev/null 2>&1 || :',
+      'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch1:refs/heads/test-branch1\' || :',
       'git checkout -b test-branch2',
-      'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch2:refs/heads/test-branch2\' > /dev/null 2>&1 || :',
+      'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch2:refs/heads/test-branch2\' || :',
     ]);
     stdoutCalledWith(mockStdout, [
       '::group::Pushing to Hello/World@releases/v1 (tag: test/v1.2.3)...',
       '[command]git fetch origin --tags',
       '[command]git push origin --delete tags/original/test/v1.2.3',
+      '  >> stdout',
       '[command]git tag -d \'original/test/v1.2.3\'',
       '  >> stdout',
       '[command]git tag \'original/test/v1.2.3\' \'test/v1.2.3\'',
       '  >> stdout',
       '[command]git push origin refs/tags/original/test/v1.2.3',
+      '  >> stdout',
       '[command]git fetch origin --tags',
       '[command]git tag -d \'test/v1.2.3\' \'test/v1.2\' test/v1',
       '  >> stdout',
@@ -586,12 +590,15 @@ describe('push', () => {
       '[command]git tag test/v1',
       '  >> stdout',
       '[command]git push --tags --force origin releases/v1:refs/heads/releases/v1',
+      '  >> stdout',
       '[command]git checkout -b test-branch1',
       '  >> stdout',
       '[command]git push --force origin test-branch1:refs/heads/test-branch1',
+      '  >> stdout',
       '[command]git checkout -b test-branch2',
       '  >> stdout',
       '[command]git push --force origin test-branch2:refs/heads/test-branch2',
+      '  >> stdout',
     ]);
   });
 });
