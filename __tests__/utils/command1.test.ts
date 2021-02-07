@@ -511,7 +511,7 @@ describe('push', () => {
       'git tag \'v1.0.0-beta+exp.sha.5114f85\'',
       'git tag \'v1.0-beta+exp.sha.5114f85\'',
       'git tag \'v1-beta+exp.sha.5114f85\'',
-      'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\' || :',
+      'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch:refs/heads/test-branch\'',
     ]);
     stdoutCalledWith(mockStdout, [
       '::group::Pushing to Hello/World@test-branch (tag: v1.0-beta+exp.sha.5114f85)...',
@@ -563,11 +563,11 @@ describe('push', () => {
       'git tag \'test/v1.2.3\'',
       'git tag \'test/v1.2\'',
       'git tag test/v1',
-      'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'releases/v1:refs/heads/releases/v1\' || :',
+      'git push --tags --force \'https://octocat:test-token@github.com/Hello/World.git\' \'releases/v1:refs/heads/releases/v1\'',
       'git checkout -b test-branch1',
-      'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch1:refs/heads/test-branch1\' || :',
+      'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch1:refs/heads/test-branch1\'',
       'git checkout -b test-branch2',
-      'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch2:refs/heads/test-branch2\' || :',
+      'git push --force \'https://octocat:test-token@github.com/Hello/World.git\' \'test-branch2:refs/heads/test-branch2\'',
     ]);
     stdoutCalledWith(mockStdout, [
       '::group::Pushing to Hello/World@releases/v1 (tag: test/v1.2.3)...',
