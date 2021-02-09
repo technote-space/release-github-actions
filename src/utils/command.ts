@@ -90,7 +90,7 @@ export const config = async(logger: Logger, helper: GitHelper, context: Context)
   const email     = getCommitEmail();
   logger.startProcess('Configuring git committer to be %s <%s>...', name, email);
 
-  await helper.config(pushDir, name, email);
+  await helper.config(pushDir, {name, email});
 };
 
 export const commit = async(helper: GitHelper, context: Context): Promise<boolean> => helper.commit(getParams(context).pushDir, getCommitMessage(), {allowEmpty: true});
