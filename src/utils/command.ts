@@ -142,7 +142,7 @@ export const push = async(logger: Logger, helper: GitHelper, context: Context): 
 
 const findRelease = async(octokit: Octokit, context: Context): Promise<ReposListReleasesResponseItem | undefined> => {
   const {tagName} = getParams(context);
-  const releases  = await octokit.repos.listReleases({
+  const releases  = await octokit.rest.repos.listReleases({
     owner: context.repo.owner,
     repo: context.repo.repo,
   });
@@ -155,7 +155,7 @@ export const updateRelease = async(release: ReposListReleasesResponseItem | unde
   }
 
   logger.startProcess('Re-publishing release...');
-  await octokit.repos.updateRelease({
+  await octokit.rest.repos.updateRelease({
     owner: context.repo.owner,
     repo: context.repo.repo,
     'release_id': release.id,
