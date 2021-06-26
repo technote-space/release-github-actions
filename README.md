@@ -30,7 +30,6 @@ Once you create a new tag, this action will automatically
   - [Delete files](#delete-files)
 - [Action event details](#action-event-details)
   - [Target events](#target-events)
-  - [condition](#condition)
 - [Motivation](#motivation)
 - [Addition](#addition)
   - [Tags](#tags)
