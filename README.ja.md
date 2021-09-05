@@ -208,6 +208,7 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
 |push: *|[condition](#condition)|
 |release: published|[condition](#condition)|
 |create: *|[condition](#condition)|
+
 ### condition
 - tags
   - semantic versioning tag (例：`v1.2.3`)
@@ -245,28 +246,6 @@ https://github.com/technote-space/release-github-actions/tree/gh-actions
   - 例：`v1.2`
 - パッチバージョンのタグ名 (指定されたタグ名から生成)
   - 例：`v1.2.3`
-
-## このアクションを使用しているアクションの例
-- [Release GitHub Actions](https://github.com/technote-space/release-github-actions)
-  - [ci.yml](https://github.com/technote-space/release-github-actions/blob/master/.github/workflows/ci.yml)
-- [Auto card labeler](https://github.com/technote-space/auto-card-labeler)
-  - [ci.yml](https://github.com/technote-space/auto-card-labeler/blob/master/.github/workflows/ci.yml)
-- [Assign Author](https://github.com/technote-space/assign-author)
-  - [ci.yml](https://github.com/technote-space/assign-author/blob/master/.github/workflows/ci.yml)
-- [TOC Generator](https://github.com/technote-space/toc-generator)
-  - [ci.yml](https://github.com/technote-space/toc-generator/blob/master/.github/workflows/ci.yml)
-- [Package Version Check Action](https://github.com/technote-space/package-version-check-action)
-  - [ci.yml](https://github.com/technote-space/package-version-check-action/blob/master/.github/workflows/ci.yml)
-- [Get Diff Action](https://github.com/technote-space/get-diff-action)
-  - [ci.yml](https://github.com/technote-space/get-diff-action/blob/master/.github/workflows/ci.yml)
-- [Create Project Card Action](https://github.com/technote-space/create-project-card-action)
-  - [ci.yml](https://github.com/technote-space/create-project-card-action/blob/master/.github/workflows/ci.yml)
-- [Get git comment action](https://github.com/technote-space/get-git-comment-action)
-  - [ci.yml](https://github.com/technote-space/get-git-comment-action/blob/master/.github/workflows/ci.yml)
-- [PR Commit Body Action](https://github.com/technote-space/pr-commit-body-action)
-  - [ci.yml](https://github.com/technote-space/pr-commit-body-action/blob/master/.github/workflows/ci.yml)
-- [WP Version Check Action](https://github.com/technote-space/wp-version-check-action)
-  - [ci.yml](https://github.com/technote-space/wp-version-check-action/blob/master/.github/workflows/ci.yml)
 
 ## Author
 [GitHub (Technote)](https://github.com/technote-space)  
