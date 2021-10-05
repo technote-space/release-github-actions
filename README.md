@@ -34,7 +34,6 @@ Once you create a new tag, this action will automatically
 - [Motivation](#motivation)
 - [Addition](#addition)
   - [Tags](#tags)
-- [Sample GitHub Actions using this Action](#sample-github-actions-using-this-action)
 - [Author](#author)
 
 *generated with [TOC Generator](https://github.com/technote-space/toc-generator)*
