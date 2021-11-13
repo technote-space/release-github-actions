@@ -77,6 +77,10 @@ inputs:
     description: Tag name prefix for original tag.
     default: ''
     required: false
+  DELETE_NODE_MODULES:
+    description: Whether to delete node_modules.
+    default: 'false'
+    required: false
 
 branding:
   icon: 'tag'

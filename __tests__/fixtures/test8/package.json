@@ -1,0 +1,7 @@
+{
+  "name": "test",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "tsc && yarn ncc build lib/main.js && rm -rf lib"
+  }
+}
