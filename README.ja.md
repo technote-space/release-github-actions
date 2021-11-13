@@ -87,6 +87,7 @@ jobs:
 | TEST_TAG_PREFIX | テスト用タグのプリフィックス | | | `test/` |
 | CLEAN_TEST_TAG | テストタグを掃除するかどうか | `false` | | `true` |
 | ORIGINAL_TAG_PREFIX | 元のタグを残す際に付与するプリフィックス | | | `original/` |
+| DELETE_NODE_MODULES | node_modules を削除するかどうか | `false` | | `true` |
 | GITHUB_TOKEN | アクセストークン | `${{github.token}}` | true | `${{secrets.ACCESS_TOKEN}}` |
 
 ## Execute commands

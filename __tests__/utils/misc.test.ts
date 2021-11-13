@@ -476,6 +476,20 @@ describe('getBuildCommands', () => {
       ...mv2(buildDir7),
     ]);
   });
+
+  it('should get build commands 10', () => {
+    process.env.INPUT_PACKAGE_MANAGER     = 'yarn';
+    process.env.INPUT_DELETE_NODE_MODULES = 'true';
+    process.env.INPUT_BUILD_COMMAND       = 'tsc && yarn ncc build lib/main.js && rm -rf lib';
+    expect(getBuildCommands(buildDir1, pushDir)).toEqual([
+      'yarn install',
+      'tsc',
+      'yarn ncc build lib/main.js',
+      'rm -rf lib',
+      'rm -rdf node_modules',
+      ...clean(buildDir1),
+    ]);
+  });
 });
 
 describe('detectBuildCommands', () => {
