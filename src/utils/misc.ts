@@ -100,6 +100,7 @@ export const getBuildCommands = (buildDir: string, pushDir: string): Array<Comma
   const runCommand              = [pkgManager, runSubCommand].join('');
   const hasInstallCommand       = !!commands.filter(command => command.includes(`${runCommand}install`)).length;
   const buildCommands           = detectBuildCommands(buildDir, runCommand, commands);
+  const deleteNodeModules       = Utils.getBoolValue(getInput('DELETE_NODE_MODULES'));
 
   if (buildCommands.length) {
     commands.push(...buildCommands.map(command => `${runCommand}${command}`));
@@ -109,7 +110,9 @@ export const getBuildCommands = (buildDir: string, pushDir: string): Array<Comma
     commands.unshift(`${pkgManager} install`);
   }
 
-  if (!hasInstallCommand) {
+  if (deleteNodeModules) {
+    commands.push('rm -rdf node_modules');
+  } else if (!hasInstallCommand) {
     if ('npm' === pkgManager) {
       commands.push('rm -rdf node_modules');
     }

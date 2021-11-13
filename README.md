@@ -87,6 +87,7 @@ jobs:
 | TEST_TAG_PREFIX | Prefix for test tag | | | `test/` |
 | CLEAN_TEST_TAG | Whether to clean test tag | `false` | | `true` |
 | ORIGINAL_TAG_PREFIX | Prefix to add when leaving the original tag | | | `original/` |
+| DELETE_NODE_MODULES | Whether to delete node_modules | `false` | | `true` |
 | GITHUB_TOKEN | Access token | `${{github.token}}` | true | `${{secrets.ACCESS_TOKEN}}` |
 
 ## Execute commands
