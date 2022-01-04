@@ -808,10 +808,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@technote-space/filter-github-action@^0.5.48", "@technote-space/filter-github-action@^0.5.53":
-  version "0.5.53"
-  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.5.53.tgz#e6b54abdfabdc68bbf4315ae21b15bef8e73b5e3"
-  integrity sha512-Q/Lk1iUcgKq8TmByuOz4VopnTeUhvP53BpWVH4dlkHRHz1+pgg0zN8tI19/SzOBHIKZSCBWZStl6UtLSG7vQHw==
+"@technote-space/filter-github-action@^0.5.48", "@technote-space/filter-github-action@^0.5.54":
+  version "0.5.54"
+  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.5.54.tgz#3d4e833bb2419f8cfc2ee7ea001042b3912093df"
+  integrity sha512-kEz91EPfGhWu6gJggXWc6OMMQr+oTIHj3JSuM+gWuujIz37xsvd35PoWfa8HqAKsZ7albkDVzIhqaKNgHl/SvQ==
   dependencies:
     "@actions/core" "^1.6.0"
     "@actions/github" "^5.0.0"
@@ -1740,9 +1740,9 @@ dotenv@^10.0.0:
   integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
 
 electron-to-chromium@^1.4.17:
-  version "1.4.32"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.32.tgz#7ad1e76692b307da454b7380cc882784962648b8"
-  integrity sha512-7QRVfMlccTFs7cZV3lB0k9Wcm6R6F+w1yBPX+xBAlAP/1oJIstxTev3A4r8REnUUAFph/cIB8y/EBU7PDbJTQw==
+  version "1.4.34"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.34.tgz#7d87dc0e95c2c65cbd0687ae23146a662506d1ef"
+  integrity sha512-B7g6Y9No9XMYk1VNrQ8KAmSEo1Iltrz/5EjOGxl1DffQAb3z/XbpHRCfYKwV8D+CPXm4Q7Xg1sceSt9osNwRIA==
 
 emittery@^0.8.1:
   version "0.8.1"

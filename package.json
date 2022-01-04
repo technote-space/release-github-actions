@@ -40,7 +40,7 @@
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0",
-    "@technote-space/filter-github-action": "^0.5.53",
+    "@technote-space/filter-github-action": "^0.5.54",
     "@technote-space/github-action-helper": "^5.2.27",
     "@technote-space/github-action-log-helper": "^0.1.46",
     "memize": "^1.1.0"
