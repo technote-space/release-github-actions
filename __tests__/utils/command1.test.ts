@@ -1,8 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {resolve} from 'path';
-import {GitHelper, Command} from '@technote-space/github-action-helper';
-import {Logger} from '@technote-space/github-action-log-helper';
+import { resolve } from 'path';
+import { GitHelper, Command } from '@technote-space/github-action-helper';
+import { Logger } from '@technote-space/github-action-log-helper';
 import {
   getContext,
   testEnv,
@@ -14,7 +13,7 @@ import {
   spyOnStdout,
   stdoutCalledWith,
 } from '@technote-space/github-action-test-helper';
-import {getParams} from '../../src/utils/misc';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   replaceDirectory,
   clone,
@@ -27,11 +26,12 @@ import {
   deleteTestTags,
   push,
 } from '../../src/utils/command';
+import { getParams } from '../../src/utils/misc';
 
 const setExists = testFs();
 const rootDir   = resolve(__dirname, '..', '..');
 const logger    = new Logger();
-const helper    = new GitHelper(logger, {token: 'test-token'});
+const helper    = new GitHelper(logger, { token: 'test-token' });
 
 beforeEach(() => {
   getParams.clear();

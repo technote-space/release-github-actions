@@ -1,10 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {resolve} from 'path';
-import nock from 'nock';
-import {Context} from '@actions/github/lib/context';
-import {Octokit} from '@technote-space/github-action-helper/dist/types';
-import {Logger} from '@technote-space/github-action-log-helper';
+import { resolve } from 'path';
+import { Context } from '@actions/github/lib/context';
+import { Octokit } from '@technote-space/github-action-helper/dist/types';
+import { Logger } from '@technote-space/github-action-log-helper';
 import {
   getContext,
   testEnv,
@@ -16,12 +14,14 @@ import {
   setChildProcessParams,
   getOctokit,
 } from '@technote-space/github-action-test-helper';
-import {getParams} from '../../src/utils/misc';
+import nock from 'nock';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ReposListReleasesResponseItem } from '../../src/types';
 import {
   updateRelease,
   deploy,
 } from '../../src/utils/command';
-import {ReposListReleasesResponseItem} from '../../src/types';
+import { getParams } from '../../src/utils/misc';
 
 const rootDir = resolve(__dirname, '../..');
 const common  = async(callback: (fn1, fn2, mockExec) => void, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
@@ -35,7 +35,7 @@ const common  = async(callback: (fn1, fn2, mockExec) => void, method: (GitHub, C
       return getApiFixture(resolve(__dirname, '..', 'fixtures'), 'repos.listReleases');
     })
     .patch('/repos/Hello/World/releases/1', body => {
-      expect(body).toEqual({draft: false});
+      expect(body).toEqual({ draft: false });
       return body;
     })
     .reply(200, () => {
@@ -121,7 +121,7 @@ describe('updateRelease', () => {
       expect(fn1).not.toBeCalled();
       expect(fn2).not.toBeCalled();
     }, async(octokit: Octokit, context: Context) => {
-      await updateRelease(getReleaseItem({draft: true}), logger, octokit, context);
+      await updateRelease(getReleaseItem({ draft: true }), logger, octokit, context);
     });
   });
 
@@ -143,7 +143,7 @@ describe('deploy', () => {
 
   it('should commit', async() => {
     process.env.INPUT_GITHUB_TOKEN = 'test-token';
-    setChildProcessParams({stdout: 'A test.txt'});
+    setChildProcessParams({ stdout: 'A test.txt' });
 
     await common((fn1, fn2, mockExec) => {
       expect(mockExec).toBeCalled();
