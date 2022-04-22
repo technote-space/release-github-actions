@@ -1,4 +1,5 @@
 /* eslint-disable no-magic-numbers */
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {resolve} from 'path';
 import nock from 'nock';
 import {Context} from '@actions/github/lib/context';
@@ -25,8 +26,8 @@ import {ReposListReleasesResponseItem} from '../../src/types';
 const rootDir = resolve(__dirname, '../..');
 const common  = async(callback: (fn1, fn2, mockExec) => void, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
   const mockExec = spyOnSpawn();
-  const fn1      = jest.fn();
-  const fn2      = jest.fn();
+  const fn1      = vi.fn();
+  const fn2      = vi.fn();
   nock('https://api.github.com')
     .get('/repos/Hello/World/releases')
     .reply(200, () => {

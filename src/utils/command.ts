@@ -1,4 +1,4 @@
-import {mkdirSync, existsSync, writeFileSync} from 'fs';
+import fs from 'fs';
 import {resolve, dirname} from 'path';
 import {Command, ContextHelper, GitHelper, Utils} from '@technote-space/github-action-helper';
 import {Logger} from '@technote-space/github-action-log-helper';
@@ -28,7 +28,7 @@ export const replaceDirectory = (context: Context) => (message: string): string 
 
 export const prepareFiles = async(logger: Logger, helper: GitHelper, context: Context): Promise<void> => {
   const {buildDir, pushDir} = getParams(context);
-  mkdirSync(buildDir, {recursive: true});
+  fs.mkdirSync(buildDir, {recursive: true});
 
   logger.startProcess('Cloning the remote repo for build...');
   await helper.checkout(buildDir, context);
@@ -48,11 +48,11 @@ export const createBuildInfoFile = async(logger: Logger, context: Context): Prom
   logger.startProcess('Creating build info file...');
   const filepath = resolve(buildDir, filename);
   const dir      = dirname(filepath);
-  if (!existsSync(dir)) {
-    mkdirSync(dir, {recursive: true});
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, {recursive: true});
   }
 
-  writeFileSync(filepath, JSON.stringify({
+  fs.writeFileSync(filepath, JSON.stringify({
     owner: context.repo.owner,
     repo: context.repo.repo,
     sha: context.sha,

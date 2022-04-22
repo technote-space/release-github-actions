@@ -1,4 +1,4 @@
-import {existsSync, readFileSync} from 'fs';
+import fs from 'fs';
 import {resolve} from 'path';
 import memize from 'memize';
 import {Context} from '@actions/github/lib/context';
@@ -24,11 +24,11 @@ export const getSearchBuildCommandTargets = (): Array<string> => Utils.getArrayI
 
 export const detectBuildCommands = (dir: string, runCommand: string, commands: Array<string>): Array<string> => {
   const packageFile = resolve(dir, 'package.json');
-  if (!existsSync(packageFile)) {
+  if (!fs.existsSync(packageFile)) {
     return [];
   }
 
-  const parsed = JSON.parse(readFileSync(packageFile, 'utf8'));
+  const parsed = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
   if (!('scripts' in parsed)) {
     return [];
   }
