@@ -1,6 +1,6 @@
 {
   "name": "@technote-space/release-github-actions",
-  "version": "7.1.2",
+  "version": "7.2.0",
   "description": "GitHub actions to auto release.",
   "keywords": [
     "github",
@@ -68,10 +68,10 @@
     "typescript": "^4.6.3",
     "vitest": "^0.9.4"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "engines": {
     "node": "^16"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
