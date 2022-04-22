@@ -1,6 +1,6 @@
 {
   "name": "@technote-space/release-github-actions",
-  "version": "7.2.0",
+  "version": "7.2.1",
   "description": "GitHub actions to auto release.",
   "keywords": [
     "github",
@@ -21,12 +21,19 @@
     "email": "technote.space@gmail.com",
     "url": "https://technote.space"
   },
+  "type": "module",
+  "exports": {
+    "import": "./lib/index.mjs",
+    "require": "./lib/index.cjs"
+  },
+  "main": "lib/index.mjs",
+  "types": "lib/index.d.ts",
   "files": [
     "lib",
     "action.yml"
   ],
   "scripts": {
-    "build": "rm -rdf lib && rollup -c",
+    "build": "tsc && rollup -c",
     "cover": "vitest run --coverage",
     "postinstall": "[ -n \"$CI\" ] || [ ! -f node_modules/.bin/husky ] || husky install",
     "lint": "eslint 'src/**/*.ts' --cache",

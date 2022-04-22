@@ -1,14 +1,15 @@
 {
   "extends": "@sindresorhus/tsconfig",
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "lib",
     "target": "ES2021",
     "module": "ES2020",
     "lib": [
       "ES2021"
     ],
     "noPropertyAccessFromIndexSignature": false,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "emitDeclarationOnly": true
   },
   "include": [
     "src"

@@ -9,7 +9,7 @@
   dependencies:
     "@actions/http-client" "^1.0.11"
 
-"@actions/github@^5.0.0", "@actions/github@^5.0.1":
+"@actions/github@^5.0.1":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@actions/github/-/github-5.0.1.tgz#5fdbe371d9a592038668be95d12421361585fba1"
   integrity sha512-JZGyPM9ektb8NVTTI/2gfJ9DL7Rk98tQ7OVyTlgTuaQroariRBsOnzjy0I2EarX4xUZpK88YyO503fhmjFdyAg==
@@ -429,14 +429,6 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/tsconfig/-/tsconfig-2.0.0.tgz#610e1cb8ed4e1cb7ff0cb4cb8712cd607315c152"
   integrity sha512-1nsyWtFtPpVjEnNzp2rd03BVz84BYHeW7LNYvmcj3q4jAgJL2hl0XBp3WmDFFPjFLF3w+L0XEYqhjWUTU+TCzw==
 
-"@technote-space/filter-github-action@^0.5.54":
-  version "0.5.62"
-  resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.5.62.tgz#7fe276130dcf445e00d7aa94ab0f1773dc7ab3f0"
-  integrity sha512-20FKkwcS1DAtTJw/W4dilwySoDa1+U8zEV49eN/NXUYKnvkJ/A2b7wckeqo9BA2ywKbXnonMXneRxX1ckQAYgw==
-  dependencies:
-    "@actions/core" "^1.6.0"
-    "@actions/github" "^5.0.0"
-
 "@technote-space/filter-github-action@^0.6.1":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@technote-space/filter-github-action/-/filter-github-action-0.6.1.tgz#ba6661ca695053b5752805b309ddcda0c8eceffe"
@@ -499,16 +491,9 @@
     js-yaml "^4.1.0"
 
 "@technote-space/release-github-actions@^7.1.1":
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-7.1.1.tgz#5bccb67aa826faf4e4827a0a1854201f6b38dc71"
-  integrity sha512-1zhNKVkqkQZMj+zoPcZdaZmNHzR71Lij4AF6GrjNgYWN2nA1LEFuiPK90oa4pI2VrA6BpHny02aCrTnuvBzRZA==
-  dependencies:
-    "@actions/core" "^1.6.0"
-    "@actions/github" "^5.0.0"
-    "@technote-space/filter-github-action" "^0.5.54"
-    "@technote-space/github-action-helper" "^5.2.27"
-    "@technote-space/github-action-log-helper" "^0.1.46"
-    memize "^1.1.0"
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-7.2.0.tgz#1278b8d8bcf7bbf5669767a1e774bd86b8963efe"
+  integrity sha512-seb7T47CcuNogs1sc5L6twZyU7Ub824hnHlRfBsqfmEmRzGZ42eK5rIuN+9zHR1cdx8N97Y/BysQvqHW/Ijigw==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
