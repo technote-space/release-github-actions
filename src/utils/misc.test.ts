@@ -1,7 +1,9 @@
 /* eslint-disable no-magic-numbers */
-import {resolve} from 'path';
-import {isTargetEvent} from '@technote-space/filter-github-action';
-import {testEnv, generateContext} from '@technote-space/github-action-test-helper';
+import { resolve } from 'path';
+import { isTargetEvent } from '@technote-space/filter-github-action';
+import { testEnv, generateContext } from '@technote-space/github-action-test-helper';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { DEFAULT_FETCH_DEPTH, TARGET_EVENTS } from '../constant';
 import {
   getParams,
   getSearchBuildCommandTargets,
@@ -25,8 +27,7 @@ import {
   isEnabledCleanTestTag,
   getOutputBuildInfoFilename,
   getCreateTags,
-} from '../../src/utils/misc';
-import {DEFAULT_FETCH_DEPTH, TARGET_EVENTS} from '../../src/constant';
+} from './misc';
 
 const rootDir = resolve(__dirname, '../..');
 
@@ -133,7 +134,7 @@ describe('getParams', () => {
   testEnv(rootDir);
 
   it('should get params 1', () => {
-    const params = getParams(generateContext({ref: 'refs/tags/v1.2.3'}));
+    const params = getParams(generateContext({ ref: 'refs/tags/v1.2.3' }));
     expect(params).toHaveProperty('workDir');
     expect(params).toHaveProperty('buildDir');
     expect(params).toHaveProperty('pushDir');
@@ -146,7 +147,7 @@ describe('getParams', () => {
   it('should get params 2', () => {
     process.env.INPUT_TEST_TAG_PREFIX = 'test/';
 
-    const params = getParams(generateContext({ref: 'refs/tags/test/v2.3.4'}));
+    const params = getParams(generateContext({ ref: 'refs/tags/test/v2.3.4' }));
     expect(params.tagName).toBe('test/v2.3.4');
     expect(params.branchName).toBe('gh-actions');
   });
@@ -154,7 +155,7 @@ describe('getParams', () => {
   it('should get params 3', () => {
     process.env.INPUT_BRANCH_NAME = 'gh-actions';
 
-    const params = getParams(generateContext({ref: 'refs/tags/v1.2.3'}));
+    const params = getParams(generateContext({ ref: 'refs/tags/v1.2.3' }));
     expect(params.tagName).toBe('v1.2.3');
     expect(params.branchName).toBe('gh-actions');
   });
@@ -162,7 +163,7 @@ describe('getParams', () => {
   it('should get params 4', () => {
     process.env.INPUT_BRANCH_NAME = 'releases/${MAJOR}/${MINOR}/${PATCH}';
 
-    const params = getParams(generateContext({ref: 'refs/tags/v2.3.4'}));
+    const params = getParams(generateContext({ ref: 'refs/tags/v2.3.4' }));
     expect(params.tagName).toBe('v2.3.4');
     expect(params.branchName).toBe('releases/v2/v2.3/v2.3.4');
   });
@@ -293,7 +294,7 @@ describe('getClearFilesCommands', () => {
       'rm -rdf *.lock',
       'rm -rdf *.yml',
       'rm -rdf *.yaml',
-      {command: 'rm', args: ['-rdf', '__tests__', 'src']},
+      { command: 'rm', args: ['-rdf', '__tests__', 'src'] },
     ]);
     expect(getClearFilesCommands(['?<>:|"\'@#$%^& ;/?<>:|"\'@#$%^& ;.*', '-?<>:|"\'@#$%^& ;', '*.?<>:|"\'@#$%^& ;'])).toEqual([
       'rm -rdf -- -\\?\\<\\>\\:\\|\\"\\\'\\@\\#\\$\\%\\^\\&\\ \\;',
@@ -303,7 +304,7 @@ describe('getClearFilesCommands', () => {
     expect(getClearFilesCommands(['test/?>; abc.txt', '-test1 test2.txt', ';rm -rf /', '-test1 test2/*.txt'])).toEqual([
       'rm -rdf -- -test1\\ test2.txt',
       'rm -rdf -- -test1\\ test2/*.txt',
-      {command: 'rm', args: ['-rdf', 'test/?>; abc.txt', ';rm -rf /']},
+      { command: 'rm', args: ['-rdf', 'test/?>; abc.txt', ';rm -rf /'] },
     ]);
   });
 });
@@ -345,7 +346,7 @@ describe('getBuildCommands', () => {
     'rm -rdf *.lock',
     'rm -rdf *.yml',
     'rm -rdf *.yaml',
-    {command: 'rm', args: ['-rdf', '__tests__', 'docs', 'src']},
+    { command: 'rm', args: ['-rdf', '__tests__', 'docs', 'src'] },
   ];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clean     = (buildDir: string): Array<string | { [key: string]: any }> => [
@@ -424,7 +425,7 @@ describe('getBuildCommands', () => {
       ...mv1(buildDir1),
       'rm -rdf -- -test2',
       'rm -rdf -- -test5',
-      {command: 'rm', args: ['-rdf', 'test1', 'test3 test4', 'test6;test7']},
+      { command: 'rm', args: ['-rdf', 'test1', 'test3 test4', 'test6;test7'] },
       ...mv2(buildDir1),
     ]);
   });

@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import {resolve} from 'path';
-import {GitHelper, Command} from '@technote-space/github-action-helper';
-import {Logger} from '@technote-space/github-action-log-helper';
+import { resolve } from 'path';
+import { GitHelper, Command } from '@technote-space/github-action-helper';
+import { Logger } from '@technote-space/github-action-log-helper';
 import {
   getContext,
   testEnv,
@@ -13,7 +13,7 @@ import {
   spyOnStdout,
   stdoutCalledWith,
 } from '@technote-space/github-action-test-helper';
-import {getParams} from '../../src/utils/misc';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   replaceDirectory,
   clone,
@@ -25,12 +25,13 @@ import {
   getDeleteTestTag,
   deleteTestTags,
   push,
-} from '../../src/utils/command';
+} from './command';
+import { getParams } from './misc';
 
 const setExists = testFs();
 const rootDir   = resolve(__dirname, '..', '..');
 const logger    = new Logger();
-const helper    = new GitHelper(logger, {token: 'test-token'});
+const helper    = new GitHelper(logger, { token: 'test-token' });
 
 beforeEach(() => {
   getParams.clear();
@@ -265,7 +266,7 @@ describe('createBuildInfoFile', () => {
     process.env.INPUT_BRANCH_NAME                = 'test-branch';
     process.env.GITHUB_WORKSPACE                 = 'test-dir';
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const writeMock                              = jest.spyOn(require('fs'), 'writeFileSync');
+    const writeMock                              = vi.spyOn(require('fs'), 'writeFileSync');
 
     await createBuildInfoFile(logger, getContext({
       eventName: 'push',
@@ -280,9 +281,9 @@ describe('createBuildInfoFile', () => {
     process.env.INPUT_BRANCH_NAME                = 'test-branch';
     process.env.GITHUB_WORKSPACE                 = 'test-dir';
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mkdirMock                              = jest.spyOn(require('fs'), 'mkdirSync');
+    const mkdirMock                              = vi.spyOn(require('fs'), 'mkdirSync');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const writeMock                              = jest.spyOn(require('fs'), 'writeFileSync');
+    const writeMock                              = vi.spyOn(require('fs'), 'writeFileSync');
 
     await createBuildInfoFile(logger, getContext({
       eventName: 'push',
@@ -298,9 +299,9 @@ describe('createBuildInfoFile', () => {
     process.env.INPUT_BRANCH_NAME                = 'test-branch';
     process.env.GITHUB_WORKSPACE                 = 'test-dir';
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mkdirMock                              = jest.spyOn(require('fs'), 'mkdirSync');
+    const mkdirMock                              = vi.spyOn(require('fs'), 'mkdirSync');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const writeMock                              = jest.spyOn(require('fs'), 'writeFileSync');
+    const writeMock                              = vi.spyOn(require('fs'), 'writeFileSync');
     setExists(true);
 
     await createBuildInfoFile(logger, getContext({

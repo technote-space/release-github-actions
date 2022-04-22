@@ -1,9 +1,10 @@
-import {mkdirSync, existsSync, writeFileSync} from 'fs';
-import {resolve, dirname} from 'path';
-import {Command, ContextHelper, GitHelper, Utils} from '@technote-space/github-action-helper';
-import {Logger} from '@technote-space/github-action-log-helper';
-import {Context} from '@actions/github/lib/context';
-import {Octokit} from '@technote-space/github-action-helper/dist/types';
+import type { ReposListReleasesResponseItem } from '../types';
+import type { Context } from '@actions/github/lib/context';
+import type { Octokit } from '@technote-space/github-action-helper/dist/types';
+import fs from 'fs';
+import { resolve, dirname } from 'path';
+import { Command, ContextHelper, GitHelper, Utils } from '@technote-space/github-action-helper';
+import { Logger } from '@technote-space/github-action-log-helper';
 import {
   getBuildCommands,
   getCommitMessage,
@@ -19,16 +20,15 @@ import {
   getParams,
   getReplaceDirectory,
 } from './misc';
-import {ReposListReleasesResponseItem} from '../types';
 
 export const replaceDirectory = (context: Context) => (message: string): string => {
   const directories = getReplaceDirectory(context);
-  return Object.keys(directories).reduce((value, directory) => Utils.replaceAll(Utils.replaceAll(value, ` -C ${directory}`, ''), directory, directories[directory]), message);
+  return Object.keys(directories).reduce((value, directory) => Utils.replaceAll(Utils.replaceAll(value, ` -C ${directory}`, ''), directory, directories[directory]!), message);
 };
 
 export const prepareFiles = async(logger: Logger, helper: GitHelper, context: Context): Promise<void> => {
-  const {buildDir, pushDir} = getParams(context);
-  mkdirSync(buildDir, {recursive: true});
+  const { buildDir, pushDir } = getParams(context);
+  fs.mkdirSync(buildDir, { recursive: true });
 
   logger.startProcess('Cloning the remote repo for build...');
   await helper.checkout(buildDir, context);
@@ -43,16 +43,16 @@ export const createBuildInfoFile = async(logger: Logger, context: Context): Prom
     return;
   }
 
-  const {buildDir, branchName, tagName} = getParams(context);
+  const { buildDir, branchName, tagName } = getParams(context);
 
   logger.startProcess('Creating build info file...');
   const filepath = resolve(buildDir, filename);
   const dir      = dirname(filepath);
-  if (!existsSync(dir)) {
-    mkdirSync(dir, {recursive: true});
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
 
-  writeFileSync(filepath, JSON.stringify({
+  fs.writeFileSync(filepath, JSON.stringify({
     owner: context.repo.owner,
     repo: context.repo.repo,
     sha: context.sha,
@@ -65,7 +65,7 @@ export const createBuildInfoFile = async(logger: Logger, context: Context): Prom
 };
 
 export const clone = async(logger: Logger, helper: GitHelper, context: Context): Promise<void> => {
-  const {pushDir, branchName} = getParams(context);
+  const { pushDir, branchName } = getParams(context);
   logger.startProcess('Fetching...');
   await helper.fetchOrigin(pushDir, context, ['--no-tags'], [Utils.getRefspec(branchName)]);
 
@@ -74,7 +74,7 @@ export const clone = async(logger: Logger, helper: GitHelper, context: Context):
 };
 
 export const checkBranch = async(clonedBranch: string, logger: Logger, helper: GitHelper, context: Context): Promise<void> => {
-  const {pushDir, branchName} = getParams(context);
+  const { pushDir, branchName } = getParams(context);
   if (branchName !== clonedBranch) {
     logger.info('remote branch %s not found.', branchName);
     logger.info('now branch: %s', clonedBranch);
@@ -85,24 +85,24 @@ export const checkBranch = async(clonedBranch: string, logger: Logger, helper: G
 };
 
 export const config = async(logger: Logger, helper: GitHelper, context: Context): Promise<void> => {
-  const {pushDir} = getParams(context);
-  const name      = getCommitName();
-  const email     = getCommitEmail();
+  const { pushDir } = getParams(context);
+  const name        = getCommitName();
+  const email       = getCommitEmail();
   logger.startProcess('Configuring git committer to be %s <%s>...', name, email);
 
-  await helper.config(pushDir, {name, email});
+  await helper.config(pushDir, { name, email });
 };
 
-export const commit = async(helper: GitHelper, context: Context): Promise<boolean> => helper.commit(getParams(context).pushDir, getCommitMessage(), {allowEmpty: true});
+export const commit = async(helper: GitHelper, context: Context): Promise<boolean> => helper.commit(getParams(context).pushDir, getCommitMessage(), { allowEmpty: true });
 
-export const getDeleteTestTag = async(tagName: string, prefix: string, helper: GitHelper, context: Context): Promise<Array<string>> => (await helper.getTags(getParams(context).pushDir, {quiet: true}))
+export const getDeleteTestTag = async(tagName: string, prefix: string, helper: GitHelper, context: Context): Promise<Array<string>> => (await helper.getTags(getParams(context).pushDir, { quiet: true }))
   .filter(tag => Utils.getPrefixRegExp(prefix).test(tag))
   .map(tag => tag.replace(Utils.getPrefixRegExp(prefix), ''))
   .filter(tag => Utils.versionCompare(tag, tagName, false) < 0) // eslint-disable-line no-magic-numbers
   .map(tag => `${prefix}${tag}`);
 
 export const deleteTestTags = async(helper: GitHelper, context: Context): Promise<void> => {
-  const {pushDir, tagName} = getParams(context);
+  const { pushDir, tagName } = getParams(context);
   if (!isTestTag(tagName) && isEnabledCleanTestTag()) {
     const prefixForTestTag = getTestTagPrefix();
     if (prefixForTestTag) {
@@ -117,7 +117,7 @@ export const deleteTestTags = async(helper: GitHelper, context: Context): Promis
 };
 
 export const push = async(logger: Logger, helper: GitHelper, context: Context): Promise<void> => {
-  const {pushDir, branchName, tagName, branchNames} = getParams(context);
+  const { pushDir, branchName, tagName, branchNames } = getParams(context);
   logger.startProcess('Pushing to %s@%s (tag: %s)...', ContextHelper.getRepository(context), branchName, tagName);
 
   const prefixForOriginalTag = getOriginalTagPrefix();
@@ -132,7 +132,7 @@ export const push = async(logger: Logger, helper: GitHelper, context: Context): 
   await deleteTestTags(helper, context);
   await helper.deleteLocalTag(pushDir, tagNames);
   await helper.addLocalTag(pushDir, tagNames);
-  await helper.push(pushDir, branchName, context, {withTag: true, force: true});
+  await helper.push(pushDir, branchName, context, { withTag: true, force: true });
   await branchNames.reduce(async(prev, branch) => {
     await prev;
     await helper.createBranch(pushDir, branch);
@@ -141,8 +141,8 @@ export const push = async(logger: Logger, helper: GitHelper, context: Context): 
 };
 
 const findRelease = async(octokit: Octokit, context: Context): Promise<ReposListReleasesResponseItem | undefined> => {
-  const {tagName} = getParams(context);
-  const releases  = await octokit.rest.repos.listReleases({
+  const { tagName } = getParams(context);
+  const releases    = await octokit.rest.repos.listReleases({
     owner: context.repo.owner,
     repo: context.repo.repo,
   });
@@ -164,7 +164,7 @@ export const updateRelease = async(release: ReposListReleasesResponseItem | unde
 };
 
 export const copyFiles = async(logger: Logger, command: Command, context: Context): Promise<void> => {
-  const {buildDir, pushDir} = getParams(context);
+  const { buildDir, pushDir } = getParams(context);
   logger.startProcess('Copying %s contents to %s...', buildDir, pushDir);
 
   await command.execAsync({
@@ -190,13 +190,13 @@ const executeCommit = async(release: ReposListReleasesResponseItem | undefined, 
 };
 
 export const deploy = async(octokit: Octokit, context: Context): Promise<void> => {
-  const logger       = new Logger(replaceDirectory(context));
-  const command      = new Command(logger);
-  const {branchName} = getParams(context);
+  const logger         = new Logger(replaceDirectory(context));
+  const command        = new Command(logger);
+  const { branchName } = getParams(context);
 
   logger.startProcess('Deploying branch %s to %s...', branchName, ContextHelper.getRepository(context));
 
-  const helper  = new GitHelper(logger, {depth: getFetchDepth()});
+  const helper  = new GitHelper(logger, { depth: getFetchDepth() });
   const release = await findRelease(octokit, context);
   await prepareCommit(logger, command, helper, context);
   await executeCommit(release, logger, helper, octokit, context);

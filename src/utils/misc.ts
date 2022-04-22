@@ -1,10 +1,10 @@
-import {existsSync, readFileSync} from 'fs';
-import {resolve} from 'path';
+import type { Context } from '@actions/github/lib/context';
+import fs from 'fs';
+import { resolve } from 'path';
+import { getInput } from '@actions/core' ;
+import { Utils, ContextHelper } from '@technote-space/github-action-helper';
 import memize from 'memize';
-import {Context} from '@actions/github/lib/context';
-import {Utils, ContextHelper} from '@technote-space/github-action-helper';
-import {getInput} from '@actions/core' ;
-import {DEFAULT_FETCH_DEPTH} from '../constant';
+import { DEFAULT_FETCH_DEPTH } from '../constant';
 
 type CommandType = string | {
   command: string;
@@ -24,11 +24,11 @@ export const getSearchBuildCommandTargets = (): Array<string> => Utils.getArrayI
 
 export const detectBuildCommands = (dir: string, runCommand: string, commands: Array<string>): Array<string> => {
   const packageFile = resolve(dir, 'package.json');
-  if (!existsSync(packageFile)) {
+  if (!fs.existsSync(packageFile)) {
     return [];
   }
 
-  const parsed = JSON.parse(readFileSync(packageFile, 'utf8'));
+  const parsed = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
   if (!('scripts' in parsed)) {
     return [];
   }
@@ -87,7 +87,7 @@ export const getClearFilesCommands = (targets: Array<string>): Array<CommandType
   }
 
   if (withoutWildcard.length) {
-    commands.push({command: 'rm', args: ['-rdf', ...withoutWildcard]});
+    commands.push({ command: 'rm', args: ['-rdf', ...withoutWildcard] });
   }
 
   return commands;
@@ -127,11 +127,11 @@ export const getBuildCommands = (buildDir: string, pushDir: string): Array<Comma
   ];
 };
 
-export const getCommitMessage = (): string => getInput('COMMIT_MESSAGE', {required: true});
+export const getCommitMessage = (): string => getInput('COMMIT_MESSAGE', { required: true });
 
-export const getCommitName = (): string => getInput('COMMIT_NAME', {required: true});
+export const getCommitName = (): string => getInput('COMMIT_NAME', { required: true });
 
-export const getCommitEmail = (): string => getInput('COMMIT_EMAIL', {required: true});
+export const getCommitEmail = (): string => getInput('COMMIT_EMAIL', { required: true });
 
 export const getBranchNames = (): Array<string> => Utils.getArrayInput('BRANCH_NAME', true);
 
@@ -174,21 +174,21 @@ export const getOutputBuildInfoFilename = (): string => {
 type createTagType = (tagName: string) => string;
 
 // eslint-disable-next-line no-magic-numbers
-export const getMajorTag = (tagName: string): string => 'v' + Utils.normalizeVersion(tagName, {slice: 1});
+export const getMajorTag = (tagName: string): string => 'v' + Utils.normalizeVersion(tagName, { slice: 1 });
 
 // eslint-disable-next-line no-magic-numbers
-export const getMinorTag = (tagName: string): string => 'v' + Utils.normalizeVersion(tagName, {slice: 2});
+export const getMinorTag = (tagName: string): string => 'v' + Utils.normalizeVersion(tagName, { slice: 2 });
 
 // eslint-disable-next-line no-magic-numbers
-export const getPatchTag = (tagName: string): string => 'v' + Utils.normalizeVersion(tagName, {slice: 3});
+export const getPatchTag = (tagName: string): string => 'v' + Utils.normalizeVersion(tagName, { slice: 3 });
 
 export const isValidTagName = (tagName: string): boolean => Utils.isValidSemanticVersioning(tagName) || (isTestTag(tagName) && Utils.isValidSemanticVersioning(getTestTag(tagName)));
 
 export const getCreateTags = (tagName: string): Array<string> => {
   const settings  = [
-    {condition: isCreateMajorVersionTag, createTag: getMajorTag},
-    {condition: isCreateMinorVersionTag, createTag: getMinorTag},
-    {condition: isCreatePatchVersionTag, createTag: getPatchTag},
+    { condition: isCreateMajorVersionTag, createTag: getMajorTag },
+    { condition: isCreateMinorVersionTag, createTag: getMinorTag },
+    { condition: isCreatePatchVersionTag, createTag: getPatchTag },
   ];
   const createTag = isTestTag(tagName) ? (create: createTagType): string => getTestTagPrefix() + create(getTestTag(tagName)) : (create: createTagType): string => create(tagName);
 
@@ -203,20 +203,20 @@ const params = (context: Context): { workDir: string; buildDir: string; pushDir:
   const normalized     = isTestTag(tagName) ? getTestTag(tagName) : tagName;
   const rawBranchNames = getBranchNames();
   const getBranch      = (branch: string): string => [
-    {key: 'MAJOR', func: getMajorTag},
-    {key: 'MINOR', func: getMinorTag},
-    {key: 'PATCH', func: getPatchTag},
+    { key: 'MAJOR', func: getMajorTag },
+    { key: 'MINOR', func: getMinorTag },
+    { key: 'PATCH', func: getPatchTag },
   ].reduce((acc, item) => Utils.replaceAll(acc, `\${${item.key}}`, item.func(normalized)), branch);
   const branchNames    = rawBranchNames.map(getBranch);
-  const branchName     = branchNames[0];
+  const branchName     = branchNames[0]!;
   // eslint-disable-next-line no-magic-numbers
-  return {workDir, buildDir, pushDir, branchName, branchNames: branchNames.slice(1), tagName};
+  return { workDir, buildDir, pushDir, branchName, branchNames: branchNames.slice(1), tagName };
 };
 
 export const getParams = memize(params);
 
 export const getReplaceDirectory = (context: Context): { [key: string]: string } => {
-  const {workDir, buildDir, pushDir} = getParams(context);
+  const { workDir, buildDir, pushDir } = getParams(context);
   return {
     [buildDir]: '<Build Directory>',
     [pushDir]: '<Push Directory>',
