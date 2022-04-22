@@ -23,7 +23,7 @@ import {
 
 export const replaceDirectory = (context: Context) => (message: string): string => {
   const directories = getReplaceDirectory(context);
-  return Object.keys(directories).reduce((value, directory) => Utils.replaceAll(Utils.replaceAll(value, ` -C ${directory}`, ''), directory, directories[directory]), message);
+  return Object.keys(directories).reduce((value, directory) => Utils.replaceAll(Utils.replaceAll(value, ` -C ${directory}`, ''), directory, directories[directory]!), message);
 };
 
 export const prepareFiles = async(logger: Logger, helper: GitHelper, context: Context): Promise<void> => {

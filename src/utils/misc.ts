@@ -208,7 +208,7 @@ const params = (context: Context): { workDir: string; buildDir: string; pushDir:
     { key: 'PATCH', func: getPatchTag },
   ].reduce((acc, item) => Utils.replaceAll(acc, `\${${item.key}}`, item.func(normalized)), branch);
   const branchNames    = rawBranchNames.map(getBranch);
-  const branchName     = branchNames[0];
+  const branchName     = branchNames[0]!;
   // eslint-disable-next-line no-magic-numbers
   return { workDir, buildDir, pushDir, branchName, branchNames: branchNames.slice(1), tagName };
 };
