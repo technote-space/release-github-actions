@@ -87,5 +87,5 @@ branding:
   color: 'green'
 
 runs:
-  using: node12
+  using: node1
   main: lib/main.js
