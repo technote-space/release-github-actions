@@ -1,7 +1,7 @@
+import type { Context } from '@actions/github/lib/context';
 import fs from 'fs';
 import { resolve } from 'path';
 import { getInput } from '@actions/core' ;
-import { Context } from '@actions/github/lib/context';
 import { Utils, ContextHelper } from '@technote-space/github-action-helper';
 import memize from 'memize';
 import { DEFAULT_FETCH_DEPTH } from '../constant';
