@@ -25,8 +25,8 @@ import {
   getDeleteTestTag,
   deleteTestTags,
   push,
-} from '../../src/utils/command';
-import { getParams } from '../../src/utils/misc';
+} from './command';
+import { getParams } from './misc';
 
 const setExists = testFs();
 const rootDir   = resolve(__dirname, '..', '..');

@@ -16,12 +16,12 @@ import {
 } from '@technote-space/github-action-test-helper';
 import nock from 'nock';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ReposListReleasesResponseItem } from '../../src/types';
+import { ReposListReleasesResponseItem } from '../types';
 import {
   updateRelease,
   deploy,
-} from '../../src/utils/command';
-import { getParams } from '../../src/utils/misc';
+} from './command';
+import { getParams } from './misc';
 
 const rootDir = resolve(__dirname, '../..');
 const common  = async(callback: (fn1, fn2, mockExec) => void, method: (GitHub, Context) => Promise<void>, tagName = 'v1.2.3'): Promise<void> => {
