@@ -216,10 +216,10 @@
   dependencies:
     "@cspotcode/source-map-consumer" "0.8.0"
 
-"@eslint/eslintrc@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.2.1.tgz#8b5e1c49f4077235516bc9ec7d41378c0f69b8c6"
-  integrity sha512-bxvbYnBPN1Gibwyp6NrpnFzA3YtRL3BBAyEAFVIpNTm2Rn4Vy87GA5M4aSn3InRrlsbX5N0GW7XIx+U4SAEKdQ==
+"@eslint/eslintrc@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-1.2.2.tgz#4989b9e8c0216747ee7cca314ae73791bb281aae"
+  integrity sha512-lTVWHs7O2hjBFZunXTZYnYqtB9GakA1lnxIf+gKq2nY5gxkkNi/lQvveW6t8gFdOHTg6nG50Xs95PrLqVpcaLg==
   dependencies:
     ajv "^6.12.4"
     debug "^4.3.2"
@@ -251,9 +251,9 @@
   integrity sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==
 
 "@jridgewell/resolve-uri@^3.0.3":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@jridgewell/resolve-uri/-/resolve-uri-3.0.5.tgz#68eb521368db76d040a6315cdb24bf2483037b9c"
-  integrity sha512-VPeQ7+wH0itvQxnG+lIzWgkysKIr3L9sslimFW55rHMdGu/qCQ5z5h9zq4gI8uBtqkpHhsF4Z/OwExufUCThew==
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@jridgewell/resolve-uri/-/resolve-uri-3.0.6.tgz#4ac237f4dabc8dd93330386907b97591801f7352"
+  integrity sha512-R7xHtBSNm+9SyvpJkdQl+qrM3Hm2fea3Ef197M3mUug+v+yR+Rhfbs7PBtcBUVnIWJ4JcAdjvij+c8hXS9p5aw==
 
 "@jridgewell/sourcemap-codec@^1.4.10":
   version "1.4.11"
@@ -491,9 +491,9 @@
     js-yaml "^4.1.0"
 
 "@technote-space/release-github-actions@^7.1.1":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-7.2.0.tgz#1278b8d8bcf7bbf5669767a1e774bd86b8963efe"
-  integrity sha512-seb7T47CcuNogs1sc5L6twZyU7Ub824hnHlRfBsqfmEmRzGZ42eK5rIuN+9zHR1cdx8N97Y/BysQvqHW/Ijigw==
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-7.2.1.tgz#65d3557f71129cd954748998d619d14423735e7b"
+  integrity sha512-ZqrZeuQHDBMJqRYdu4+9Wg8CDmA/x3kUkmBSLy1BjL3ub0cvFjJ6v+UfmbyaQH//3cdOM9VstO3fs30TJdt2pA==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
@@ -1440,12 +1440,12 @@ eslint-visitor-keys@^3.0.0, eslint-visitor-keys@^3.3.0:
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-3.3.0.tgz#f6480fa6b1f30efe2d1968aa8ac745b862469826"
   integrity sha512-mQ+suqKJVyeuwGYHAdjMFqjCyfl8+Ldnxuyp3ldiMBFKkvytrXUZWaiPCEav8qDHKty44bD+qV1IP4T+w+xXRA==
 
-eslint@^8.13.0:
-  version "8.13.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.13.0.tgz#6fcea43b6811e655410f5626cfcf328016badcd7"
-  integrity sha512-D+Xei61eInqauAyTJ6C0q6x9mx7kTUC1KZ0m0LSEexR0V+e94K12LmWX076ZIsldwfQ2RONdaJe0re0TRGQbRQ==
+eslint@^8.14.0:
+  version "8.14.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-8.14.0.tgz#62741f159d9eb4a79695b28ec4989fcdec623239"
+  integrity sha512-3/CE4aJX7LNEiE3i6FeodHmI/38GZtWCsAtsymScmzYapx8q1nVVb+eLcLSzATmCPXw5pT4TqVs1E0OmxAd9tw==
   dependencies:
-    "@eslint/eslintrc" "^1.2.1"
+    "@eslint/eslintrc" "^1.2.2"
     "@humanwhocodes/config-array" "^0.9.2"
     ajv "^6.10.0"
     chalk "^4.0.0"
