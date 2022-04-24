@@ -1,6 +1,6 @@
 {
   "name": "@technote-space/release-github-actions",
-  "version": "7.2.2",
+  "version": "7.2.3",
   "description": "GitHub actions to auto release.",
   "keywords": [
     "github",
@@ -33,7 +33,7 @@
     "action.yml"
   ],
   "scripts": {
-    "build": "tsc && rollup -c",
+    "build": "tsc --emitDeclarationOnly && rollup -c",
     "cover": "vitest run --coverage",
     "postinstall": "[ -n \"$CI\" ] || [ ! -f node_modules/.bin/husky ] || husky install",
     "lint": "eslint 'src/**/*.ts' --cache",
