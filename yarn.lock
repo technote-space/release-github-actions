@@ -491,9 +491,9 @@
     js-yaml "^4.1.0"
 
 "@technote-space/release-github-actions@^7.1.1":
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-7.2.1.tgz#65d3557f71129cd954748998d619d14423735e7b"
-  integrity sha512-ZqrZeuQHDBMJqRYdu4+9Wg8CDmA/x3kUkmBSLy1BjL3ub0cvFjJ6v+UfmbyaQH//3cdOM9VstO3fs30TJdt2pA==
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-7.2.2.tgz#56bb1c0a35a404727d858c3f868024f72e3f4e24"
+  integrity sha512-fHQWlrWiuVB5rfgHzuX3NIYPe7UbTNSlehl6+UCjAHdAIcHU/yzuLSZP3Hg5sEWOXcS0UvDC+2vS/lWlsTDbnQ==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
