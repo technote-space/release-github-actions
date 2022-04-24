@@ -64,7 +64,7 @@
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "c8": "^7.11.2",
-    "eslint": "^8.13.0",
+    "eslint": "^8.14.0",
     "eslint-plugin-import": "^2.26.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.4.0",
