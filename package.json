@@ -33,7 +33,7 @@
     "action.yml"
   ],
   "scripts": {
-    "build": "tsc && rollup -c",
+    "build": "tsc --emitDeclarationOnly && rollup -c",
     "cover": "vitest run --coverage",
     "postinstall": "[ -n \"$CI\" ] || [ ! -f node_modules/.bin/husky ] || husky install",
     "lint": "eslint 'src/**/*.ts' --cache",
