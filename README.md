@@ -72,7 +72,7 @@ jobs:
 | name | description | default | required | e.g. |
 |:---:|:---|:---:|:---:|:---:|
 | BUILD_COMMAND | Build command<br>[More details of execute command](#execute-commands) | | | `yarn build:all` |
-| CLEAN_TARGETS | Files or directories to clean before release (Comma separated)<br>Absolute path and `..` are not permitted to use.<br>[More details of execute command](#execute-commands) | `.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
+| CLEAN_TARGETS | Files or directories to clean before release (Comma separated)<br>Absolute path and `..` are not permitted to use.<br>[More details of execute command](#execute-commands) | `.[!.]*,__tests__,docs,src,*.[jt]s,*.[mc][jt]s,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
 | PACKAGE_MANAGER | Package manager to use to install dependencies<br>If there is `yarn.lock` or` package-lock.json`, the action automatically determines the package manager to use, but this option can be used to specify it explicitly.<br>（`npm` or `yarn`） | | | `yarn` |
 | COMMIT_MESSAGE | Commit message | `feat: build for release` | true | `feat: release` |
 | COMMIT_NAME | Commit name | `github-actions[bot]` | true | |
@@ -118,12 +118,14 @@ To execute `GitHub Actions`, `src files used for build`, `test files`, `test set
 And `GitHub Actions` is downloaded every time when it is used, so fewer files are better.  
 
 `CLEAN_TARGETS` option is used for this purpose.  
-default: `.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
+default: `.[!.]*,__tests__,docs,src,*.[jt]s,*.[mc][jt]s,*.json,*.lock,*.yml,*.yaml`  
 
 ```shell
 rm -rdf .[!.]*
 rm -rdf *.js
+rm -rdf *.mjs
 rm -rdf *.ts
+rm -rdf *.cts
 rm -rdf *.json
 rm -rdf *.lock
 rm -rdf *.yml
@@ -132,75 +134,6 @@ rm -rdf __tests__ docs src
 ```
 
 (action.yml is not subject to deletion.)
-
-The default setting assumes the use of `Action template for TypeScript` or `Action template for JavaScript`.  
-https://github.com/actions/typescript-action  
-https://github.com/actions/javascript-action  
-
-However, these templates have security issues etc, you must do the following.
-
-#### Action template for JavaScript
-
-If a pull request includes a built file, it is highly likely that even malicious code will be missed in a review, so you need to fix `.gitignore` as follows:
-
-`.gitignore`
-```diff
-+ /dist
-```
-
-#### Action template for TypeScript
-
-Since processing by `ncc` is unnecessary, delete the related commands and packages and modify `action.yml` to use script built with `tsc`.
-
-`action.yml`  
-```diff
- name: 'Your name here'
- description: 'Provide a description here'
- author: 'Your name or organization here'
- inputs:
-   myInput:              # change this
-     description: 'input description here'
-     default: 'default value if applicable'
- runs:
-   using: 'node12'
--  main: 'dist/index.js'
-+  main: 'lib/main.js'
-``` 
-
-`package.json`
-```diff
-   "scripts": {
-     "build": "tsc",
-     "format": "prettier --write **/*.ts",
-     "format-check": "prettier --check **/*.ts",
-     "lint": "eslint src/**/*.ts",
--    "package": "ncc build --source-map --license licenses.txt",
--    "test": "jest",
--    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
-+    "test": "jest"
-   },
-``` 
-
-```diff
-  "devDependencies": {
-     "@types/jest": "^26.0.10",
-     "@types/node": "^14.6.0",
-     "@typescript-eslint/parser": "^3.10.1",
--    "@vercel/ncc": "^0.23.0",
-     "eslint": "^7.7.0",
-     "eslint-plugin-github": "^4.1.1",
-     "eslint-plugin-jest": "^23.20.0",
-     "jest": "^24.9.0",
-     "jest-circus": "^26.4.2",
-     "js-yaml": "^3.14.0",
-     "prettier": "2.1.1",
-     "ts-jest": "^24.3.0",
-     "typescript": "^4.0.2"
-   }
-``` 
-
-You can see an example of `GitHub Actions` with unnecessary files deleted below.  
-https://github.com/technote-space/release-github-actions/tree/gh-actions
 
 ## Action event details
 ### Target events
