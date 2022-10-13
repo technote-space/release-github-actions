@@ -340,8 +340,8 @@ describe('getBuildCommands', () => {
   ];
   const rm        = [
     'rm -rdf .[!.]*',
-    'rm -rdf *.js',
-    'rm -rdf *.ts',
+    'rm -rdf *.[jt]s',
+    'rm -rdf *.[mc][jt]s',
     'rm -rdf *.json',
     'rm -rdf *.lock',
     'rm -rdf *.yml',
