@@ -72,7 +72,7 @@ jobs:
 | name | description | default | required | e.g. |
 |:---:|:---|:---:|:---:|:---:|
 | BUILD_COMMAND | ビルド用コマンド<br>[コマンドの詳細](#execute-commands) | | | `yarn build:all` |
-| CLEAN_TARGETS | リリース前に掃除するファイルやディレクトリ (カンマ区切り)<br>絶対パスや `..` は使用できません<br>[コマンドの詳細](#execute-commands) |`.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
+| CLEAN_TARGETS | リリース前に掃除するファイルやディレクトリ (カンマ区切り)<br>絶対パスや `..` は使用できません<br>[コマンドの詳細](#execute-commands) |`.[!.]*,__tests__,docs,src,*.[jt]s,*.[mc][jt]s,*.json,*.lock,*.yml,*.yaml` | true | `.[!.]*,*.txt` |
 | PACKAGE_MANAGER | 依存関係のインストールに使用するパッケージマネージャー<br>`yarn.lock` や `package-lock.json` がある場合は自動で使用するパッケージマネージャーを決定しますが、このオプションで強制することができます<br>（`npm` または `yarn`） | | | `yarn` |
 | COMMIT_MESSAGE | コミット時に設定するメッセージ | `feat: build for release` | true | `feat: release` |
 | COMMIT_NAME | コミット時に設定する名前 | `github-actions[bot]` | true | |
@@ -117,12 +117,14 @@ yarn install --production
 そして `GitHub Actions` は使用されるたびにダウンロードされるため、ファイルは少ないほうが良いです。  
 
 `CLEAN_TARGETS` オプションはこの目的のために使用されます。  
-default: `.[!.]*,__tests__,docs,src,*.js,*.ts,*.json,*.lock,*.yml,*.yaml`  
+default: `.[!.]*,__tests__,docs,src,*.[jt]s,*.[mc][jt]s,*.json,*.lock,*.yml,*.yaml`  
 
 ```shell
 rm -rdf .[!.]*
 rm -rdf *.js
+rm -rdf *.mjs
 rm -rdf *.ts
+rm -rdf *.cts
 rm -rdf *.json
 rm -rdf *.lock
 rm -rdf *.yml
@@ -131,75 +133,6 @@ rm -rdf __tests__ docs src
 ```
 
 (action.yml は削除の対象ではありません)
-
-このデフォルト値は「TypeScriptのActionテンプレート」や「JavaScriptのActionテンプレート」の使用を想定した値になっています。  
-https://github.com/actions/typescript-action  
-https://github.com/actions/javascript-action  
-
-ただし上記テンプレートにはセキュリティ上の問題などがあるため、以下の対応が必要です。
-
-#### JavaScriptのActionテンプレート
-
-プルリクエストにビルドしたファイルが含まれる場合、悪意のあるコードが埋め込まれていてもレビューで見逃す可能性が高いため、`.gitignore` を次のように修正する必要があります。
-
-`.gitignore`
-```diff
-+ /dist
-```
-
-#### TypeScriptのActionテンプレート
-
-`ncc` による処理は不要なため、コマンド及びパッケージを削除し `tsc` でビルドされたスクリプトを使用するように修正します。
-
-`action.yml`  
-```diff
- name: 'Your name here'
- description: 'Provide a description here'
- author: 'Your name or organization here'
- inputs:
-   myInput:              # change this
-     description: 'input description here'
-     default: 'default value if applicable'
- runs:
-   using: 'node12'
--  main: 'dist/index.js'
-+  main: 'lib/main.js'
-``` 
-
-`package.json`
-```diff
-   "scripts": {
-     "build": "tsc",
-     "format": "prettier --write **/*.ts",
-     "format-check": "prettier --check **/*.ts",
-     "lint": "eslint src/**/*.ts",
--    "package": "ncc build --source-map --license licenses.txt",
--    "test": "jest",
--    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
-+    "test": "jest"
-   },
-``` 
-
-```diff
-  "devDependencies": {
-     "@types/jest": "^26.0.10",
-     "@types/node": "^14.6.0",
-     "@typescript-eslint/parser": "^3.10.1",
--    "@vercel/ncc": "^0.23.0",
-     "eslint": "^7.7.0",
-     "eslint-plugin-github": "^4.1.1",
-     "eslint-plugin-jest": "^23.20.0",
-     "jest": "^24.9.0",
-     "jest-circus": "^26.4.2",
-     "js-yaml": "^3.14.0",
-     "prettier": "2.1.1",
-     "ts-jest": "^24.3.0",
-     "typescript": "^4.0.2"
-   }
-``` 
-
-不要なファイルが削除された`GitHub Actions`の例は以下で確認できます。  
-https://github.com/technote-space/release-github-actions/tree/gh-actions
 
 ## Action イベント詳細
 ### 対象イベント
