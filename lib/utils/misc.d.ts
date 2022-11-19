@@ -1,6 +1,6 @@
 import type { Context } from '@actions/github/lib/context';
 import memize from 'memize';
-declare type CommandType = string | {
+type CommandType = string | {
     command: string;
     args?: Array<string> | undefined;
     quiet?: boolean | undefined;
