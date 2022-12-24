@@ -63,7 +63,7 @@
     "@types/node": "^18.11.17",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
-    "@vitest/coverage-c8": "^0.26.0",
+    "@vitest/coverage-c8": "^0.26.2",
     "eslint": "^8.30.0",
     "eslint-plugin-import": "^2.26.0",
     "husky": "^8.0.2",
@@ -71,9 +71,9 @@
     "memize": "^1.1.0",
     "nock": "^13.2.9",
     "pinst": "^3.0.0",
-    "rollup": "^3.7.5",
+    "rollup": "^3.8.1",
     "typescript": "^4.9.4",
-    "vitest": "^0.26.0"
+    "vitest": "^0.26.2"
   },
   "publishConfig": {
     "access": "public"
