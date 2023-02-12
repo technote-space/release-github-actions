@@ -40,7 +40,7 @@
     "lint:fix": "eslint --fix 'src/**/*.ts'",
     "prepublishOnly": "[ -n \"$CI\" ] || [ ! -f node_modules/.bin/pinst ] || pinst --disable",
     "postpublish": "[ -n \"$CI\" ] || [ ! -f node_modules/.bin/pinst ] || pinst --enable",
-    "release": "yarn release-ga --test",
+    "release": "npm_config_yes=true npx @technote-space/release-github-actions-cli --test",
     "test": "yarn lint && yarn typecheck && yarn cover",
     "typecheck": "tsc --noEmit",
     "update": "npm_config_yes=true npx npm-check-updates -u --timeout 100000 && yarn install && yarn upgrade && yarn audit"
@@ -59,7 +59,6 @@
     "@technote-space/github-action-helper": "^5.3.10",
     "@technote-space/github-action-log-helper": "^0.2.10",
     "@technote-space/github-action-test-helper": "^0.11.2",
-    "@technote-space/release-github-actions-cli": "^1.9.3",
     "@types/node": "^18.13.0",
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",

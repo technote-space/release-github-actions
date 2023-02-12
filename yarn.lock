@@ -584,7 +584,7 @@
     "@actions/core" "^1.10.0"
     "@actions/github" "^5.1.1"
 
-"@technote-space/github-action-helper@^5.3.10", "@technote-space/github-action-helper@^5.3.8":
+"@technote-space/github-action-helper@^5.3.10":
   version "5.3.10"
   resolved "https://registry.yarnpkg.com/@technote-space/github-action-helper/-/github-action-helper-5.3.10.tgz#d9f7300048c2c3aa7297fdbf569b0739983f2a55"
   integrity sha512-g3fbBSQcq4VzOS8Nk8gbJxs/LqmdfKixzhgy2gi09lsxW5thYSGtKES8wlfp5AN5MrDxg8JoTOq4Cuu3X3fSog==
@@ -597,7 +597,7 @@
     shell-escape "^0.2.0"
     sprintf-js "^1.1.2"
 
-"@technote-space/github-action-log-helper@^0.2.10", "@technote-space/github-action-log-helper@^0.2.8", "@technote-space/github-action-log-helper@^0.2.9":
+"@technote-space/github-action-log-helper@^0.2.10", "@technote-space/github-action-log-helper@^0.2.9":
   version "0.2.10"
   resolved "https://registry.yarnpkg.com/@technote-space/github-action-log-helper/-/github-action-log-helper-0.2.10.tgz#613af35526d79ca0040894c14c1bb32070ae2c87"
   integrity sha512-JTCdLDNqAijD8kXkRgVUIGX7lvxUiP+x6+jfNdpzEet2HhMovnoZkOxCdnV356SzxFDraG+sUXIAXtZFxL0zFA==
@@ -615,24 +615,6 @@
     "@octokit/plugin-rest-endpoint-methods" "^6.7.0"
     js-yaml "^4.1.0"
     vitest "^0.26.2"
-
-"@technote-space/release-github-actions-cli@^1.9.3":
-  version "1.9.3"
-  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions-cli/-/release-github-actions-cli-1.9.3.tgz#a71e1dd1e85e71069eaed251ddc14f44000daf3f"
-  integrity sha512-oSjpLOGyEiMQvUjZ6Qd5CQxFQneWbHqIxu7D5efnbKDitMNcxjQQN7Pq0PgavRhp7HJrtP1u/2Fmz7DIvMZUSQ==
-  dependencies:
-    "@technote-space/github-action-helper" "^5.3.8"
-    "@technote-space/github-action-log-helper" "^0.2.8"
-    "@technote-space/release-github-actions" "^8.0.1"
-    commander "^9.4.1"
-    cosmiconfig "^7.0.1"
-    dotenv "^16.0.3"
-    js-yaml "^4.1.0"
-
-"@technote-space/release-github-actions@^8.0.1":
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/@technote-space/release-github-actions/-/release-github-actions-8.0.2.tgz#502863ebb72beb872b8461385cd82aea3b3c2e52"
-  integrity sha512-oaQ2Nyy6nWw+ImIaJrvo3ItJXAU5/u/mDkZrmHNRtR81Px0JKWA7sEAd3kdRecqcUqlVc++9ZkWrZGqdbo578Q==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
@@ -700,11 +682,6 @@
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz#d3357479a0fdfdd5907fe67e17e0a85c906e1301"
   integrity sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==
-
-"@types/parse-json@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
-  integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
 "@types/resolve@1.20.2":
   version "1.20.2"
@@ -1273,17 +1250,6 @@ cosmiconfig-typescript-loader@^4.0.0:
   resolved "https://registry.yarnpkg.com/cosmiconfig-typescript-loader/-/cosmiconfig-typescript-loader-4.3.0.tgz#c4259ce474c9df0f32274ed162c0447c951ef073"
   integrity sha512-NTxV1MFfZDLPiBMjxbHRwSh5LaLcPMwNdCutmnHJCKoVnlvldPWlllonKwrsRJ5pYZBIBGRWWU2tfvzxgeSW5Q==
 
-cosmiconfig@^7.0.1:
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-7.1.0.tgz#1443b9afa596b670082ea46cbd8f6a62b84635f6"
-  integrity sha512-AdmX6xUzdNASswsFtmwSt7Vj8po9IuqXm0UXz7QKPuEUmPB4XyjGfaAr2PSuELMwkRMVH1EpIkX5bTZGRB3eCA==
-  dependencies:
-    "@types/parse-json" "^4.0.0"
-    import-fresh "^3.2.1"
-    parse-json "^5.0.0"
-    path-type "^4.0.0"
-    yaml "^1.10.0"
-
 cosmiconfig@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-8.0.0.tgz#e9feae014eab580f858f8a0288f38997a7bebe97"
@@ -1407,11 +1373,6 @@ dot-prop@^5.1.0:
   integrity sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q==
   dependencies:
     is-obj "^2.0.0"
-
-dotenv@^16.0.3:
-  version "16.0.3"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.3.tgz#115aec42bac5053db3c456db30cc243a5a836a07"
-  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
 
 eastasianwidth@^0.2.0:
   version "0.2.0"
@@ -3835,11 +3796,6 @@ yallist@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
-
-yaml@^1.10.0:
-  version "1.10.2"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.2.tgz#2301c5ffbf12b467de8da2333a459e29e7920e4b"
-  integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
 
 yaml@^2.1.3:
   version "2.2.1"
