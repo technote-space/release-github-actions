@@ -57,7 +57,7 @@ jobs:
     name: Release GitHub Actions
     runs-on: ubuntu-latest
     steps:
-      - uses: technote-space/release-github-actions@v6
+      - uses: technote-space/release-github-actions@v8
 ```
 
 [More details of target event](#action-event-details)
