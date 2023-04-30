@@ -98,7 +98,7 @@ export const getBuildCommands = (buildDir: string, pushDir: string): Array<Comma
   const pkgManager              = Utils.useNpm(buildDir, getInput('PACKAGE_MANAGER')) ? 'npm' : 'yarn';
   const runSubCommand           = pkgManager === 'npm' ? ' run ' : ' ';
   const runCommand              = [pkgManager, runSubCommand].join('');
-  const hasInstallCommand       = !!commands.filter(command => command.includes(`${runCommand}install`)).length;
+  const hasInstallCommand       = commands.some(command => command.includes(`${pkgManager} install`) || command.includes('npm ci'));
   const buildCommands           = detectBuildCommands(buildDir, runCommand, commands);
   const deleteNodeModules       = Utils.getBoolValue(getInput('DELETE_NODE_MODULES'));
 
