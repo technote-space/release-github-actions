@@ -478,7 +478,7 @@ describe('getBuildCommands', () => {
     ]);
   });
 
-  it('should get build commands 10', () => {
+  it('should get build commands 12', () => {
     process.env.INPUT_PACKAGE_MANAGER     = 'yarn';
     process.env.INPUT_DELETE_NODE_MODULES = 'true';
     process.env.INPUT_BUILD_COMMAND       = 'tsc && yarn ncc build lib/main.js && rm -rf lib';
@@ -489,6 +489,16 @@ describe('getBuildCommands', () => {
       'rm -rf lib',
       'rm -rdf node_modules',
       ...clean(buildDir1),
+    ]);
+  });
+
+  it('should get build commands 13', () => {
+    process.env.INPUT_PACKAGE_MANAGER = 'npm';
+    process.env.INPUT_BUILD_COMMAND   = 'npm ci && npm run package';
+    expect(getBuildCommands(buildDir7, pushDir)).toEqual([
+      'npm ci',
+      'npm run package',
+      ...clean(buildDir7),
     ]);
   });
 });
