@@ -1,5 +1,4 @@
 import type { Context } from '@actions/github/lib/context';
-import memize from 'memize';
 type CommandType = string | {
     command: string;
     args?: Array<string> | undefined;
@@ -41,7 +40,7 @@ export declare const getParams: ((context: Context) => {
     branchName: string;
     branchNames: Array<string>;
     tagName: string;
-}) & memize.MemizeMemoizedFunction;
+}) & import("memize").MemizeMemoizedFunction;
 export declare const getReplaceDirectory: (context: Context) => {
     [key: string]: string;
 };
